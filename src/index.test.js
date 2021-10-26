@@ -1,5 +1,5 @@
 const { fix, parse } = require('./index')
-const { string, number, boolean, list } = require('./pipes')
+const { string, number, boolean, array } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
@@ -81,13 +81,13 @@ describe('Array validation', () => {
   })
 
   test('require option', () => {
-    expect(() => fix(undefined, list({ type: ['number'], require: true }))).toThrow('required')
+    expect(() => fix(undefined, array({ type: 'number', require: true }))).toThrow('required')
   })
 
   test('default option', () => {
     expect(fix(undefined, 'string[]')).toEqual([])
-    expect(fix(undefined, list({ type: ['number'], default: undefined }))).toBeUndefined()
-    expect(fix(undefined, list({ type: ['number'], default: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(undefined, array({ type: 'number', default: undefined }))).toBeUndefined()
+    expect(fix(undefined, array({ type: 'number', default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
@@ -131,7 +131,7 @@ describe('Errors validation', () => {
       pseudonym: ['lower', 'trim'],
       age: 'number',
       single: boolean({ coerce: false }),
-      novels: list({ type: 'string' }),
+      novels: array({ type: 'string' }),
     })
 
     expect(errors).toEqual([

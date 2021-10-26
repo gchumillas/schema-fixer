@@ -35,7 +35,7 @@ const boolean = pipe((value, { coerce }) => {
   throw 'not a boolean'
 }, { default: false, coerce: true })
 
-const list = pipe((value, { type, parse, fieldPath }) => {
+const array = pipe((value, { type, parse, fieldPath }) => {
   if (Array.isArray(value)) {
     const [val, errors] = value.reduce(([prevVal, prevErrors], item, i) => {
       const [val, errors] = parse(item, type, { fieldPath: `${fieldPath}[${i}]` })
@@ -77,8 +77,8 @@ const upper = pipe(value => {
 })
 
 module.exports = {
-  string, trim, lower, upper, // string pipelines
+  string, trim, lower, upper,
   number,
   boolean,
-  list
+  array
 }

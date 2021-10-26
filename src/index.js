@@ -1,6 +1,6 @@
 const { concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
-const { string, number, boolean, trim, lower, upper, list } = require('./pipes')
+const { string, number, boolean, trim, lower, upper, array } = require('./pipes')
 
 const shorthands = {
   'string': string(),
@@ -9,9 +9,9 @@ const shorthands = {
   'trim': trim(),
   'lower': lower(),
   'upper': upper(),
-  'string[]': list({ type: [string()] }),
-  'number[]': list({ type: [number()] }),
-  'boolean[]': list({ type: [boolean()] })
+  'string[]': array({ type: [string()] }),
+  'number[]': array({ type: [number()] }),
+  'boolean[]': array({ type: [boolean()] })
 }
 
 const parse = (value, schema, { fieldPath = '' } = {}) => {
