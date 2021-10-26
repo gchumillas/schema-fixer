@@ -14,4 +14,14 @@ const text = pipe((value, { coerce, require }) => {
   throw 'not a string'
 }, { default: '', coerce: true })
 
-module.exports = { text }
+const float = pipe((value, { coerce }) => {
+  if (typeof value == 'number') {
+    return value
+  } else if (coerce && !isNaN(value)) {
+    return +value
+  }
+
+  throw 'not a number'
+}, { default: 0, coerce: true })
+
+module.exports = { text, float }
