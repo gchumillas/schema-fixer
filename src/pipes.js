@@ -53,4 +53,12 @@ const trim = pipe(value => {
   return value.trim()
 })
 
-module.exports = { text, float, bool, list, trim }
+const lower = pipe(value => {
+  if (typeof value != 'string') {
+    throw 'not a string'
+  }
+
+  return value.toLocaleLowerCase()
+})
+
+module.exports = { text, float, bool, list, trim, lower }
