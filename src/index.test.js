@@ -39,6 +39,10 @@ describe('Float validation', () => {
     expect(fix(undefined, [float({ default: undefined })])).toBeUndefined()
     expect(fix(undefined, [float({ default: 125.48 })])).toBe(125.48)
   })
+
+  test('coerce option', () => {
+    expect(() => fix('125.48', [float({ coerce: false })])).toThrow('not a number')
+  })
 })
 
 describe('Boolean validation', () => {
