@@ -1,5 +1,5 @@
 const { fix } = require('./index')
-const { text, float, bool } = require('./pipes')
+const { text, float, bool, list } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
@@ -67,5 +67,23 @@ describe('Boolean validation', () => {
 
   test('coerse option', () => {
     expect(() => fix(1, [bool({ coerce: false })])).toThrow('not a boolean')
+  })
+})
+
+describe.only('Array validation', () => {
+  test('basic', () => {
+    expect(fix([true, false], [list({ type: [text()] })])).toEqual(['true', 'false'])
+    expect(fix([0, 1], [list({ type: [bool()] })])).toEqual([false, true])
+    expect(fix([1, '2', 3], [list({ type: [float()] })])).toEqual([1, 2, 3])
+  })
+
+  test('require option', () => {
+    expect(() => fix(undefined, [list({ type: [float()], require: true })])).toThrow('required')
+  })
+
+  test('default option', () => {
+    expect(fix(undefined, [list({ type: [text()] })])).toEqual([])
+    expect(fix(undefined, [list({ type: [float()], default: undefined })])).toBeUndefined()
+    expect(fix(undefined, [list({ type: [float()], default: [1, 2, 3] })])).toEqual([1, 2, 3])
   })
 })
