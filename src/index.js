@@ -1,4 +1,4 @@
-const { concat } = require('./core/utils')
+const { concat, isObject } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 const { string, number, boolean, trim, lower, upper, array } = require('./pipes')
 
@@ -36,6 +36,11 @@ const parse = (value, schema, { fieldPath = '' } = {}) => {
     } catch (error) {
       return [value, [fieldPath ? { path: fieldPath, error } : error]]
     }
+  }
+
+  if (!isObject(value)) {
+    const error = 'not an object'
+    return [value, [fieldPath ? { path: fieldPath, error } : error]]
   }
 
   return Object.entries(schema).reduce(([prevVal, prevErrors], [field, fieldSchema]) => {
