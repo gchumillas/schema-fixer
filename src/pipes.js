@@ -35,12 +35,18 @@ const bool = pipe((value, { coerce }) => {
   throw 'not a boolean'
 }, { default: false, coerce: true })
 
-const list = pipe((value, { type, fix, fieldPath }) => {
+const list = pipe((value, { type, parse, fieldPath }) => {
   if (Array.isArray(value)) {
-    return value.reduce((prevVal, item, i) => [
-      ...prevVal,
-      fix(item, type, { fieldPath: `${fieldPath}[${i}]` })
-    ], [])
+    const [val, errors] = value.reduce(([prevVal, prevErrors], item, i) => {
+      const [val, errors] = parse(item, type, { fieldPath: `${fieldPath}[${i}]` })
+      return [[...prevVal, val], [...prevErrors, ...errors]]
+    }, [[], []])
+
+    if (errors.length) {
+      throw errors
+    }
+
+    return val
   }
 
   throw 'not an array'
