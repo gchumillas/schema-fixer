@@ -9,12 +9,12 @@ describe('Text validation', () => {
   })
 
   test('require option', () => {
-    expect(() => fix(null, [text({ require: true })])).toThrow('required')
     expect(() => fix(undefined, [text({ require: true })])).toThrow('required')
     expect(() => fix('', [text({ require: true })])).toThrow('required')
   })
 
   test('default option', () => {
+    expect(fix(undefined, [text({ default: undefined })])).toBeUndefined()
     expect(fix(undefined, [text({ default: 'John Smith' })])).toBe('John Smith')
   })
 
@@ -32,12 +32,12 @@ describe('Float validation', () => {
   })
 
   test('require option', () => {
-    expect(() => fix(null, [float({ require: true })])).toThrow('required')
+    expect(() => fix(undefined, [float({ require: true })])).toThrow('required')
     expect(() => fix(undefined, [float({ require: true })])).toThrow('required')
   })
 
   test('default option', () => {
-    expect(fix(null, [float({ default: undefined })])).toBeUndefined()
+    expect(fix(undefined, [float({ default: undefined })])).toBeUndefined()
     expect(fix(undefined, [float({ default: 125.48 })])).toBe(125.48)
   })
 })
