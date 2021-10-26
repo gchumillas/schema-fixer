@@ -75,9 +75,9 @@ describe('Boolean validation', () => {
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], [list({ type: ['text'] })])).toEqual(['true', 'false'])
-    expect(fix([0, 1], [list({ type: ['bool'] })])).toEqual([false, true])
-    expect(fix([1, '2', 3], [list({ type: ['float'] })])).toEqual([1, 2, 3])
+    expect(fix([true, false], ['text[]'])).toEqual(['true', 'false'])
+    expect(fix([0, 1], ['bool[]'])).toEqual([false, true])
+    expect(fix([1, '2', 3], ['float[]'])).toEqual([1, 2, 3])
   })
 
   test('require option', () => {
@@ -85,7 +85,7 @@ describe('Array validation', () => {
   })
 
   test('default option', () => {
-    expect(fix(undefined, [list({ type: ['text'] })])).toEqual([])
+    expect(fix(undefined, ['text[]'])).toEqual([])
     expect(fix(undefined, [list({ type: ['float'], default: undefined })])).toBeUndefined()
     expect(fix(undefined, [list({ type: ['float'], default: [1, 2, 3] })])).toEqual([1, 2, 3])
   })

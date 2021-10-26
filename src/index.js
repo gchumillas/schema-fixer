@@ -1,11 +1,24 @@
 const { concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
-const pipes = require('./pipes')
+const { text, float, bool, trim, lower, upper, list } = require('./pipes')
+
+const shorthands = {
+  'text': text(),
+  'float': float(),
+  'bool': bool(),
+  'trim': trim(),
+  'lower': lower(),
+  'upper': upper(),
+  'text[]': list({ type: [text()] }),
+  'float[]': list({ type: [float()] }),
+  'bool[]': list({ type: [bool()] })
+}
 
 const fix = (value, schema, { fieldPath = '' } = {}) => {
   if (Array.isArray(schema)) {
     return schema.reduce((prevVal, pipe) => {
-      const fn = typeof pipe == 'string' ? pipes[pipe]() : pipe
+      // TODO: check for the shorthand to exist
+      const fn = typeof pipe == 'string' ? shorthands[pipe] : pipe
       return fn(prevVal, { fieldPath, fix })
     }, value)
   }
