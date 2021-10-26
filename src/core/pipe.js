@@ -9,9 +9,17 @@ const pipe = (fn, defaultOptions = {}) => {
     return (value, extraOptions = {}) => {
       extraOptions = { ...options, ...extraOptions }
 
-      const { default: defValue } = extraOptions
-      if (isNull(value) && !isNull(defValue)) {
-        return fn(defValue, { ...options, ...extraOptions })
+      if (isNull(value)) {
+        const { default: defValue, require } = extraOptions
+        if (!isNull(defValue)) {
+          return fn(defValue, { ...options, ...extraOptions })
+        }
+
+        if (require) {
+          throw 'required'
+        }
+
+        return undefined
       }
 
       return fn(value, { ...options, ...extraOptions })
