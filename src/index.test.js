@@ -1,5 +1,5 @@
 const { fix, parse } = require('./index')
-const { string, float, boolean, list } = require('./pipes')
+const { string, number, boolean, list } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
@@ -27,23 +27,23 @@ describe('Text validation', () => {
 
 describe('Float validation', () => {
   test('basic', () => {
-    expect(fix(125.48, 'float')).toBe(125.48)
-    expect(fix('125.48', 'float')).toBe(125.48)
-    expect(() => fix('lorem ipsum', 'float')).toThrow('not a number')
+    expect(fix(125.48, 'number')).toBe(125.48)
+    expect(fix('125.48', 'number')).toBe(125.48)
+    expect(() => fix('lorem ipsum', 'number')).toThrow('not a number')
   })
 
   test('require option', () => {
-    expect(() => fix(undefined, float({ require: true }))).toThrow('required')
+    expect(() => fix(undefined, number({ require: true }))).toThrow('required')
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'float')).toBe(0)
-    expect(fix(undefined, float({ default: undefined }))).toBeUndefined()
-    expect(fix(undefined, float({ default: 125.48 }))).toBe(125.48)
+    expect(fix(undefined, 'number')).toBe(0)
+    expect(fix(undefined, number({ default: undefined }))).toBeUndefined()
+    expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
   })
 
   test('coerce option', () => {
-    expect(() => fix('125.48', float({ coerce: false }))).toThrow('not a number')
+    expect(() => fix('125.48', number({ coerce: false }))).toThrow('not a number')
   })
 })
 
@@ -77,17 +77,17 @@ describe('Array validation', () => {
   test('basic', () => {
     expect(fix([true, false], 'string[]')).toEqual(['true', 'false'])
     expect(fix([0, 1], 'boolean[]')).toEqual([false, true])
-    expect(fix([1, '2', 3], 'float[]')).toEqual([1, 2, 3])
+    expect(fix([1, '2', 3], 'number[]')).toEqual([1, 2, 3])
   })
 
   test('require option', () => {
-    expect(() => fix(undefined, list({ type: ['float'], require: true }))).toThrow('required')
+    expect(() => fix(undefined, list({ type: ['number'], require: true }))).toThrow('required')
   })
 
   test('default option', () => {
     expect(fix(undefined, 'string[]')).toEqual([])
-    expect(fix(undefined, list({ type: ['float'], default: undefined }))).toBeUndefined()
-    expect(fix(undefined, list({ type: ['float'], default: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(undefined, list({ type: ['number'], default: undefined }))).toBeUndefined()
+    expect(fix(undefined, list({ type: ['number'], default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
@@ -129,7 +129,7 @@ describe('Errors validation', () => {
       name: string({ coerce: false }),
       lastName: string({ require: true }),
       pseudonym: ['lower', 'trim'],
-      age: 'float',
+      age: 'number',
       single: boolean({ coerce: false }),
       novels: list({ type: 'string' }),
     })

@@ -15,7 +15,7 @@ const string = pipe((value, { coerce, require }) => {
   throw 'not a string'
 }, { default: '', coerce: true })
 
-const float = pipe((value, { coerce }) => {
+const number = pipe((value, { coerce }) => {
   if (typeof value == 'number') {
     return value
   } else if (coerce && !isNaN(value)) {
@@ -78,7 +78,7 @@ const upper = pipe(value => {
 
 module.exports = {
   string, trim, lower, upper, // string pipelines
-  float,
+  number,
   boolean,
   list
 }

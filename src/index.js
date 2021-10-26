@@ -1,16 +1,16 @@
 const { concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
-const { string, float, boolean, trim, lower, upper, list } = require('./pipes')
+const { string, number, boolean, trim, lower, upper, list } = require('./pipes')
 
 const shorthands = {
   'string': string(),
-  'float': float(),
+  'number': number(),
   'boolean': boolean(),
   'trim': trim(),
   'lower': lower(),
   'upper': upper(),
   'string[]': list({ type: [string()] }),
-  'float[]': list({ type: [float()] }),
+  'number[]': list({ type: [number()] }),
   'boolean[]': list({ type: [boolean()] })
 }
 
