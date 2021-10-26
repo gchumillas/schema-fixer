@@ -3,7 +3,7 @@ const { pipe } = require('./core/pipe')
 
 const fix = (value, schema, { fieldPath = '' } = {}) => {
   if (Array.isArray(schema)) {
-    return schema.reduce((prevVal, pipe) => pipe(prevVal), value)
+    return schema.reduce((prevVal, pipe) => pipe(prevVal, { fieldPath, fix }), value)
   }
 
   return Object.entries(schema).reduce((prevVal, [field, fieldSchema]) => ({
