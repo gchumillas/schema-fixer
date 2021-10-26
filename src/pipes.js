@@ -61,4 +61,17 @@ const lower = pipe(value => {
   return value.toLocaleLowerCase()
 })
 
-module.exports = { text, float, bool, list, trim, lower }
+const upper = pipe(value => {
+  if (typeof value != 'string') {
+    throw 'not a string'
+  }
+
+  return value.toLocaleUpperCase()
+})
+
+module.exports = {
+  text, trim, lower, upper, // string pipelines
+  float,
+  bool,
+  list
+}
