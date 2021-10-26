@@ -24,4 +24,14 @@ const float = pipe((value, { coerce }) => {
   throw 'not a number'
 }, { default: 0, coerce: true })
 
-module.exports = { text, float }
+const bool = pipe((value, { coerce }) => {
+  if (typeof value == 'boolean') {
+    return value
+  } else if (coerce) {
+    return !!value
+  }
+
+  throw 'not a boolean'
+}, { default: false, coerce: true })
+
+module.exports = { text, float, bool }
