@@ -22,8 +22,14 @@ const parse = (value, schema, { fieldPath = '' } = {}) => {
   if (Array.isArray(schema)) {
     try {
       const val = schema.reduce((prevVal, pipe) => {
-        // TODO: check for the shorthand to exist
-        const fn = typeof pipe == 'string' ? shorthands[pipe] : pipe
+        let fn = pipe
+        if (typeof pipe == 'string') {
+          fn = shorthands[pipe]
+          if (!fn) {
+            throw `unrecognized ${pipe} pipe`
+          }
+        }
+
         return fn(prevVal, { fieldPath, parse })
       }, value)
       return [val, []]
