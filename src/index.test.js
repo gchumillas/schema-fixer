@@ -129,7 +129,7 @@ describe('Object validation', () => {
       name: string({ coerce: false }),
       lastName: string({ require: true }),
       pseudonym: ['lower', 'trim'],
-      age: 'number',
+      age: 'float',
       single: boolean({ coerce: false }),
       novels: 'string[]',
     })
@@ -138,7 +138,7 @@ describe('Object validation', () => {
       { 'path': 'name', 'error': 'not a string' },
       { 'path': 'lastName', 'error': 'required' },
       { 'path': 'pseudonym', 'error': 'not a string' },
-      { 'path': 'age', 'error': 'not a number' },
+      { 'path': 'age', 'error': 'unrecognized float pipe' },
       { 'path': 'single', 'error': 'not a boolean' },
       { 'path': 'novels', 'error': expect.anything() }
     ])
