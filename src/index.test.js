@@ -1,4 +1,4 @@
-const { fix } = require('./index')
+const { fix, parse } = require('./index')
 const { text, float, bool, list } = require('./pipes')
 
 describe('Text validation', () => {
@@ -110,5 +110,43 @@ describe('Misc pipelines', () => {
   test('combined pipelines', () => {
     expect(fix(' Hello There! ', ['text', 'trim', 'lower'])).toBe('hello there!')
     expect(fix(' Hello There! ', ['text', 'trim', 'upper'])).toBe('HELLO THERE!')
+  })
+})
+
+describe('Errors validation', () => {
+  test('check errors', () => {
+    const [, errors] = parse({
+      name: 125.48,
+      lastName: '',
+      pseudonym: 78945,
+      age: 'old',
+      single: 1,
+      novels: [
+        { title: 'Book 1', year: 2011 },
+        { title: 'Book 2', year: 2012 }
+      ]
+    }, {
+      name: text({ coerce: false }),
+      lastName: text({ require: true }),
+      pseudonym: ['lower', 'trim'],
+      age: 'float',
+      single: bool({ coerce: false }),
+      novels: list({ type: 'text' }),
+    })
+
+    expect(errors).toEqual([
+      { 'path': 'name', 'error': 'not a string' },
+      { 'path': 'lastName', 'error': 'required' },
+      { 'path': 'pseudonym', 'error': 'not a string' },
+      { 'path': 'age', 'error': 'not a number' },
+      { 'path': 'single', 'error': 'not a boolean' },
+      {
+        'path': 'novels',
+        'error': [
+          { 'path': 'novels[0]', 'error': 'not a string' },
+          { 'path': 'novels[1]', 'error': 'not a string' }
+        ]
+      }
+    ])
   })
 })

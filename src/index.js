@@ -14,23 +14,36 @@ const shorthands = {
   'bool[]': list({ type: [bool()] })
 }
 
-const fix = (value, schema, { fieldPath = '' } = {}) => {
+const parse = (value, schema, { fieldPath = '' } = {}) => {
   if (['function', 'string'].includes(typeof schema)) {
     schema = [schema]
   }
 
   if (Array.isArray(schema)) {
-    return schema.reduce((prevVal, pipe) => {
-      // TODO: check for the shorthand to exist
-      const fn = typeof pipe == 'string' ? shorthands[pipe] : pipe
-      return fn(prevVal, { fieldPath, fix })
-    }, value)
+    try {
+      const val = schema.reduce((prevVal, pipe) => {
+        // TODO: check for the shorthand to exist
+        const fn = typeof pipe == 'string' ? shorthands[pipe] : pipe
+        return fn(prevVal, { fieldPath, parse })
+      }, value)
+      return [val, []]
+    } catch (error) {
+      return [value, [fieldPath ? { path: fieldPath, error } : error]]
+    }
   }
 
-  return Object.entries(schema).reduce((prevVal, [field, fieldSchema]) => ({
-    ...prevVal,
-    [field]: fix(value[field], fieldSchema, { fieldPath: concat([fieldPath, field], '.'), fix })
-  }), {})
+  return Object.entries(schema).reduce(([prevVal, prevErrors], [field, fieldSchema]) => {
+    const [val, errors] = parse(value[field], fieldSchema, { fieldPath: concat([fieldPath, field], '.'), parse })
+    return [{ ...prevVal, [field]: val }, [...prevErrors, ...errors]]
+  }, [{}, []])
 }
 
-module.exports = { fix, pipe }
+const fix = (value, schema) => {
+  const [val, errors] = parse(value, schema)
+  if (errors.length) {
+    throw errors
+  }
+  return val
+}
+
+module.exports = { parse, fix, pipe }
