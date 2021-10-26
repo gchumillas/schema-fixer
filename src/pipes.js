@@ -45,4 +45,12 @@ const list = pipe((value, { type, fix, fieldPath }) => {
   throw 'not an array'
 }, { default: [] })
 
-module.exports = { text, float, bool, list }
+const trim = pipe(value => {
+  if (typeof value != 'string') {
+    throw 'not a string'
+  }
+
+  return value.trim()
+})
+
+module.exports = { text, float, bool, list, trim }
