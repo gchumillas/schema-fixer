@@ -15,6 +15,10 @@ const shorthands = {
 }
 
 const fix = (value, schema, { fieldPath = '' } = {}) => {
+  if (['function', 'string'].includes(typeof schema)) {
+    schema = [schema]
+  }
+
   if (Array.isArray(schema)) {
     return schema.reduce((prevVal, pipe) => {
       // TODO: check for the shorthand to exist
