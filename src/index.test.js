@@ -1,5 +1,5 @@
 const { fix } = require('./index')
-const { text, float, bool, list, trim } = require('./pipes')
+const { text, float, bool, list, trim, lower } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
@@ -95,5 +95,10 @@ describe('Misc pipelines', () => {
   test('trim', () => {
     expect(fix(' hello there! ', [text(), trim()])).toBe('hello there!')
     expect(() => fix(125.48, [trim()])).toThrow('not a string')
+  })
+
+  test('lower', () => {
+    expect(fix('Hello There!', [text(), lower()])).toBe('hello there!')
+    expect(() => fix(125.48, [lower()])).toThrow('not a string')
   })
 })
