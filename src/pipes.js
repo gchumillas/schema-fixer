@@ -1,7 +1,7 @@
 // TODO: replace text, bool, list by string, boolean, array respectivel (they are not reserver keywords)
 const { pipe } = require('./core/pipe')
 
-const text = pipe((value, { coerce, require }) => {
+const string = pipe((value, { coerce, require }) => {
   if (typeof value == 'string') {
     if (require && !value) {
       throw 'required'
@@ -77,7 +77,7 @@ const upper = pipe(value => {
 })
 
 module.exports = {
-  text, trim, lower, upper, // string pipelines
+  string, trim, lower, upper, // string pipelines
   float,
   bool,
   list

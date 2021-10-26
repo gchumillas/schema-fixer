@@ -1,27 +1,27 @@
 const { fix, parse } = require('./index')
-const { text, float, bool, list } = require('./pipes')
+const { string, float, bool, list } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
-    expect(fix('hello there!', 'text')).toBe('hello there!')
-    expect(fix(true, 'text')).toBe('true')
-    expect(fix(125.48, 'text')).toBe('125.48')
+    expect(fix('hello there!', 'string')).toBe('hello there!')
+    expect(fix(true, 'string')).toBe('true')
+    expect(fix(125.48, 'string')).toBe('125.48')
   })
 
   test('require option', () => {
-    expect(() => fix(undefined, text({ require: true }))).toThrow('required')
-    expect(() => fix('', text({ require: true }))).toThrow('required')
+    expect(() => fix(undefined, string({ require: true }))).toThrow('required')
+    expect(() => fix('', string({ require: true }))).toThrow('required')
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'text')).toBe('')
-    expect(fix(undefined, text({ default: undefined }))).toBeUndefined()
-    expect(fix(undefined, text({ default: 'John Smith' }))).toBe('John Smith')
+    expect(fix(undefined, 'string')).toBe('')
+    expect(fix(undefined, string({ default: undefined }))).toBeUndefined()
+    expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
   })
 
   test('coerce option', () => {
-    expect(() => fix(true, text({ coerce: false }))).toThrow('not a string')
-    expect(() => fix(125.48, text({ coerce: false }))).toThrow('not a string')
+    expect(() => fix(true, string({ coerce: false }))).toThrow('not a string')
+    expect(() => fix(125.48, string({ coerce: false }))).toThrow('not a string')
   })
 })
 
@@ -75,7 +75,7 @@ describe('Boolean validation', () => {
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], 'text[]')).toEqual(['true', 'false'])
+    expect(fix([true, false], 'string[]')).toEqual(['true', 'false'])
     expect(fix([0, 1], 'bool[]')).toEqual([false, true])
     expect(fix([1, '2', 3], 'float[]')).toEqual([1, 2, 3])
   })
@@ -85,7 +85,7 @@ describe('Array validation', () => {
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'text[]')).toEqual([])
+    expect(fix(undefined, 'string[]')).toEqual([])
     expect(fix(undefined, list({ type: ['float'], default: undefined }))).toBeUndefined()
     expect(fix(undefined, list({ type: ['float'], default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
@@ -93,23 +93,23 @@ describe('Array validation', () => {
 
 describe('Misc pipelines', () => {
   test('trim', () => {
-    expect(fix(' hello there! ', ['text', 'trim'])).toBe('hello there!')
+    expect(fix(' hello there! ', ['string', 'trim'])).toBe('hello there!')
     expect(() => fix(125.48, 'trim')).toThrow('not a string')
   })
 
   test('lower', () => {
-    expect(fix('Hello There!', ['text', 'lower'])).toBe('hello there!')
+    expect(fix('Hello There!', ['string', 'lower'])).toBe('hello there!')
     expect(() => fix(125.48, 'lower')).toThrow('not a string')
   })
 
   test('upper', () => {
-    expect(fix('hello there!', ['text', 'upper'])).toBe('HELLO THERE!')
+    expect(fix('hello there!', ['string', 'upper'])).toBe('HELLO THERE!')
     expect(() => fix(125.48, 'upper')).toThrow('not a string')
   })
 
   test('combined pipelines', () => {
-    expect(fix(' Hello There! ', ['text', 'trim', 'lower'])).toBe('hello there!')
-    expect(fix(' Hello There! ', ['text', 'trim', 'upper'])).toBe('HELLO THERE!')
+    expect(fix(' Hello There! ', ['string', 'trim', 'lower'])).toBe('hello there!')
+    expect(fix(' Hello There! ', ['string', 'trim', 'upper'])).toBe('HELLO THERE!')
   })
 })
 
@@ -126,12 +126,12 @@ describe('Errors validation', () => {
         { title: 'Book 2', year: 2012 }
       ]
     }, {
-      name: text({ coerce: false }),
-      lastName: text({ require: true }),
+      name: string({ coerce: false }),
+      lastName: string({ require: true }),
       pseudonym: ['lower', 'trim'],
       age: 'float',
       single: bool({ coerce: false }),
-      novels: list({ type: 'text' }),
+      novels: list({ type: 'string' }),
     })
 
     expect(errors).toEqual([
