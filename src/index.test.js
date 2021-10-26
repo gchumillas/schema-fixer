@@ -1,5 +1,5 @@
 const { fix } = require('./index')
-const { text } = require('./pipes')
+const { text, float } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
@@ -21,5 +21,17 @@ describe('Text validation', () => {
   test('coerce option', () => {
     expect(() => fix(true, [text({ coerce: false })])).toThrow('not a string')
     expect(() => fix(125.48, [text({ coerce: false })])).toThrow('not a string')
+  })
+})
+
+describe('Float validation', () => {
+  test('basic', () => {
+    expect(fix(125.48, [float()])).toBe(125.48)
+    expect(fix('125.48', [float()])).toBe(125.48)
+    expect(() => fix('lorem ipsum', [float()])).toThrow('not a number')
+  })
+
+  test('require option', () => {
+    expect(() => fix(null, [float({ require: true })])).toThrow('required')
   })
 })
