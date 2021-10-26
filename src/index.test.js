@@ -1,5 +1,5 @@
 const { fix, parse } = require('./index')
-const { string, float, bool, list } = require('./pipes')
+const { string, float, boolean, list } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
@@ -49,34 +49,34 @@ describe('Float validation', () => {
 
 describe('Boolean validation', () => {
   test('basic', () => {
-    expect(fix(true, 'bool')).toBe(true)
-    expect(fix(false, 'bool')).toBe(false)
-    expect(fix(1, 'bool')).toBe(true)
-    expect(fix(0, 'bool')).toBe(false)
-    expect(fix('', 'bool')).toBe(false)
-    expect(fix('lorem ipsum', 'bool')).toBe(true)
-    expect(fix({}, 'bool')).toBe(true)
+    expect(fix(true, 'boolean')).toBe(true)
+    expect(fix(false, 'boolean')).toBe(false)
+    expect(fix(1, 'boolean')).toBe(true)
+    expect(fix(0, 'boolean')).toBe(false)
+    expect(fix('', 'boolean')).toBe(false)
+    expect(fix('lorem ipsum', 'boolean')).toBe(true)
+    expect(fix({}, 'boolean')).toBe(true)
   })
 
   test('require option', () => {
-    expect(() => fix(undefined, bool({ require: true }))).toThrow('required')
+    expect(() => fix(undefined, boolean({ require: true }))).toThrow('required')
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'bool')).toBe(false)
-    expect(fix(undefined, bool({ default: undefined }))).toBeUndefined()
-    expect(fix(undefined, bool({ default: true }))).toBe(true)
+    expect(fix(undefined, 'boolean')).toBe(false)
+    expect(fix(undefined, boolean({ default: undefined }))).toBeUndefined()
+    expect(fix(undefined, boolean({ default: true }))).toBe(true)
   })
 
   test('coerse option', () => {
-    expect(() => fix(1, bool({ coerce: false }))).toThrow('not a boolean')
+    expect(() => fix(1, boolean({ coerce: false }))).toThrow('not a boolean')
   })
 })
 
 describe('Array validation', () => {
   test('basic', () => {
     expect(fix([true, false], 'string[]')).toEqual(['true', 'false'])
-    expect(fix([0, 1], 'bool[]')).toEqual([false, true])
+    expect(fix([0, 1], 'boolean[]')).toEqual([false, true])
     expect(fix([1, '2', 3], 'float[]')).toEqual([1, 2, 3])
   })
 
@@ -130,7 +130,7 @@ describe('Errors validation', () => {
       lastName: string({ require: true }),
       pseudonym: ['lower', 'trim'],
       age: 'float',
-      single: bool({ coerce: false }),
+      single: boolean({ coerce: false }),
       novels: list({ type: 'string' }),
     })
 
