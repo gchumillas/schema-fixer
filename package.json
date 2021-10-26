@@ -1,0 +1,35 @@
+{
+  "name": "@gchumillas/schema-fixer",
+  "license": "ISC",
+  "version": "0.1.0",
+  "type": "commonjs",
+  "description": "Schema validator and fixer",
+  "repository": "github:gchumillas/schema-fixer",
+  "author": "Gonzalo Chumillas",
+  "main": "dist/index.js",
+  "types": "dist/index.dt.ts",
+  "engines": {
+    "node": ">=14.18.1"
+  },
+  "keywords": [
+    "schema",
+    "validator",
+    "fixer"
+  ],
+  "scripts": {
+    "test": "jest ./src",
+    "lint": "eslint 'src/**/*.js'",
+    "build": "gulp build"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@types/jest": "^26.0.22",
+    "eslint": "^7.32.0",
+    "eslint-plugin-node": "^11.1.0",
+    "fs-extra": "^10.0.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "jest": "^26.6.3"
+  }
+}
