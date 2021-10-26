@@ -113,7 +113,7 @@ describe('Misc pipelines', () => {
   })
 })
 
-describe('Errors validation', () => {
+describe('Object validation', () => {
   test('check errors', () => {
     const [, errors] = parse({
       name: 125.48,
@@ -134,19 +134,13 @@ describe('Errors validation', () => {
       novels: array({ type: 'string' }),
     })
 
-    expect(errors).toEqual([
+    expect(errors).toMatchObject([
       { 'path': 'name', 'error': 'not a string' },
       { 'path': 'lastName', 'error': 'required' },
       { 'path': 'pseudonym', 'error': 'not a string' },
       { 'path': 'age', 'error': 'not a number' },
       { 'path': 'single', 'error': 'not a boolean' },
-      {
-        'path': 'novels',
-        'error': [
-          { 'path': 'novels[0]', 'error': 'not a string' },
-          { 'path': 'novels[1]', 'error': 'not a string' }
-        ]
-      }
+      { 'path': 'novels', 'error': expect.anything() }
     ])
   })
 })
