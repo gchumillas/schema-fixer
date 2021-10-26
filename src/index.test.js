@@ -14,6 +14,7 @@ describe('Text validation', () => {
   })
 
   test('default option', () => {
+    expect(fix(undefined, [text()])).toBe('')
     expect(fix(undefined, [text({ default: undefined })])).toBeUndefined()
     expect(fix(undefined, [text({ default: 'John Smith' })])).toBe('John Smith')
   })
@@ -36,6 +37,7 @@ describe('Float validation', () => {
   })
 
   test('default option', () => {
+    expect(fix(undefined, [float()])).toBe(0)
     expect(fix(undefined, [float({ default: undefined })])).toBeUndefined()
     expect(fix(undefined, [float({ default: 125.48 })])).toBe(125.48)
   })
@@ -61,6 +63,7 @@ describe('Boolean validation', () => {
   })
 
   test('default option', () => {
+    expect(fix(undefined, [bool()])).toBe(false)
     expect(fix(undefined, [bool({ default: undefined })])).toBeUndefined()
     expect(fix(undefined, [bool({ default: true })])).toBe(true)
   })
@@ -70,7 +73,7 @@ describe('Boolean validation', () => {
   })
 })
 
-describe.only('Array validation', () => {
+describe('Array validation', () => {
   test('basic', () => {
     expect(fix([true, false], [list({ type: [text()] })])).toEqual(['true', 'false'])
     expect(fix([0, 1], [list({ type: [bool()] })])).toEqual([false, true])
