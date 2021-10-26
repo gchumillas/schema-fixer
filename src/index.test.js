@@ -131,7 +131,7 @@ describe('Object validation', () => {
       pseudonym: ['lower', 'trim'],
       age: 'number',
       single: boolean({ coerce: false }),
-      novels: array({ type: 'string' }),
+      novels: 'string[]',
     })
 
     expect(errors).toMatchObject([
