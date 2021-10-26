@@ -6,4 +6,12 @@ const isNull = value => {
   return value === null || value === undefined
 }
 
-module.exports = { concat, isNull }
+const test = command => {
+  try {
+    return [command()]
+  } catch (e) {
+    return [undefined, e]
+  }
+}
+
+module.exports = { concat, isNull, test }
