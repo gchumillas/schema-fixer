@@ -1,3 +1,4 @@
+// TODO: replace text, bool, list by string, boolean, array respectivel (they are not reserver keywords)
 const { pipe } = require('./core/pipe')
 
 const text = pipe((value, { coerce, require }) => {
