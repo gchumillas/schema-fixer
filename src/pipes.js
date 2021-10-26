@@ -34,4 +34,15 @@ const bool = pipe((value, { coerce }) => {
   throw 'not a boolean'
 }, { default: false, coerce: true })
 
-module.exports = { text, float, bool }
+const list = pipe((value, { type, fix, fieldPath }) => {
+  if (Array.isArray(value)) {
+    return value.reduce((prevVal, item, i) => [
+      ...prevVal,
+      fix(item, type, { fieldPath: `${fieldPath}[${i}]` })
+    ], [])
+  }
+
+  throw 'not an array'
+}, { default: [] })
+
+module.exports = { text, float, bool, list }
