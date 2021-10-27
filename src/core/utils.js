@@ -10,4 +10,6 @@ const isObject = value => {
   return value !== null && typeof value == 'object' && !Array.isArray(value)
 }
 
-module.exports = { concat, isNull, isObject, test }
+const error = text => new Error(text)
+
+module.exports = { concat, isNull, isObject, error }
