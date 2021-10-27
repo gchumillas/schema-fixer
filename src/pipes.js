@@ -36,10 +36,10 @@ const boolean = pipe((value, { coerce }) => {
   return error('not a boolean')
 }, { default: false, coerce: true })
 
-const array = pipe((value, { type, parse, fieldPath }) => {
+const array = pipe((value, { type, parse, path }) => {
   if (Array.isArray(value)) {
     const [val, errors] = value.reduce(([prevVal, prevErrors], item, i) => {
-      const [val, errors] = parse(item, type, { fieldPath: `${fieldPath}[${i}]` })
+      const [val, errors] = parse(item, type, { path: `${path}[${i}]` })
       return [[...prevVal, val], [...prevErrors, ...errors]]
     }, [[], []])
 
