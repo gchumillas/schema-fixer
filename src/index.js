@@ -57,7 +57,7 @@ const fix = (value, schema) => {
   const [val, errors] = parse(value, schema)
   if (errors.length) {
     const [{ path, error }] = errors
-    throw !path ? error : errors
+    throw new Error(!path ? error : JSON.stringify(errors))
   }
   return val
 }
