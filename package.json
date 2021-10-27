@@ -6,8 +6,11 @@
   "description": "Schema validator and fixer",
   "repository": "github:gchumillas/schema-fixer",
   "author": "Gonzalo Chumillas",
-  "main": "dist/index.js",
-  "types": "dist/index.dt.ts",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./pipes": "./dist/pipes.js"
+  },
   "engines": {
     "node": ">=14.18.1"
   },
