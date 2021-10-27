@@ -140,7 +140,10 @@ describe('Object validation', () => {
       { 'path': 'pseudonym', 'error': 'not a string' },
       { 'path': 'age', 'error': 'unrecognized float pipe' },
       { 'path': 'single', 'error': 'not a boolean' },
-      { 'path': 'novels', 'error': expect.anything() }
+      { 'path': 'novels', 'error': [
+        { 'path': 'novels[0]', 'error': 'not a string' },
+        { 'path': 'novels[1]', 'error': 'not a string' }
+      ] }
     ])
   })
 })
