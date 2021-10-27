@@ -19,7 +19,8 @@
   "scripts": {
     "test": "jest ./src",
     "lint": "eslint 'src/**/*.js'",
-    "build": "gulp build"
+    "build": "gulp build",
+    "prepare": "yarn build"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
