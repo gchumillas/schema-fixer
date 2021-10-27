@@ -7,7 +7,7 @@ const clean = () => {
 };
 
 const compile = () => {
-  return gulp.src('src/index.js')
+  return gulp.src(['src/**/*.js', '!src/**/*.test.js'])
     .pipe(babel({
       presets: ['@babel/env']
     }))
