@@ -18,4 +18,8 @@ const copyDefTypes = () => {
   return fs.copy('./src/index.d.ts', './dist/index.d.ts')
 }
 
-exports.build = gulp.series(clean, compile, copyDefTypes);
+exports.build = gulp.series(
+  clean,
+  compile,
+  // copyDefTypes
+);
