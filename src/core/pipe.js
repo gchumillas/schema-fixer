@@ -17,13 +17,13 @@ const pipe = (fn, defaultOptions = {}) => {
         }
 
         if (!isNull(defValue)) {
-          return fn(defValue, { ...options, ...extraOptions })
+          return [fn(defValue, { ...options, ...extraOptions })].flat()
         }
 
         return ok(undefined)
       }
 
-      return fn(value, { ...options, ...extraOptions })
+      return [fn(value, { ...options, ...extraOptions })].flat()
     }
   }
 }
