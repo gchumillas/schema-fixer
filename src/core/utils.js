@@ -10,12 +10,4 @@ const isObject = value => {
   return value !== null && typeof value == 'object' && !Array.isArray(value)
 }
 
-const test = command => {
-  try {
-    return [command()]
-  } catch (e) {
-    return [undefined, e]
-  }
-}
-
 module.exports = { concat, isNull, isObject, test }
