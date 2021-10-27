@@ -1,3 +1,4 @@
+// TODO: add enum type
 const { pipe } = require('./core/pipe')
 
 const string = pipe((value, { coerce, require }) => {
