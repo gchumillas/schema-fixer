@@ -1,6 +1,6 @@
 const { concat, isObject, error, ok } = require('./core/utils')
 const { pipe } = require('./core/pipe')
-const { string, number, boolean, trim, lower, upper, array } = require('./pipes')
+const { string, number, boolean, trim, lower, upper, array, select } = require('./pipes')
 
 const shorthands = {
   'string': string(),
@@ -14,6 +14,22 @@ const shorthands = {
   'boolean[]': array({ type: [boolean()] })
 }
 
+const parsePipe = (text = '') => {
+  text = text.trim()
+
+  let fn = shorthands[text]
+  if (!fn) {
+    const matches = text.match(/^\[(.*)]$/)
+    if (matches) {
+      const options = matches[1].split(',').map(x => x.trim())
+      fn = select({ options })
+    }
+  }
+
+  return fn
+}
+
+// [sold, avaible, expired] --> select({options: ['sold', 'available', 'expired']})
 const parse = (value, schema, { path = '' } = {}) => {
   if (['function', 'string'].includes(typeof schema)) {
     schema = [schema]
@@ -24,7 +40,7 @@ const parse = (value, schema, { path = '' } = {}) => {
     for (const pipe of schema) {
       let fn = pipe
       if (typeof pipe == 'string') {
-        fn = shorthands[pipe]
+        fn = parsePipe(pipe)
         if (!fn) {
           const error = `unrecognized ${pipe} pipe`
           return [value, [{ path, error }]]
