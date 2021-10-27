@@ -14,7 +14,7 @@ const shorthands = {
   'boolean[]': array({ type: [boolean()] })
 }
 
-const parse = (value, schema, { fieldPath = '' } = {}) => {
+const parse = (value, schema, { path = '' } = {}) => {
   if (['function', 'string'].includes(typeof schema)) {
     schema = [schema]
   }
@@ -27,13 +27,13 @@ const parse = (value, schema, { fieldPath = '' } = {}) => {
         fn = shorthands[pipe]
         if (!fn) {
           const error = `unrecognized ${pipe} pipe`
-          return [value, [fieldPath ? { path: fieldPath, error } : error]]
+          return [value, [path ? { path: path, error } : error]]
         }
       }
 
-      const [val, error] = fn(acc, { fieldPath, parse })
+      const [val, error] = fn(acc, { path, parse })
       if (error) {
-        return [value, [fieldPath ? { path: fieldPath, error } : error]]
+        return [value, [path ? { path: path, error } : error]]
       }
 
       acc = val
@@ -44,11 +44,11 @@ const parse = (value, schema, { fieldPath = '' } = {}) => {
 
   if (!isObject(value)) {
     const error = 'not an object'
-    return [value, [fieldPath ? { path: fieldPath, error } : error]]
+    return [value, [path ? { path: path, error } : error]]
   }
 
   return Object.entries(schema).reduce(([prevVal, prevErrors], [field, fieldSchema]) => {
-    const [val, errors] = parse(value[field], fieldSchema, { fieldPath: concat([fieldPath, field], '.'), parse })
+    const [val, errors] = parse(value[field], fieldSchema, { path: concat([path, field], '.'), parse })
     return [{ ...prevVal, [field]: val }, [...prevErrors, ...errors]]
   }, [{}, []])
 }
