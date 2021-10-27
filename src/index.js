@@ -1,4 +1,4 @@
-const { concat, isObject } = require('./core/utils')
+const { concat, isObject, error, ok } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 const { string, number, boolean, trim, lower, upper, array } = require('./pipes')
 
@@ -62,4 +62,4 @@ const fix = (value, schema) => {
   return val
 }
 
-module.exports = { parse, fix, pipe }
+module.exports = { parse, fix, pipe, error, ok }
