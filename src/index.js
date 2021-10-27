@@ -29,7 +29,6 @@ const parsePipe = (text = '') => {
   return fn
 }
 
-// [sold, avaible, expired] --> select({options: ['sold', 'available', 'expired']})
 const parse = (value, schema, { path = '' } = {}) => {
   if (['function', 'string'].includes(typeof schema)) {
     schema = [schema]
