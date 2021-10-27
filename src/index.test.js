@@ -1,5 +1,5 @@
 const { fix, parse } = require('./index')
-const { string, number, boolean, array } = require('./pipes')
+const { string, number, boolean, array, select } = require('./pipes')
 
 describe('Text validation', () => {
   test('basic', () => {
@@ -92,6 +92,12 @@ describe('Array validation', () => {
 })
 
 describe('Misc pipelines', () => {
+  test('select', () => {
+    expect(fix('sold', '[sold, available]')).toEqual('sold')
+    expect(fix('hello, John', select({ options: ['bye bye', 'hello, John'] }))).toEqual('hello, John')
+    expect(() => fix(101, '[101, 202]')).toThrow('not a string')
+  })
+
   test('trim', () => {
     expect(fix(' hello there! ', ['string', 'trim'])).toBe('hello there!')
     expect(() => fix(125.48, 'trim')).toThrow('not a string')
@@ -110,6 +116,7 @@ describe('Misc pipelines', () => {
   test('combined pipelines', () => {
     expect(fix(' Hello There! ', ['string', 'trim', 'lower'])).toBe('hello there!')
     expect(fix(' Hello There! ', ['string', 'trim', 'upper'])).toBe('HELLO THERE!')
+    expect(fix(101, ['string', '[101, 202]'])).toEqual('101')
   })
 })
 
