@@ -20,22 +20,26 @@ const parse = (value, schema, { fieldPath = '' } = {}) => {
   }
 
   if (Array.isArray(schema)) {
-    try {
-      const val = schema.reduce((prevVal, pipe) => {
-        let fn = pipe
-        if (typeof pipe == 'string') {
-          fn = shorthands[pipe]
-          if (!fn) {
-            throw `unrecognized ${pipe} pipe`
-          }
+    let acc = value
+    for (const pipe of schema) {
+      let fn = pipe
+      if (typeof pipe == 'string') {
+        fn = shorthands[pipe]
+        if (!fn) {
+          const error = `unrecognized ${pipe} pipe`
+          return [value, [fieldPath ? { path: fieldPath, error } : error]]
         }
+      }
 
-        return fn(prevVal, { fieldPath, parse })
-      }, value)
-      return [val, []]
-    } catch (error) {
-      return [value, [fieldPath ? { path: fieldPath, error: `${error?.message || error}` } : error]]
+      const [val, error] = fn(acc, { fieldPath, parse })
+      if (error) {
+        return [value, [fieldPath ? { path: fieldPath, error } : error]]
+      }
+
+      acc = val
     }
+
+    return [acc, []]
   }
 
   if (!isObject(value)) {
@@ -52,7 +56,8 @@ const parse = (value, schema, { fieldPath = '' } = {}) => {
 const fix = (value, schema) => {
   const [val, errors] = parse(value, schema)
   if (errors.length) {
-    throw errors
+    const [item] = errors
+    throw typeof item == 'string' ? item : errors
   }
   return val
 }

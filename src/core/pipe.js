@@ -1,4 +1,4 @@
-const { isNull } = require('./utils')
+const { isNull, error, ok } = require('./utils')
 
 const pipe = (fn, defaultOptions = {}) => {
   defaultOptions = { require: false, ...defaultOptions }
@@ -13,14 +13,14 @@ const pipe = (fn, defaultOptions = {}) => {
         const { default: defValue, require } = extraOptions
 
         if (require) {
-          throw 'required'
+          return error('required')
         }
 
         if (!isNull(defValue)) {
           return fn(defValue, { ...options, ...extraOptions })
         }
 
-        return undefined
+        return ok(undefined)
       }
 
       return fn(value, { ...options, ...extraOptions })

@@ -1,38 +1,39 @@
 // TODO: add enum type
+const { error, ok } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 
 const string = pipe((value, { coerce, require }) => {
   if (typeof value == 'string') {
     if (require && !value) {
-      throw 'required'
+      return error('required')
     }
 
-    return value
+    return ok(value)
   } else if (coerce && ['boolean', 'number'].includes(typeof value)) {
-    return `${value}`
+    return ok(`${value}`)
   }
 
-  throw 'not a string'
+  return error('not a string')
 }, { default: '', coerce: true })
 
 const number = pipe((value, { coerce }) => {
   if (typeof value == 'number') {
-    return value
+    return ok(value)
   } else if (coerce && !isNaN(value)) {
-    return +value
+    return ok(+value)
   }
 
-  throw 'not a number'
+  return error('not a number')
 }, { default: 0, coerce: true })
 
 const boolean = pipe((value, { coerce }) => {
   if (typeof value == 'boolean') {
-    return value
+    return ok(value)
   } else if (coerce) {
-    return !!value
+    return ok(!!value)
   }
 
-  throw 'not a boolean'
+  return error('not a boolean')
 }, { default: false, coerce: true })
 
 const array = pipe((value, { type, parse, fieldPath }) => {
@@ -43,37 +44,37 @@ const array = pipe((value, { type, parse, fieldPath }) => {
     }, [[], []])
 
     if (errors.length) {
-      throw errors
+      return error(errors)
     }
 
-    return val
+    return ok(val)
   }
 
-  throw 'not an array'
+  return error('not an array')
 }, { default: [] })
 
 const trim = pipe(value => {
   if (typeof value != 'string') {
-    throw 'not a string'
+    return error('not a string')
   }
 
-  return value.trim()
+  return ok(value.trim())
 })
 
 const lower = pipe(value => {
   if (typeof value != 'string') {
-    throw 'not a string'
+    return error('not a string')
   }
 
-  return value.toLocaleLowerCase()
+  return ok(value.toLocaleLowerCase())
 })
 
 const upper = pipe(value => {
   if (typeof value != 'string') {
-    throw 'not a string'
+    return error('not a string')
   }
 
-  return value.toLocaleUpperCase()
+  return ok(value.toLocaleUpperCase())
 })
 
 module.exports = {
