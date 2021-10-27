@@ -1,5 +1,5 @@
 // TODO: add enum type
-const { error, ok } = require('./core/utils')
+const { error, ok, concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 
 const string = pipe((value, { coerce, require }) => {
@@ -53,6 +53,18 @@ const array = pipe((value, { type, parse, path }) => {
   return error('not an array')
 }, { default: [] })
 
+const select = pipe((value, { options }) => {
+  if (typeof value != 'string') {
+    return error('not a string')
+  }
+
+  if (options.includes(value)) {
+    return ok(value)
+  }
+
+  return error(`${value} is not in [${concat(options, ', ')}]`)
+})
+
 const trim = pipe(value => {
   if (typeof value != 'string') {
     return error('not a string')
@@ -81,5 +93,6 @@ module.exports = {
   string, trim, lower, upper,
   number,
   boolean,
-  array
+  array,
+  select
 }
