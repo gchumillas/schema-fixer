@@ -27,13 +27,13 @@ const parse = (value, schema, { path = '' } = {}) => {
         fn = shorthands[pipe]
         if (!fn) {
           const error = `unrecognized ${pipe} pipe`
-          return [value, [path ? { path, error } : error]]
+          return [value, [{ path, error }]]
         }
       }
 
       const [val, error] = fn(acc, { path, parse })
       if (error) {
-        return [value, [path ? { path, error } : error]]
+        return [value, [{ path, error }]]
       }
 
       acc = val
@@ -44,7 +44,7 @@ const parse = (value, schema, { path = '' } = {}) => {
 
   if (!isObject(value)) {
     const error = 'not an object'
-    return [value, [path ? { path, error } : error]]
+    return [value, [{ path, error }]]
   }
 
   return Object.entries(schema).reduce(([prevVal, prevErrors], [field, fieldSchema]) => {
@@ -56,8 +56,8 @@ const parse = (value, schema, { path = '' } = {}) => {
 const fix = (value, schema) => {
   const [val, errors] = parse(value, schema)
   if (errors.length) {
-    const [item] = errors
-    throw typeof item == 'string' ? item : errors
+    const [{ path, error }] = errors
+    throw !path ? error : errors
   }
   return val
 }
