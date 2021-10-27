@@ -122,12 +122,17 @@ describe('Misc pipelines', () => {
 
 describe('Object validation', () => {
   test('check errors', () => {
+    expect(() => fix(100, { id: 'string' })).toThrow('not an object')
+    expect(() => fix(true, { id: 'string' })).toThrow('not an object')
+    expect(() => fix('lorem ipsum', { id: 'string' })).toThrow('not an object')
+
     const [, errors] = parse({
       name: 125.48,
       lastName: '',
       pseudonym: 78945,
       age: 'old',
       single: 1,
+      location: 102,
       novels: [
         { title: 'Book 1', year: 2011 },
         { title: 'Book 2', year: 2012 }
@@ -138,6 +143,7 @@ describe('Object validation', () => {
       pseudonym: ['lower', 'trim'],
       age: 'float',
       single: boolean({ coerce: false }),
+      location: { latitude: 'number', longitude: 'number' },
       novels: 'string[]',
     })
 
@@ -147,10 +153,13 @@ describe('Object validation', () => {
       { 'path': 'pseudonym', 'error': 'not a string' },
       { 'path': 'age', 'error': 'unrecognized float pipe' },
       { 'path': 'single', 'error': 'not a boolean' },
-      { 'path': 'novels', 'error': [
-        { 'path': 'novels[0]', 'error': 'not a string' },
-        { 'path': 'novels[1]', 'error': 'not a string' }
-      ] }
+      { 'path': 'location', 'error': 'not an object' },
+      {
+        'path': 'novels', 'error': [
+          { 'path': 'novels[0]', 'error': 'not a string' },
+          { 'path': 'novels[1]', 'error': 'not a string' }
+        ]
+      }
     ])
   })
 })
