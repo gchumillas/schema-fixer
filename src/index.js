@@ -34,7 +34,7 @@ const parse = (value, schema, { fieldPath = '' } = {}) => {
       }, value)
       return [val, []]
     } catch (error) {
-      return [value, [fieldPath ? { path: fieldPath, error } : error]]
+      return [value, [fieldPath ? { path: fieldPath, error: `${error?.message || error}` } : error]]
     }
   }
 
