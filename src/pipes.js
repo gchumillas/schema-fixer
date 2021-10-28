@@ -1,4 +1,3 @@
-// TODO: add enum type
 const { error, ok, concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 
