@@ -1,10 +1,11 @@
-An amazing JavaScript library.
+A library to "fix" external data.
 
-The goal of this library is to "fix data" and avoiding the always problematic `null` and `undefined` values.
-Also this library removes all extra properties, preventing the "NoSQL injection".
+## Motivation
 
-1. Fix data so the types are always predictable.
-2. Avoid `null`, `undefined` and `NaN` values.
-3. Remove extra properties to prevent "data injection".
-4. Concise language (no more kilometric schemas)
-5. HOW to contribute
+When working with external data, be it data from databases or forms, it's common that it's not presented in the proper format. And it can lead to serious problems, such as [Code Injection](https://en.wikipedia.org/wiki/Code_injection) or [Data Corruption](https://en.wikipedia.org/wiki/Data_corruption).
+
+This library "fixes" the data so that it can be rendered or processed properly. It is especially suitable when working with APIs or NoSQL databases. Here are some features:
+
+1. Avoid `null` and `undefined` values. Those values are replaced by "default values", so that the front-end developers don't have to worry about to recheck the data to prevent "null/undefined errors".
+2. Remove undesired extra-properties. This way we can prevent Code Injection.
+3. Coercion. Transform numbers, booleans, etc. to the correct types to prevent Data Corruption.
