@@ -1,4 +1,4 @@
-const { fix, parse } = require('./index')
+const { fix, parse, pipe, error } = require('./index')
 const { string, number, boolean, array, select } = require('./pipes')
 
 describe('Text validation', () => {
@@ -161,5 +161,21 @@ describe('Object validation', () => {
         ]
       }
     ])
+  })
+})
+
+describe('Custom pipes', () => {
+  test('floor pipe', () => {
+    // transforms a number to an integer
+    const floor = pipe(value => {
+      if (typeof value != 'number') {
+        return error('not a number')
+      }
+
+      return Math.floor(value)
+    })
+
+    expect(fix('105.48', ['number', floor()])).toBe(105)
+    expect(() => fix('105.48', floor())).toThrow('not a number')
   })
 })
