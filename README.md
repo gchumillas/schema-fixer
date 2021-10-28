@@ -103,7 +103,7 @@ const floor = pipe(value => {
   return Math.floor(value)
 })
 
-// note that you pass scalar values to the fix function
+// note that you can pass "scalar" values to the fix function
 const data = fix('105.48', ['number', floor()])
 console.log(data) // returns 105
 ```
