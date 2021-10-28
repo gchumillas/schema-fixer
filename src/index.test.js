@@ -1,4 +1,4 @@
-const { fix, parse, pipe, error } = require('./index')
+const { fix, parse, pipe, error, ok } = require('./index')
 const { string, number, boolean, array, select } = require('./pipes')
 
 describe('Text validation', () => {
@@ -171,7 +171,7 @@ describe('Custom pipes', () => {
         return error('not a number')
       }
 
-      return Math.floor(value)
+      return ok(Math.floor(value))
     })
 
     expect(fix('105.48', ['number', floor()])).toBe(105)
