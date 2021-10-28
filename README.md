@@ -67,7 +67,7 @@ The previous script outputs:
 }
 ```
 
-## Example (short way)
+## Example (the short way)
 
 The previous code can be written in the following "short way":
 ```js
