@@ -100,7 +100,7 @@ const floor = pipe(value => {
     return error('not a number')
   }
 
-  return Math.floor(value)
+  return ok(Math.floor(value))
 })
 
 // note that you can pass "scalar" values to the fix function
