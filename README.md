@@ -105,7 +105,7 @@ const floor = pipe(value => {
 
 // note that you can pass "scalar" values to the fix function
 const data = fix('105.48', ['number', floor()])
-console.log(data) // returns 105
+console.log(data) // outputs 105
 ```
 
 Need to know more pipes? Take a look at the [PIPES FILE](./src/pipes.js).
