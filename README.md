@@ -39,7 +39,7 @@ const fixedData = fix(data, {
   isMarried: [boolean()],
   childrend: [array({ type: [string()] })],
   books: [array({
-    type: { // type can be ca complex schema
+    type: { // type can be a complex schema
       title: [string()],
       year: [number()],
       id: [string(), upper()] // we can apply two `pipes`
