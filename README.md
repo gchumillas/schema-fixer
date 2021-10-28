@@ -93,6 +93,8 @@ const fixedData = fix(data, {
 Creating new pipes is extremely simple. For example:
 
 ```js
+import { fix, pipe, error, ok } from '@gchumillas/schema-fixer'
+
 const floor = pipe(value => {
   if (typeof value != 'number') {
     return error('not a number')
