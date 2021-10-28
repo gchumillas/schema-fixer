@@ -166,7 +166,6 @@ describe('Object validation', () => {
 
 describe('Custom pipes', () => {
   test('floor pipe', () => {
-    // transforms a number to an integer
     const floor = pipe(value => {
       if (typeof value != 'number') {
         return error('not a number')
