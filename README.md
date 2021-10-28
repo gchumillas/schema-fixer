@@ -27,7 +27,7 @@ const data = {
     { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
     { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
   ],
-  // this additional property has been accidentally passed
+  // this additional property was accidentally passed
   metadata: 'console.log(\'please ignore me\')'
 }
 
