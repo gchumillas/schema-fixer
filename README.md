@@ -108,6 +108,8 @@ const data = fix('105.48', ['number', floor()])
 console.log(data) // returns 105
 ```
 
+Need to know more pipes? Take a look at the [PIPES FILE](./src/pipes.js).
+
 ## Need more examples?
 
 Take a look at the [TEST FILE](./src/index.test.js).
