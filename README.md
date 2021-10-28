@@ -88,7 +88,7 @@ const fixedData = fix(data, {
 })
 ```
 
-## Custom pipes:
+## Custom pipes
 
 Creating new pipes is extremely simple. For example:
 
