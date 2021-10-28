@@ -78,13 +78,13 @@ const fixedData = fix(data, {
   age: 'number',
   isMarried: 'boolean',
   childrend: 'string[]', // shorthand for array({ type: 'string' })
-  books: [array({
+  books: array({
     type: {
       title: 'string',
       year: 'number',
       id: ['string', 'upper'] // these two pipes are applied in order
     }
-  })]
+  })
 })
 ```
 
