@@ -1,7 +1,7 @@
 {
   "name": "@gchumillas/schema-fixer",
   "license": "ISC",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "type": "commonjs",
   "description": "Schema validator and fixer",
   "repository": "github:gchumillas/schema-fixer",
@@ -11,8 +11,12 @@
     "/dist"
   ],
   "exports": {
-    ".": "./dist/index.js",
-    "./pipes": "./dist/pipes.js"
+    "./*": "./dist/*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/*", "./dist/index.d.ts"]
+    }
   },
   "engines": {
     "node": ">=14.18.1"

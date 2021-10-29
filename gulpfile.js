@@ -15,11 +15,11 @@ const compile = () => {
 };
 
 const copyDefTypes = () => {
-  return fs.copy('./src/index.d.ts', './dist/index.d.ts')
+  return fs.copy('./src', './dist', /\.d\.ts$/)
 }
 
 exports.build = gulp.series(
   clean,
   compile,
-  // copyDefTypes
+  copyDefTypes
 );
