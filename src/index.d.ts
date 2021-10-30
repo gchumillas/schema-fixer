@@ -1,8 +1,15 @@
-type Pipe = string | ((value: any) => any);
-interface SchemaRecord extends Record<string, Schema> { }
-export type Schema = Pipe | Pipe[] | SchemaRecord;
-export function fix(value: any, schema: Schema): any;
-export function parse(value: any, schema: Schema): [value: any, errors: any[]];
-export function pipe(fn: (value: any) => any, options?: Record<string, any>)
+export type Result<T> = [value: T] | [value: undefined, error: any]
 export function error<T>(value: T): [undefined, T]
 export function ok<T>(value: T): [T]
+
+type Pipe<T, S> = (value: any, options: T & { require: boolean, default: any, path: string }) => Result<S>
+type PipeFactory<T, S> = (options?: T & { require?: boolean, default?: any }) => Pipe<T, S>
+export function pipe<T = {}, S = any>(
+  fn: (value: any, options: T & { require: boolean, default: S }) => Result<S>,
+  options?: { default: S }
+): PipeFactory<T, S>;
+
+interface SchemaRecord extends Record<string, Schema> { }
+export type Schema = (string | Pipe<any, any>) | (string | Pipe<any, any>)[] | SchemaRecord;
+export function fix(value: any, schema: Schema): any;
+export function parse(value: any, schema: Schema, options?: { path?: string }): [value: any, errors: any[]];

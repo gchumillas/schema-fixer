@@ -1,10 +1,10 @@
-import { Schema } from ".";
+import { Schema, PipeFactory } from ".";
 
-export function string(options?: { require?: boolean, default?: any, coerce?: boolean }): (value: any) => string;
-export function number(options?: { require?: boolean, default?: any, coerce?: boolean }): (value: any) => number;
-export function boolean(options?: { require?: boolean, default?: any, coerce?: boolean }): (value: any) => boolean;
-export function array(options: { require?: boolean, default?: any, type: Schema }): (value: any) => any[];
-export function select(options: { options: string[] }): (value: any) => string;
-export function trim(): (value: any) => string;
-export function lower(): (value: any) => string;
-export function upper(): (value: any) => string;
+export const string: PipeFactory<{ coerce?: boolean }, string>
+export const number: PipeFactory<{ coerce?: boolean }, number>
+export const boolean: PipeFactory<{ coerce?: boolean }, boolean>
+export const array: PipeFactory<{ type: Schema }, any[]>
+export const select: PipeFactory<{ options: string[] }, string>
+export const trim: PipeFactory<{}, string>
+export const lower: PipeFactory<{}, string>
+export const upper: PipeFactory<{}, string>
