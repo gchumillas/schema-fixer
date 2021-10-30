@@ -1,7 +1,7 @@
 const { error, ok, concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 
-const string = pipe((value, { coerce, require }) => {
+const string = pipe((value, { coerce = true, require }) => {
   if (typeof value == 'string') {
     if (require && !value) {
       return error('required')
@@ -13,9 +13,9 @@ const string = pipe((value, { coerce, require }) => {
   }
 
   return error('not a string')
-}, { default: '', coerce: true })
+}, { default: '' })
 
-const number = pipe((value, { coerce }) => {
+const number = pipe((value, { coerce = true }) => {
   if (typeof value == 'number') {
     return ok(value)
   } else if (coerce && !isNaN(value)) {
@@ -23,9 +23,9 @@ const number = pipe((value, { coerce }) => {
   }
 
   return error('not a number')
-}, { default: 0, coerce: true })
+}, { default: 0 })
 
-const boolean = pipe((value, { coerce }) => {
+const boolean = pipe((value, { coerce = true }) => {
   if (typeof value == 'boolean') {
     return ok(value)
   } else if (coerce) {
@@ -33,7 +33,7 @@ const boolean = pipe((value, { coerce }) => {
   }
 
   return error('not a boolean')
-}, { default: false, coerce: true })
+}, { default: false })
 
 const array = pipe((value, { type, parse, path }) => {
   if (Array.isArray(value)) {

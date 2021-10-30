@@ -1,10 +1,8 @@
 const { isNull, error, ok } = require('./utils')
 
-const pipe = (fn, defaultOptions = {}) => {
-  defaultOptions = { require: false, ...defaultOptions }
-
+const pipe = (fn, { default: defValue } = {}) => {
   return (options = {}) => {
-    options = { ...defaultOptions, ...options }
+    options = { require: false, default: defValue, ...options }
 
     return (value, extraOptions = {}) => {
       extraOptions = { ...options, ...extraOptions }
