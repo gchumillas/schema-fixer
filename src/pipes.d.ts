@@ -1,4 +1,4 @@
-import { Schema, PipeFactory } from ".";
+import { Schema, PipeFactory } from "."
 
 export const string: PipeFactory<{ coerce?: boolean }, string>
 export const number: PipeFactory<{ coerce?: boolean }, number>
