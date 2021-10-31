@@ -121,7 +121,3 @@ Need to know more pipes? Take a look at the [PIPES FILE](./src/pipes.js).
 ## Need more examples?
 
 Take a look at the [TEST FILE](./src/index.test.js).
-
-## Author notes
-
-This library is still in beta and shouldn't be used in production.
