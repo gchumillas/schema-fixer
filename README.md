@@ -10,11 +10,19 @@ This library "fixes" the data so that it can be rendered or processed properly. 
 2. Remove undesired extra-properties. This way we can prevent Code Injection.
 3. Coercion. Transform numbers, booleans, etc. to the correct types to prevent Data Corruption.
 
+## Install
+
+Just run the following command inside the project's folder:
+
+```bash
+yarn add @gchumillas/schema-fixer
+```
+
 ## Example (the long way)
 
 ```js
-import { fix } from '@gchumillas/schema-fixer'
-import { string, number, boolean, array, upper } from '@gchumillas/schema-fixer/pipes'
+import { fix, pipes } from '@gchumillas/schema-fixer'
+const { string, number, boolean, array, upper } = pipes
 
 const data = {
   name: 'Stephen',
