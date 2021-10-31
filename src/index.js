@@ -1,6 +1,7 @@
 const { concat, isObject, error, ok } = require('./core/utils')
 const { pipe } = require('./core/pipe')
-const { string, number, boolean, trim, lower, upper, array, select } = require('./pipes')
+const pipes = require('./pipes')
+const { string, number, boolean, trim, lower, upper, array, select } = pipes
 
 const shorthands = {
   'string': string(),
@@ -77,4 +78,4 @@ const fix = (value, schema) => {
   return val
 }
 
-module.exports = { parse, fix, pipe, error, ok }
+module.exports = { parse, fix, pipe, error, ok, pipes }

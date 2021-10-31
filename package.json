@@ -7,17 +7,10 @@
   "repository": "github:gchumillas/schema-fixer",
   "author": "Gonzalo Chumillas",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "/dist"
   ],
-  "exports": {
-    "./*": "./dist/*"
-  },
-  "typesVersions": {
-    "*": {
-      "*": ["./dist/*", "./dist/index.d.ts"]
-    }
-  },
   "engines": {
     "node": ">=14.18.1"
   },

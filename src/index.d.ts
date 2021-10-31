@@ -10,3 +10,14 @@ interface SchemaRecord extends Record<string, Schema> { }
 export type Schema = (string | Pipe<any, any>) | (string | Pipe<any, any>)[] | SchemaRecord
 export function fix(value: any, schema: Schema): any
 export function parse(value: any, schema: Schema, options?: { path?: string }): [value: any, errors: any[]]
+
+export const pipes: {
+  string: PipeFactory<{ coerce?: boolean }, string>
+  number: PipeFactory<{ coerce?: boolean }, number>
+  boolean: PipeFactory<{ coerce?: boolean }, boolean>
+  array: PipeFactory<{ type: Schema }, any[]>
+  select: PipeFactory<{ options: string[] }, string>
+  trim: PipeFactory<{}, string>
+  lower: PipeFactory<{}, string>
+  upper: PipeFactory<{}, string>
+}
