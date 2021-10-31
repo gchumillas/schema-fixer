@@ -15,7 +15,9 @@ const compile = () => {
 };
 
 const copyDefTypes = () => {
-  return fs.copy('./src', './dist', /\.d\.ts$/)
+  return Promise.all(
+    ['index.d.ts', 'pipes.d.ts'].map(filename => fs.copy(`./src/${filename}`, `./dist/${filename}`))
+  )
 }
 
 exports.build = gulp.series(
