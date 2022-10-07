@@ -130,12 +130,12 @@ number, boolean, etc). Custom pipes cannot be written as shorthands (for now).
 
 ## Custom pipes
 
-Creating new pipes is extremely simple. For example:
+Creating new pipes is pretty simple. For example:
 
 ```js
 import { fix, pipe, error, ok } from '@gchumillas/schema-fixer'
 
-const floor = pipe(value => {
+const floorPipe = pipe((value) => {
   if (typeof value != 'number') {
     return error('not a number')
   }
@@ -144,9 +144,36 @@ const floor = pipe(value => {
 })
 
 // Note that you can pass "scalar" values to the fix function.
-const data = fix('105.48', ['number', floor()])
-console.log(data) // outputs 105
+const data = fix('105.48', ['number', floorPipe()])
+console.log(data) // outputs: 105
 ```
+
+Another example:
+```js
+const { fix, pipe, ok, error } = require('./src/index')
+
+const colorPipe = pipe((value) => {
+  if (typeof value != 'string' || !value.match(/^\#[0-9A-F]{6}$/i)) {
+    return error('not a color')
+  }
+
+  return ok(value)
+})
+
+// note that we are using multiple pipes before applying our custom pipe
+const fixedColor = fix('#ab783F', ['string', 'upper', 'trim', colorPipe()])
+console.log(fixedColor) // outputs: #AB783F
+```
+
+## Combining multiple pipes
+
+You can apply multiple tipes to the same data. For example
+```js
+const color = '  #aB4cf7  '
+const fixedColor = fix(color, ['string', 'trim', 'upper'])
+console.log(fixedColor) // outputs: #AB4CF7
+```
+
 
 Need to know more pipes? Take a look at the [PIPES FILE](./src/pipes.js).
 
