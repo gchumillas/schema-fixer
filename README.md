@@ -65,12 +65,11 @@ const schema = {
 
 // fix the data against the schema
 const fixedData = fix(data, schema)
-
 console.log(fixedData)
 ```
 
 The previous code outputs:
-```
+```js
 {
   name: 'Stephen',
   middleName: '',   // Undefined has been replaced by  ''.
