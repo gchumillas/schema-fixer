@@ -1,5 +1,54 @@
 const { fix, parse, pipe, error, ok } = require('./index')
-const { string, number, boolean, array, select } = require('./pipes')
+const { string, upper, number, boolean, array, select } = require('./pipes')
+
+describe('General', () => {
+  test('Validate README example', () => {
+    const data = {
+      name: 'Stephen',
+      middleName: undefined,
+      lastName: 'King',
+      age: '74',
+      isMarried: 1,
+      childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
+      books: [
+        { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
+        { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
+      ],
+      // this additional property was accidentally passed
+      metadata: 'console.log(\'please ignore me\')'
+    }
+  
+    const fixedData = fix(data, {
+      name: string(),
+      middleName: string(),
+      lastName: string(),
+      age: number(),
+      isMarried: boolean(),
+      childrend: array({ type: [string()] }),
+      books: array({
+        type: { // type can be a complex schema
+          title: string(),
+          year: number(),
+          id: [string(), upper()] // we can apply two `pipes`
+        }
+      })
+    })
+  
+    expect(fixedData).toMatchObject({
+      name: 'Stephen',
+      middleName: '',   // undefined has been replaced by  ''
+      lastName: 'King',
+      age: 74,          // '74' has been replaced by 74
+      isMarried: true,  // 1 has been replaced by true
+      childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
+      books: [
+        { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
+        { title: 'Salem\'s lot', year: 1975, id: 'ISBN-0385007515' }
+      ]
+      // metadata was ignored
+    })
+  })
+})
 
 describe('Text validation', () => {
   test('basic', () => {

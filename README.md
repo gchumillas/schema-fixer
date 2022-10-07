@@ -40,19 +40,19 @@ const data = {
 }
 
 const fixedData = fix(data, {
-  name: [string()],
-  middleName: [string()],
-  lastName: [string()],
-  age: [number()],
-  isMarried: [boolean()],
-  childrend: [array({ type: [string()] })],
-  books: [array({
+  name: string(),
+  middleName: string(),
+  lastName: string(),
+  age: number(),
+  isMarried: boolean(),
+  childrend: array({ type: [string()] }),
+  books: array({
     type: { // type can be a complex schema
-      title: [string()],
-      year: [number()],
+      title: string(),
+      year: number(),
       id: [string(), upper()] // we can apply two `pipes`
     }
-  })]
+  })
 })
 
 console.log(fixedData)
@@ -69,7 +69,7 @@ The previous script outputs:
   childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
   books: [
     { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
-    { title: "Salem's lot", year: 1975, id: 'ISBN-0385007515' }
+    { title: 'Salem\'s lot', year: 1975, id: 'ISBN-0385007515' }
   ]
   // metadata was ignored
 }
