@@ -45,7 +45,9 @@ const fixedData = fix(data, {
   lastName: string(),
   age: number(),
   isMarried: boolean(),
-  childrend: array({ type: [string()] }),
+  childrend: array({
+    type: string()
+  }),
   books: array({
     type: { // type can be a complex schema
       title: string(),
