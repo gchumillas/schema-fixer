@@ -167,7 +167,7 @@ console.log(fixedColor) // outputs: #AB783F
 
 ## Combining multiple pipes
 
-You can apply multiple tipes to the same data. For example
+You can apply multiple pipes to the same data. For example
 ```js
 const color = '  #aB4cf7  '
 const fixedColor = fix(color, ['string', 'trim', 'upper'])
