@@ -174,6 +174,27 @@ const fixedColor = fix(color, ['string', 'trim', 'upper'])
 console.log(fixedColor) // outputs: #AB4CF7
 ```
 
+# fix vs. parse
+
+The `parse` function, unlike the `fix` function, doesn't throw any exceptions.
+Instead, it returns an array of errors that can be examined later. For example:
+
+```js
+// May throw an exception if "data" does not satisfy the "schema".
+try {
+  const fixedData = fix(data, schema)
+} catch (reason) {
+  console.log(reason)
+}
+
+// The "parse" function never fails.
+// Instead it returns a list of errors.
+const [fixedData, errors] = parse(data, schema)
+if (errors.length > 0) {
+  console.log(errors)
+}
+```
+
 ## Need more examples?
 
 Take a look at the [PIPES FILE](./src/pipes.js) and the [TEST FILE](./src/index.test.js).
