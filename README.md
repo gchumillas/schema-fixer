@@ -103,24 +103,30 @@ The previous code outputs:
 
 ## Example (sugar way)
 
-The previous code can be written in the following "short way":
+Sometimes constantly writing "string()", "number()", "boolean()", etc, can be a
+bit cumbersome. That's why this library permits the use of "shorthands". The previous
+example can be written as follows:
+
 ```js
 const fixedData = fix(data, {
-  name: 'string',  // omit the array, as there's only one pipe
+  name: 'string',
   middleName: 'string',
   lastName: 'string',
   age: 'number',
   isMarried: 'boolean',
-  childrend: 'string[]', // shorthand for array({ type: 'string' })
+  childrend: 'string[]', // shorthand for array({ type: string() })
   books: array({
     type: {
       title: 'string',
       year: 'number',
-      id: ['string', 'upper'] // these two pipes are applied in order
+      id: ['string', 'upper']
     }
   })
 })
 ```
+
+**Note** that "shorthands" are only used with the predefined pipes (string,
+number, boolean, etc). Custom pipes cannot be written as shorthands (for now).
 
 ## Custom pipes
 
@@ -137,7 +143,7 @@ const floor = pipe(value => {
   return ok(Math.floor(value))
 })
 
-// note that you can pass "scalar" values to the fix function
+// Note that you can pass "scalar" values to the fix function.
 const data = fix('105.48', ['number', floor()])
 console.log(data) // outputs 105
 ```
