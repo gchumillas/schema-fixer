@@ -18,7 +18,7 @@ Just run the following command inside the project's folder:
 yarn add @gchumillas/schema-fixer
 ```
 
-## Example (the long way)
+## Example
 
 ```js
 import { fix, pipes } from '@gchumillas/schema-fixer'
@@ -39,7 +39,7 @@ const data = {
   metadata: 'console.log(\'please ignore me\')'
 }
 
-const fixedData = fix(data, {
+const schema = {
   name: string(),
   middleName: string(),
   lastName: string(),
@@ -60,8 +60,11 @@ const fixedData = fix(data, {
       // "string" and "uppercase" (in this order).
       id: [string(), upper()]
     }
-  })
-})
+  }
+}
+
+// fix the data against the schema
+const fixedData = fix(data, schema)
 
 console.log(fixedData)
 ```
@@ -86,7 +89,20 @@ The previous code outputs:
 }
 ```
 
-## Example (the short way)
+### Definitions:
+
+- A `pipe` is any function used to "validate" and "fix" the data. This library
+  already contains some predefined pipes: `string`, `number`, `boolean`, `array`,
+  `select`, `trim`, `lower` and `upper`. **However you can write your own pipes**.
+- A `schema` is any combination of `pipes`. The following examples are schemas:
+  ```js
+  const schema1 = string()
+  const schema2 = [string(), upper()]
+  const schema3 = { title: string(), year: number(), id: [string(), upper()]}
+  ```
+  The data is "validated" and "fixed" against the schemas.
+
+## Example (sugar way)
 
 The previous code can be written in the following "short way":
 ```js
