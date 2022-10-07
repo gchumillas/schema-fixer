@@ -35,7 +35,7 @@ const data = {
     { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
     { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
   ],
-  // this additional property was accidentally passed
+  // This additional property was accidentally passed.
   metadata: 'console.log(\'please ignore me\')'
 }
 
@@ -45,14 +45,20 @@ const fixedData = fix(data, {
   lastName: string(),
   age: number(),
   isMarried: boolean(),
+  // Children is an array of strings.
   childrend: array({
     type: string()
   }),
+  // Books is an array of objects.
   books: array({
-    type: { // type can be a complex schema
+    type: {
       title: string(),
       year: number(),
-      id: [string(), upper()] // we can apply two `pipes`
+      // We can apply multiple "pipes" to the same field.
+      //
+      // In this case we want the "id" field to be
+      // "string" and "uppercase" (in this order).
+      id: [string(), upper()]
     }
   })
 })
@@ -60,20 +66,23 @@ const fixedData = fix(data, {
 console.log(fixedData)
 ```
 
-The previous script outputs:
+The previous code outputs:
 ```
 {
   name: 'Stephen',
-  middleName: '',   // undefined has been replaced by  ''
+  middleName: '',   // Undefined has been replaced by  ''.
   lastName: 'King',
-  age: 74,          // '74' has been replaced by 74
-  isMarried: true,  // 1 has been replaced by true
+  age: 74,          // '74' has been replaced by 74.
+  isMarried: true,  // 1 has been replaced by true.
   childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
   books: [
     { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
     { title: 'Salem\'s lot', year: 1975, id: 'ISBN-0385007515' }
   ]
-  // metadata was ignored
+  // The "metadata" field was removed, as it wasn't included in the schema.
+  //
+  // All fields not included in the schema are removed
+  // to prevent passing accidental data.
 }
 ```
 
