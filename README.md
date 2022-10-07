@@ -174,9 +174,6 @@ const fixedColor = fix(color, ['string', 'trim', 'upper'])
 console.log(fixedColor) // outputs: #AB4CF7
 ```
 
-
-Need to know more pipes? Take a look at the [PIPES FILE](./src/pipes.js).
-
 ## Need more examples?
 
-Take a look at the [TEST FILE](./src/index.test.js).
+Take a look at the [PIPES FILE](./src/pipes.js) and the [TEST FILE](./src/index.test.js).
