@@ -88,7 +88,7 @@ The previous code outputs:
 }
 ```
 
-### Definitions:
+**Definitions:**
 
 - A `pipe` is any function used to "validate" and "fix" the data. This library
   already contains some predefined pipes: `string`, `number`, `boolean`, `array`,
