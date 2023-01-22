@@ -97,12 +97,9 @@ The previous code outputs:
   ```js
   const schema1 = string()
   const schema2 = [string(), upper()]
-  const schema3 = { title: string(), year: number(), id: [string(), upper()]}
+  const schema3 = { title: string(), year: number(), id: [string(), upper()] }
   ```
   The data is "validated" and "fixed" against the schemas.
-
-**Note** that "shorthands" are only used with the predefined pipes (string,
-number, boolean, etc). Custom pipes cannot be written as shorthands (for now).
 
 ## Custom pipes
 
