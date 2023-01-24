@@ -149,7 +149,7 @@ const fixedColor = fix(color, [string(), trim(), upper()])
 console.log(fixedColor) // outputs: #AB4CF7
 ```
 
-# fix vs. parse
+## fix vs. parse
 
 The `parse` function, unlike the `fix` function, doesn't throw any exceptions.
 Instead, it returns an array of errors that can be examined later. For example:
