@@ -60,7 +60,7 @@ const schema = {
       // "string" and "uppercase" (in this order).
       id: [string(), upper()]
     }
-  }
+  })
 }
 
 // fix the data against the schema
@@ -106,7 +106,8 @@ The previous code outputs:
 Creating new pipes is pretty simple. For example:
 
 ```js
-import { fix, pipe, error, ok } from '@gchumillas/schema-fixer'
+import { pipes, fix, pipe, error, ok } from '@gchumillas/schema-fixer'
+const { number } = pipes
 
 const floorPipe = pipe((value) => {
   if (typeof value != 'number') {
@@ -117,13 +118,14 @@ const floorPipe = pipe((value) => {
 })
 
 // Note that you can pass "scalar" values to the fix function.
-const data = fix('105.48', ['number', floorPipe()])
+const data = fix('105.48', [number(), floorPipe()])
 console.log(data) // outputs: 105
 ```
 
 Another example:
 ```js
-const { fix, pipe, ok, error } = require('./src/index')
+import { pipes, fix, pipe, ok, error } from '@gchumillas/schema-fixer'
+const { string, upper, trim } = pipes
 
 const colorPipe = pipe((value) => {
   if (typeof value != 'string' || !value.match(/^\#[0-9A-F]{6}$/i)) {
@@ -134,7 +136,7 @@ const colorPipe = pipe((value) => {
 })
 
 // note that we are using multiple pipes before applying our custom pipe
-const fixedColor = fix('#ab783F', ['string', 'upper', 'trim', colorPipe()])
+const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
 console.log(fixedColor) // outputs: #AB783F
 ```
 
@@ -143,7 +145,7 @@ console.log(fixedColor) // outputs: #AB783F
 You can apply multiple pipes to the same data. For example
 ```js
 const color = '  #aB4cf7  '
-const fixedColor = fix(color, ['string', 'trim', 'upper'])
+const fixedColor = fix(color, [string(), trim(), upper()])
 console.log(fixedColor) // outputs: #AB4CF7
 ```
 
