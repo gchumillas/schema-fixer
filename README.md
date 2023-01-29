@@ -35,7 +35,8 @@ const data = {
     { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
     { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
   ],
-  // This additional property was accidentally passed.
+  // this property was accidentally passed and
+  // will be removed from the fixed data
   metadata: 'console.log(\'please ignore me\')'
 }
 
@@ -45,22 +46,16 @@ const schema = {
   lastName: string(),
   age: number(),
   isMarried: boolean(),
-  // Children is an array of strings.
-  childrend: array({
-    type: string()
-  }),
-  // Books is an array of objects.
+  childrend: array({ of: string() }),
+  // array of complex objects
   books: array({
-    type: {
+    of: {
       title: string(),
       year: number(),
-      // We can apply multiple "pipes" to the same field.
-      //
-      // In this case we want the "id" field to be
-      // "string" and "uppercase" (in this order).
+      // we can combine multiple 'pipes'
       id: [string(), upper()]
-    }
-  })
+    }}
+  )
 }
 
 // fix the data against the schema
@@ -81,10 +76,8 @@ The previous code outputs:
     { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
     { title: 'Salem\'s lot', year: 1975, id: 'ISBN-0385007515' }
   ]
-  // The "metadata" field was removed, as it wasn't included in the schema.
-  //
-  // All fields not included in the schema are removed
-  // to prevent passing accidental data.
+  // the "metadata" property was removed from the result
+  // as it wasn't part of the schema
 }
 ```
 
