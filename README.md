@@ -107,7 +107,7 @@ function string({
   // Throws an exception if value is '', null or undefined.
   // The 'default' parameter is ignored when [required = true]
   required = false
-})
+}) {}
 
 fix('hello there!', string())              // returns 'hello there!'
 fix(true, string())                        // returns 'true' (string)
@@ -126,7 +126,7 @@ function number({
   // Throws an exception if value is null or undefined.
   // The 'default' parameter is ignored when [required = true]
   required = false
-})
+}) {}
 
 fix(125.48, number())                  // returns 125.48
 fix('125.48', number())                // returns 125.48
@@ -142,7 +142,7 @@ function boolean({
   // When possible tries to convert the value into a number,
   // otherwise it throws an exception.
   coerced = true,
-})
+}) {}
 
 fix(true, boolean())                        // returns true
 fix(1, boolean())                           // returns true
@@ -159,7 +159,7 @@ fix(1, boolean({ coerced: false }))         // throws 'not a boolean'
 function array({
   of: pipe | pipes[] | schema,
   default: []
-})
+}) {}
 
 fix([true, false], array({ of: string() }))                 // returns ['true', 'false']
 fix([0, 1], array({ of: boolean() }))                       // returns [false, true]
@@ -178,9 +178,9 @@ fix(101, included({ in: ['101', '102']}))                        // throws 'not 
 ```
 
 ```js
-function trim()
-function lower()
-function upper()
+function trim() {}
+function lower() {}
+function upper() {}
 
 fix(' hello there! ', trim()) // returns 'hello there!'
 fix('Hello There!', lower())  // returns 'hello there!'
