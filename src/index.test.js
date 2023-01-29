@@ -144,7 +144,7 @@ describe('Array validation', () => {
 
 describe('Misc pipelines', () => {
   test('select', () => {
-    expect(fix('sold', '[sold, available]')).toEqual('sold')
+    expect(fix('sold', select({ options: ['sold', 'available']}))).toEqual('sold')
     expect(fix('hello, John', select({ options: ['bye bye', 'hello, John'] }))).toEqual('hello, John')
     expect(() => fix(101, '[101, 202]')).toThrow('not a string')
   })
