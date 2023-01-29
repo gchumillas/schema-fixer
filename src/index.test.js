@@ -147,7 +147,7 @@ describe('Misc pipelines', () => {
     expect(fix('sold', select({ options: ['sold', 'available']}))).toEqual('sold')
     expect(fix('hello, John', select({ options: ['bye bye', 'hello, John'] }))).toEqual('hello, John')
     // TODO: look into this!
-    expect(() => fix(101, select({ options: [101, 102]}))).toThrow('not a string')
+    expect(() => fix(101, select({ options: ['101', '102']}))).toThrow('not a string')
   })
 
   test('trim', () => {
