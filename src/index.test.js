@@ -160,13 +160,13 @@ describe('Misc pipelines', () => {
   })
 
   test('upper', () => {
-    expect(fix('hello there!', [string(), 'upper'])).toBe('HELLO THERE!')
-    expect(() => fix(125.48, 'upper')).toThrow('not a string')
+    expect(fix('hello there!', [string(), upper()])).toBe('HELLO THERE!')
+    expect(() => fix(125.48, upper())).toThrow('not a string')
   })
 
   test('combined pipelines', () => {
     expect(fix(' Hello There! ', [string(), 'trim', 'lower'])).toBe('hello there!')
-    expect(fix(' Hello There! ', [string(), 'trim', 'upper'])).toBe('HELLO THERE!')
+    expect(fix(' Hello There! ', [string(), 'trim', upper()])).toBe('HELLO THERE!')
     expect(fix(101, [string(), '[101, 202]'])).toEqual('101')
   })
 })
