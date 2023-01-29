@@ -52,7 +52,7 @@ const array = pipe((value, { of: type, parse, path }) => {
   return error('not an array')
 }, { default: [] })
 
-const some = pipe((value, { of: values }) => {
+const included = pipe((value, { in: values }) => {
   if (typeof value != 'string') {
     return error('not a string')
   }
@@ -93,5 +93,5 @@ module.exports = {
   number,
   boolean,
   array,
-  some
+  included
 }

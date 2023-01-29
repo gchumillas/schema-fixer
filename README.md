@@ -85,7 +85,7 @@ The previous code outputs:
 
 - A `pipe` is any function used to "validate" and "fix" the data. This library
   already contains some predefined pipes: `string`, `number`, `boolean`, `array`,
-  `select`, `trim`, `lower` and `upper`. **However you can write your own pipes**.
+  `included`, `trim`, `lower` and `upper`. **However you can write your own pipes**.
 - A `schema` is any combination of `pipes`. The following examples are schemas:
   ```js
   const schema1 = string()
@@ -239,11 +239,11 @@ fix(undefined, array({ of: number(), required: true }))     // throws 'required'
 ```
 
 ```js
-some({ of: string[] })
+included({ in: string[] })
 
-fix('sold', some({ of: ['sold', 'available']}))              // returns 'sold'
-fix('hello, John', some({ of: ['bye bye', 'hello, John'] })) // returns 'hello, John'
-fix(101, some({ of: ['101', '102']}))                        // throws 'not a string'
+fix('sold', included({ in: ['sold', 'available']}))              // returns 'sold'
+fix('hello, John', included({ in: ['bye bye', 'hello, John'] })) // returns 'hello, John'
+fix(101, included({ in: ['101', '102']}))                        // throws 'not a string'
 ```
 
 ```js

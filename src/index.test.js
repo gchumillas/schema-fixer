@@ -1,5 +1,5 @@
 const { fix, parse, pipe, error, ok } = require('./index')
-const { string, upper, lower, trim, number, boolean, array, some } = require('./pipes')
+const { string, upper, lower, trim, number, boolean, array, included } = require('./pipes')
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -178,10 +178,10 @@ describe('Array validation', () => {
 })
 
 describe('Misc pipelines', () => {
-  test('some', () => {
-    expect(fix('sold', some({ of: ['sold', 'available']}))).toEqual('sold')
-    expect(fix('hello, John', some({ of: ['bye bye', 'hello, John'] }))).toEqual('hello, John')
-    expect(() => fix(101, some({ of: ['101', '102']}))).toThrow('not a string')
+  test('included', () => {
+    expect(fix('sold', included({ in: ['sold', 'available']}))).toEqual('sold')
+    expect(fix('hello, John', included({ in: ['bye bye', 'hello, John'] }))).toEqual('hello, John')
+    expect(() => fix(101, included({ in: ['101', '102']}))).toThrow('not a string')
   })
 
   test('trim', () => {
@@ -202,7 +202,7 @@ describe('Misc pipelines', () => {
   test('combined pipelines', () => {
     expect(fix(' Hello There! ', [string(), trim(), lower()])).toBe('hello there!')
     expect(fix(' Hello There! ', [string(), trim(), upper()])).toBe('HELLO THERE!')
-    expect(fix(101, [string(), some({ of: ['101', '102'] })])).toEqual('101')
+    expect(fix(101, [string(), included({ in: ['101', '102'] })])).toEqual('101')
   })
 })
 
