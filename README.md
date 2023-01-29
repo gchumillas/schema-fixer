@@ -239,11 +239,11 @@ fix(undefined, array({ of: number(), required: true }))     // throws 'required'
 ```
 
 ```js
-included({ in: string[] })
+some({ of: string[] })
 
-fix('sold', included({ in: ['sold', 'available']}))              // returns 'sold'
-fix('hello, John', included({ in: ['bye bye', 'hello, John'] })) // returns 'hello, John'
-fix(101, included({ in: ['101', '102']}))                        // throws 'not a string'
+fix('sold', some({ of: ['sold', 'available']}))              // returns 'sold'
+fix('hello, John', some({ of: ['bye bye', 'hello, John'] })) // returns 'hello, John'
+fix(101, some({ of: ['101', '102']}))                        // throws 'not a string'
 ```
 
 ```js
