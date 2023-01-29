@@ -52,6 +52,7 @@ const array = pipe((value, { type, parse, path }) => {
   return error('not an array')
 }, { default: [] })
 
+// TODO: rename 'select' by 'in'
 const select = pipe((value, { options }) => {
   if (typeof value != 'string') {
     return error('not a string')
