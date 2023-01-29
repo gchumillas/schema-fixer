@@ -54,9 +54,9 @@ describe('General', () => {
 
 describe('Text validation', () => {
   test('basic', () => {
-    expect(fix('hello there!', 'string')).toBe('hello there!')
-    expect(fix(true, 'string')).toBe('true')
-    expect(fix(125.48, 'string')).toBe('125.48')
+    expect(fix('hello there!', string())).toBe('hello there!')
+    expect(fix(true, string())).toBe('true')
+    expect(fix(125.48, string())).toBe('125.48')
   })
 
   test('require option', () => {
@@ -65,7 +65,7 @@ describe('Text validation', () => {
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'string')).toBe('')
+    expect(fix(undefined, string())).toBe('')
     expect(fix(undefined, string({ default: undefined }))).toBeUndefined()
     expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
   })
@@ -150,32 +150,32 @@ describe('Misc pipelines', () => {
   })
 
   test('trim', () => {
-    expect(fix(' hello there! ', ['string', 'trim'])).toBe('hello there!')
+    expect(fix(' hello there! ', [string(), 'trim'])).toBe('hello there!')
     expect(() => fix(125.48, 'trim')).toThrow('not a string')
   })
 
   test('lower', () => {
-    expect(fix('Hello There!', ['string', 'lower'])).toBe('hello there!')
+    expect(fix('Hello There!', [string(), 'lower'])).toBe('hello there!')
     expect(() => fix(125.48, 'lower')).toThrow('not a string')
   })
 
   test('upper', () => {
-    expect(fix('hello there!', ['string', 'upper'])).toBe('HELLO THERE!')
+    expect(fix('hello there!', [string(), 'upper'])).toBe('HELLO THERE!')
     expect(() => fix(125.48, 'upper')).toThrow('not a string')
   })
 
   test('combined pipelines', () => {
-    expect(fix(' Hello There! ', ['string', 'trim', 'lower'])).toBe('hello there!')
-    expect(fix(' Hello There! ', ['string', 'trim', 'upper'])).toBe('HELLO THERE!')
-    expect(fix(101, ['string', '[101, 202]'])).toEqual('101')
+    expect(fix(' Hello There! ', [string(), 'trim', 'lower'])).toBe('hello there!')
+    expect(fix(' Hello There! ', [string(), 'trim', 'upper'])).toBe('HELLO THERE!')
+    expect(fix(101, [string(), '[101, 202]'])).toEqual('101')
   })
 })
 
 describe('Object validation', () => {
   test('check errors', () => {
-    expect(() => fix(100, { id: 'string' })).toThrow('not an object')
-    expect(() => fix(true, { id: 'string' })).toThrow('not an object')
-    expect(() => fix('lorem ipsum', { id: 'string' })).toThrow('not an object')
+    expect(() => fix(100, { id: string() })).toThrow('not an object')
+    expect(() => fix(true, { id: string() })).toThrow('not an object')
+    expect(() => fix('lorem ipsum', { id: string() })).toThrow('not an object')
 
     const [, errors] = parse({
       name: 125.48,
