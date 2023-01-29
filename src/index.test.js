@@ -14,8 +14,8 @@ describe('General', () => {
         { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
         { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
       ],
-      // this property was accidentally passed
-      // it will be removed from the fixed data.
+      // this property was accidentally passed and
+      // will be removed from the fixed data
       metadata: 'console.log(\'please ignore me\')'
     }
   
@@ -26,12 +26,13 @@ describe('General', () => {
       age: number(),
       isMarried: boolean(),
       childrend: array({ of: string() }),
+      // array of complex objects
       books: array({
-        // the elements of an array can be complex objects
         of: {
           title: string(),
           year: number(),
-          id: [string(), upper()] // we can apply combined 'pipes'
+          // we can combine multiple 'pipes'
+          id: [string(), upper()]
         }}
       )
     })
