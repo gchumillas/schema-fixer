@@ -1,34 +1,34 @@
 const { error, ok, concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 
-const string = pipe((value, { coerce = true, required }) => {
+const string = pipe((value, { coerced = true, required }) => {
   if (typeof value == 'string') {
     if (required && !value) {
       return error('required')
     }
 
     return ok(value)
-  } else if (coerce && ['boolean', 'number'].includes(typeof value)) {
+  } else if (coerced && ['boolean', 'number'].includes(typeof value)) {
     return ok(`${value}`)
   }
 
   return error('not a string')
 }, { default: '' })
 
-const number = pipe((value, { coerce = true }) => {
+const number = pipe((value, { coerced = true }) => {
   if (typeof value == 'number') {
     return ok(value)
-  } else if (coerce && !isNaN(value)) {
+  } else if (coerced && !isNaN(value)) {
     return ok(+value)
   }
 
   return error('not a number')
 }, { default: 0 })
 
-const boolean = pipe((value, { coerce = true }) => {
+const boolean = pipe((value, { coerced = true }) => {
   if (typeof value == 'boolean') {
     return ok(value)
-  } else if (coerce) {
+  } else if (coerced) {
     return ok(!!value)
   }
 

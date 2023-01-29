@@ -105,9 +105,9 @@ describe('Text validation', () => {
     expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
   })
 
-  test('coerce option', () => {
-    expect(() => fix(true, string({ coerce: false }))).toThrow('not a string')
-    expect(() => fix(125.48, string({ coerce: false }))).toThrow('not a string')
+  test('coerced option', () => {
+    expect(() => fix(true, string({ coerced: false }))).toThrow('not a string')
+    expect(() => fix(125.48, string({ coerced: false }))).toThrow('not a string')
   })
 })
 
@@ -128,8 +128,8 @@ describe('Float validation', () => {
     expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
   })
 
-  test('coerce option', () => {
-    expect(() => fix('125.48', number({ coerce: false }))).toThrow('not a number')
+  test('coerced option', () => {
+    expect(() => fix('125.48', number({ coerced: false }))).toThrow('not a number')
   })
 })
 
@@ -154,8 +154,8 @@ describe('Boolean validation', () => {
     expect(fix(undefined, boolean({ default: true }))).toBe(true)
   })
 
-  test('coerse option', () => {
-    expect(() => fix(1, boolean({ coerce: false }))).toThrow('not a boolean')
+  test('coerced option', () => {
+    expect(() => fix(1, boolean({ coerced: false }))).toThrow('not a boolean')
   })
 })
 
@@ -224,11 +224,11 @@ describe('Object validation', () => {
         { title: 'Book 2', year: 2012 }
       ]
     }, {
-      name: string({ coerce: false }),
+      name: string({ coerced: false }),
       lastName: string({ required: true }),
       pseudonym: [lower(), trim()],
       age: number(),
-      single: boolean({ coerce: false }),
+      single: boolean({ coerced: false }),
       location: { latitude: number(), longitude: number() },
       novels: array({ of: string() }),
     })

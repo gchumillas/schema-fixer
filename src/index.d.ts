@@ -12,9 +12,9 @@ export function fix(value: any, schema: Schema): any
 export function parse(value: any, schema: Schema, options?: { path?: string }): [value: any, errors: any[]]
 
 export const pipes: {
-  string: PipeFactory<{ coerce?: boolean }, string>
-  number: PipeFactory<{ coerce?: boolean }, number>
-  boolean: PipeFactory<{ coerce?: boolean }, boolean>
+  string: PipeFactory<{ coerced?: boolean }, string>
+  number: PipeFactory<{ coerced?: boolean }, number>
+  boolean: PipeFactory<{ coerced?: boolean }, boolean>
   array: PipeFactory<{ type: Schema }, any[]>
   select: PipeFactory<{ options: string[] }, string>
   trim: PipeFactory<{}, string>
