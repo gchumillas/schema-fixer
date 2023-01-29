@@ -94,6 +94,75 @@ The previous code outputs:
   ```
   The data is "validated" and "fixed" against the schemas.
 
+## Custom pipes
+
+Creating new pipes is pretty simple. For example:
+
+```js
+import { pipes, fix, pipe, error, ok } from '@gchumillas/schema-fixer'
+const { number } = pipes
+
+const floorPipe = pipe((value) => {
+  if (typeof value != 'number') {
+    return error('not a number')
+  }
+
+  return ok(Math.floor(value))
+})
+
+// Note that you can pass "scalar" values to the fix function.
+const data = fix('105.48', [number(), floorPipe()])
+console.log(data) // outputs: 105
+```
+
+Another example:
+```js
+import { pipes, fix, pipe, ok, error } from '@gchumillas/schema-fixer'
+const { string, upper, trim } = pipes
+
+const colorPipe = pipe((value) => {
+  if (typeof value != 'string' || !value.match(/^\#[0-9A-F]{6}$/i)) {
+    return error('not a color')
+  }
+
+  return ok(value)
+})
+
+// note that we are using multiple pipes before applying our custom pipe
+const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
+console.log(fixedColor) // outputs: #AB783F
+```
+
+## Combining multiple pipes
+
+You can apply multiple pipes to the same data. For example
+```js
+const color = '  #aB4cf7  '
+const fixedColor = fix(color, [string(), trim(), upper()])
+console.log(fixedColor) // outputs: #AB4CF7
+```
+
+## fix vs. parse
+
+The `parse` function, unlike the `fix` function, doesn't throw any exceptions.
+Instead, it returns an array of errors that can be inspected later. For example:
+
+```js
+// May throw an exception if "data" does not satisfy the "schema".
+try {
+  const fixedData = fix(data, schema)
+} catch (reason) {
+  console.log(reason)
+}
+
+// The "parse" function never fails.
+// Instead it returns a list of errors.
+const [fixedData, errors] = parse(data, schema)
+if (errors.length > 0) {
+  console.log(errors)
+}
+```
+
 ## Predefined pipes
 
 This library includes the following predefined pipes:
@@ -185,75 +254,6 @@ function upper() {}
 fix(' hello there! ', trim()) // returns 'hello there!'
 fix('Hello There!', lower())  // returns 'hello there!'
 fix('hello there!', upper())  // returns 'HELLO THERE!'
-```
-
-## Custom pipes
-
-Creating new pipes is pretty simple. For example:
-
-```js
-import { pipes, fix, pipe, error, ok } from '@gchumillas/schema-fixer'
-const { number } = pipes
-
-const floorPipe = pipe((value) => {
-  if (typeof value != 'number') {
-    return error('not a number')
-  }
-
-  return ok(Math.floor(value))
-})
-
-// Note that you can pass "scalar" values to the fix function.
-const data = fix('105.48', [number(), floorPipe()])
-console.log(data) // outputs: 105
-```
-
-Another example:
-```js
-import { pipes, fix, pipe, ok, error } from '@gchumillas/schema-fixer'
-const { string, upper, trim } = pipes
-
-const colorPipe = pipe((value) => {
-  if (typeof value != 'string' || !value.match(/^\#[0-9A-F]{6}$/i)) {
-    return error('not a color')
-  }
-
-  return ok(value)
-})
-
-// note that we are using multiple pipes before applying our custom pipe
-const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
-console.log(fixedColor) // outputs: #AB783F
-```
-
-## Combining multiple pipes
-
-You can apply multiple pipes to the same data. For example
-```js
-const color = '  #aB4cf7  '
-const fixedColor = fix(color, [string(), trim(), upper()])
-console.log(fixedColor) // outputs: #AB4CF7
-```
-
-## fix vs. parse
-
-The `parse` function, unlike the `fix` function, doesn't throw any exceptions.
-Instead, it returns an array of errors that can be inspected later. For example:
-
-```js
-// May throw an exception if "data" does not satisfy the "schema".
-try {
-  const fixedData = fix(data, schema)
-} catch (reason) {
-  console.log(reason)
-}
-
-// The "parse" function never fails.
-// Instead it returns a list of errors.
-const [fixedData, errors] = parse(data, schema)
-if (errors.length > 0) {
-  console.log(errors)
-}
 ```
 
 ## Need more examples?
