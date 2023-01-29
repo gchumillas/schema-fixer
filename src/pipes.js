@@ -1,9 +1,9 @@
 const { error, ok, concat } = require('./core/utils')
 const { pipe } = require('./core/pipe')
 
-const string = pipe((value, { coerce = true, require }) => {
+const string = pipe((value, { coerce = true, required }) => {
   if (typeof value == 'string') {
-    if (require && !value) {
+    if (required && !value) {
       return error('required')
     }
 

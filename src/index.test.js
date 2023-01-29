@@ -94,9 +94,9 @@ describe('Text validation', () => {
     expect(fix(125.48, string())).toBe('125.48')
   })
 
-  test('require option', () => {
-    expect(() => fix(undefined, string({ require: true }))).toThrow('required')
-    expect(() => fix('', string({ require: true }))).toThrow('required')
+  test('required option', () => {
+    expect(() => fix(undefined, string({ required: true }))).toThrow('required')
+    expect(() => fix('', string({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
@@ -118,8 +118,8 @@ describe('Float validation', () => {
     expect(() => fix('lorem ipsum', number())).toThrow('not a number')
   })
 
-  test('require option', () => {
-    expect(() => fix(undefined, number({ require: true }))).toThrow('required')
+  test('required option', () => {
+    expect(() => fix(undefined, number({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
@@ -144,8 +144,8 @@ describe('Boolean validation', () => {
     expect(fix({}, boolean())).toBe(true)
   })
 
-  test('require option', () => {
-    expect(() => fix(undefined, boolean({ require: true }))).toThrow('required')
+  test('required option', () => {
+    expect(() => fix(undefined, boolean({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
@@ -166,8 +166,8 @@ describe('Array validation', () => {
     expect(fix([1, '2', 3], array({ of: [number()] }))).toEqual([1, 2, 3])
   })
 
-  test('require option', () => {
-    expect(() => fix(undefined, array({ of: number(), require: true }))).toThrow('required')
+  test('required option', () => {
+    expect(() => fix(undefined, array({ of: number(), required: true }))).toThrow('required')
   })
 
   test('default option', () => {
@@ -225,7 +225,7 @@ describe('Object validation', () => {
       ]
     }, {
       name: string({ coerce: false }),
-      lastName: string({ require: true }),
+      lastName: string({ required: true }),
       pseudonym: [lower(), trim()],
       age: number(),
       single: boolean({ coerce: false }),
