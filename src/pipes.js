@@ -53,8 +53,7 @@ const array = pipe((value, { type, parse, path }) => {
   return error('not an array')
 }, { default: [] })
 
-// TODO: rename 'select' by 'in'
-const select = pipe((value, { options }) => {
+const included = pipe((value, { in: options }) => {
   if (typeof value != 'string') {
     return error('not a string')
   }
@@ -95,5 +94,5 @@ module.exports = {
   number,
   boolean,
   array,
-  select
+  included
 }
