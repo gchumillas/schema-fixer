@@ -78,9 +78,9 @@ describe('Text validation', () => {
 
 describe('Float validation', () => {
   test('basic', () => {
-    expect(fix(125.48, 'number')).toBe(125.48)
-    expect(fix('125.48', 'number')).toBe(125.48)
-    expect(() => fix('lorem ipsum', 'number')).toThrow('not a number')
+    expect(fix(125.48, number())).toBe(125.48)
+    expect(fix('125.48', number())).toBe(125.48)
+    expect(() => fix('lorem ipsum', number())).toThrow('not a number')
   })
 
   test('require option', () => {
@@ -88,7 +88,7 @@ describe('Float validation', () => {
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'number')).toBe(0)
+    expect(fix(undefined, number())).toBe(0)
     expect(fix(undefined, number({ default: undefined }))).toBeUndefined()
     expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
   })
@@ -132,13 +132,13 @@ describe('Array validation', () => {
   })
 
   test('require option', () => {
-    expect(() => fix(undefined, array({ type: 'number', require: true }))).toThrow('required')
+    expect(() => fix(undefined, array({ type: number(), require: true }))).toThrow('required')
   })
 
   test('default option', () => {
     expect(fix(undefined, 'string[]')).toEqual([])
-    expect(fix(undefined, array({ type: 'number', default: undefined }))).toBeUndefined()
-    expect(fix(undefined, array({ type: 'number', default: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(undefined, array({ type: number(), default: undefined }))).toBeUndefined()
+    expect(fix(undefined, array({ type: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
@@ -194,7 +194,7 @@ describe('Object validation', () => {
       pseudonym: ['lower', 'trim'],
       age: 'float',
       single: boolean({ coerce: false }),
-      location: { latitude: 'number', longitude: 'number' },
+      location: { latitude: number(), longitude: number() },
       novels: 'string[]',
     })
 
@@ -225,7 +225,7 @@ describe('Custom pipes', () => {
       return ok(Math.floor(value))
     })
 
-    expect(fix('105.48', ['number', floor()])).toBe(105)
+    expect(fix('105.48', [number(), floor()])).toBe(105)
     expect(() => fix('105.48', floor())).toThrow('not a number')
   })
 })
