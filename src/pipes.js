@@ -35,6 +35,7 @@ const boolean = pipe((value, { coerce = true }) => {
   return error('not a boolean')
 }, { default: false })
 
+// TODO: rename 'type' by 'of'
 const array = pipe((value, { type, parse, path }) => {
   if (Array.isArray(value)) {
     const [val, errors] = value.reduce(([prevVal, prevErrors], item, i) => {
