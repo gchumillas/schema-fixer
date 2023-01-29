@@ -94,6 +94,15 @@ The previous code outputs:
   ```
   The data is "validated" and "fixed" against the schemas.
 
+## Combining multiple pipes
+
+You can apply multiple pipes to the same data. For example
+```js
+const color = '  #aB4cf7  '
+const fixedColor = fix(color, [string(), trim(), upper()])
+console.log(fixedColor) // outputs: #AB4CF7
+```
+
 ## Custom pipes
 
 Creating new pipes is pretty simple. For example:
@@ -133,15 +142,6 @@ const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
 console.log(fixedColor) // outputs: #AB783F
 ```
 
-## Combining multiple pipes
-
-You can apply multiple pipes to the same data. For example
-```js
-const color = '  #aB4cf7  '
-const fixedColor = fix(color, [string(), trim(), upper()])
-console.log(fixedColor) // outputs: #AB4CF7
-```
-
 ## fix vs. parse
 
 The `parse` function, unlike the `fix` function, doesn't throw any exceptions.
@@ -168,6 +168,7 @@ if (errors.length > 0) {
 This library includes the following predefined pipes:
 
 ```js
+// Validates or converts a value into a string when possible.
 function string({
   default = '',
   // When possible tries to convert the value into a string,
@@ -187,6 +188,7 @@ fix({ id: 101 }, string())                 // throws 'not a string'
 ```
 
 ```js
+// Validates or converts a value into a number when possible.
 function number({
   default = 0,
   // When possible tries to convert the value into a number,
@@ -206,6 +208,7 @@ fix('lorem ipsum', number())           // throws 'not a number'
 ```
 
 ```js
+// Validates or converts a value into a boolean when possible.
 function boolean({
   default: false,
   // When possible tries to convert the value into a number,
@@ -225,6 +228,7 @@ fix(1, boolean({ coerced: false }))         // throws 'not a boolean'
 ```
 
 ```js
+// Validates or fixes an array.
 function array({
   of: pipe | pipes[] | schema,
   default: []
@@ -239,6 +243,7 @@ fix(undefined, array({ of: number(), required: true }))     // throws 'required'
 ```
 
 ```js
+// Verifies that the value is included in a list of values.
 included({ in: string[] })
 
 fix('sold', included({ in: ['sold', 'available']}))              // returns 'sold'
