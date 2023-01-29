@@ -14,7 +14,8 @@ describe('General', () => {
         { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
         { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
       ],
-      // this additional property was accidentally passed
+      // this property was accidentally passed
+      // it will be removed from the fixed data.
       metadata: 'console.log(\'please ignore me\')'
     }
   
@@ -24,16 +25,15 @@ describe('General', () => {
       lastName: string(),
       age: number(),
       isMarried: boolean(),
-      childrend: array({
-        type: string()
-      }),
+      childrend: array({ of: string() }),
       books: array({
-        type: { // type can be a complex schema
+        // the elements of an array can be complex objects
+        of: {
           title: string(),
           year: number(),
-          id: [string(), upper()] // we can apply two `pipes`
-        }
-      })
+          id: [string(), upper()] // we can apply combined 'pipes'
+        }}
+      )
     })
   
     expect(fixedData).toMatchObject({
@@ -126,19 +126,19 @@ describe('Boolean validation', () => {
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], array({ type: [string()] }))).toEqual(['true', 'false'])
-    expect(fix([0, 1], array({ type: [boolean()] }))).toEqual([false, true])
-    expect(fix([1, '2', 3], array({ type: [number()] }))).toEqual([1, 2, 3])
+    expect(fix([true, false], array({ of: [string()] }))).toEqual(['true', 'false'])
+    expect(fix([0, 1], array({ of: [boolean()] }))).toEqual([false, true])
+    expect(fix([1, '2', 3], array({ of: [number()] }))).toEqual([1, 2, 3])
   })
 
   test('require option', () => {
-    expect(() => fix(undefined, array({ type: number(), require: true }))).toThrow('required')
+    expect(() => fix(undefined, array({ of: number(), require: true }))).toThrow('required')
   })
 
   test('default option', () => {
-    expect(fix(undefined, array({ type: string() }))).toEqual([])
-    expect(fix(undefined, array({ type: number(), default: undefined }))).toBeUndefined()
-    expect(fix(undefined, array({ type: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(undefined, array({ of: string() }))).toEqual([])
+    expect(fix(undefined, array({ of: number(), default: undefined }))).toBeUndefined()
+    expect(fix(undefined, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
@@ -195,7 +195,7 @@ describe('Object validation', () => {
       age: number(),
       single: boolean({ coerce: false }),
       location: { latitude: number(), longitude: number() },
-      novels: array({ type: string() }),
+      novels: array({ of: string() }),
     })
 
     expect(errors).toMatchObject([
