@@ -156,7 +156,7 @@ fix(1, boolean({ coerced: false }))         // throws 'not a boolean'
 ```
 
 ```js
-array({
+function array({
   of: pipe | pipes[] | schema,
   default: []
 })
