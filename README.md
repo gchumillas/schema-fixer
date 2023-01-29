@@ -94,6 +94,99 @@ The previous code outputs:
   ```
   The data is "validated" and "fixed" against the schemas.
 
+## Predefined pipes
+
+This library includes the following predefined pipes:
+
+```js
+function string({
+  default = '',
+  // When possible tries to convert the value into a string,
+  // otherwise it throws an exception.
+  coerced = true,
+  // Throws an exception if value is '', null or undefined.
+  // The 'default' parameter is ignored when [required = true]
+  required = false
+})
+
+fix('hello there!', string())              // returns 'hello there!'
+fix(true, string())                        // returns 'true' (string)
+fix('', string({ default: 'John Smith' })) // returns 'John Smith'
+fix(undefined, string({ required: true })) // throws 'required'
+fix(125.48, string({ coerced: false }))    // throws 'not a string'
+fix({ id: 101 }, string())                 // throws 'not a string'
+```
+
+```js
+function number({
+  default = 0,
+  // When possible tries to convert the value into a number,
+  // otherwise it throws an exception.
+  coerced = true,
+  // Throws an exception if value is null or undefined.
+  // The 'default' parameter is ignored when [required = true]
+  required = false
+})
+
+fix(125.48, number())                  // returns 125.48
+fix('125.48', number())                // returns 125.48
+fix(undefined, number())               // returns 0
+fix(null, number({ default: 125.48 })) // returns 125.48
+fix(null, number({ required: true }))  // throws 'required'
+fix('lorem ipsum', number())           // throws 'not a number'
+```
+
+```js
+function boolean({
+  default: false,
+  // When possible tries to convert the value into a number,
+  // otherwise it throws an exception.
+  coerced = true,
+})
+
+fix(true, boolean())                        // returns true
+fix(1, boolean())                           // returns true
+fix('', boolean())                          // returns false
+fix('lorem ipsum', boolean())               // returns true
+fix({}, boolean())                          // returns true
+fix(undefined, boolean())                   // returns false
+fix(undefined, boolean({ default: true }))  // returns true
+fix(undefined, boolean({ required: true })) // throws 'required'
+fix(1, boolean({ coerced: false }))         // throws 'not a boolean'
+```
+
+```js
+array({
+  of: pipe | pipes[] | schema,
+  default: []
+})
+
+fix([true, false], array({ of: string() }))                 // returns ['true', 'false']
+fix([0, 1], array({ of: boolean() }))                       // returns [false, true]
+fix([1, '2', 3], array({ of: number() }))                   // returns [1, 2, 3]
+fix(undefined, array({ of: string() }))                     // returns []
+fix(undefined, array({ of: number(), default: [1, 2, 3] })) // returns [1, 2, 3]
+fix(undefined, array({ of: number(), required: true }))     // throws 'required'
+```
+
+```js
+included({ in: string[] })
+
+fix('sold', included({ in: ['sold', 'available']}))              // returns 'sold'
+fix('hello, John', included({ in: ['bye bye', 'hello, John'] })) // returns 'hello, John'
+fix(101, included({ in: ['101', '102']}))                        // throws 'not a string'
+```
+
+```js
+function trim()
+function lower()
+function upper()
+
+fix(' hello there! ', trim()) // returns 'hello there!'
+fix('Hello There!', lower())  // returns 'hello there!'
+fix('hello there!', upper())  // returns 'HELLO THERE!'
+```
+
 ## Custom pipes
 
 Creating new pipes is pretty simple. For example:
