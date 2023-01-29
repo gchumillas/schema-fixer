@@ -178,7 +178,7 @@ describe('Array validation', () => {
 })
 
 describe('Misc pipelines', () => {
-  test('select', () => {
+  test('included', () => {
     expect(fix('sold', included({ in: ['sold', 'available']}))).toEqual('sold')
     expect(fix('hello, John', included({ in: ['bye bye', 'hello, John'] }))).toEqual('hello, John')
     expect(() => fix(101, included({ in: ['101', '102']}))).toThrow('not a string')
