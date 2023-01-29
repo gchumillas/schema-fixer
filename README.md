@@ -152,7 +152,7 @@ console.log(fixedColor) // outputs: #AB4CF7
 ## fix vs. parse
 
 The `parse` function, unlike the `fix` function, doesn't throw any exceptions.
-Instead, it returns an array of errors that can be examined later. For example:
+Instead, it returns an array of errors that can be inspected later. For example:
 
 ```js
 // May throw an exception if "data" does not satisfy the "schema".
