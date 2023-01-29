@@ -1,5 +1,5 @@
 const { fix, parse, pipe, error, ok } = require('./index')
-const { string, upper, number, boolean, array, select } = require('./pipes')
+const { string, upper, lower, trim, number, boolean, array, select } = require('./pipes')
 
 describe('General', () => {
   test('Validate README example', () => {
@@ -126,9 +126,9 @@ describe('Boolean validation', () => {
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], 'string[]')).toEqual(['true', 'false'])
-    expect(fix([0, 1], 'boolean[]')).toEqual([false, true])
-    expect(fix([1, '2', 3], 'number[]')).toEqual([1, 2, 3])
+    expect(fix([true, false], array({ type: [string()] }))).toEqual(['true', 'false'])
+    expect(fix([0, 1], array({ type: [boolean()] }))).toEqual([false, true])
+    expect(fix([1, '2', 3], array({ type: [number()] }))).toEqual([1, 2, 3])
   })
 
   test('require option', () => {
@@ -136,7 +136,7 @@ describe('Array validation', () => {
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'string[]')).toEqual([])
+    expect(fix(undefined, array({ type: string() }))).toEqual([])
     expect(fix(undefined, array({ type: number(), default: undefined }))).toBeUndefined()
     expect(fix(undefined, array({ type: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
@@ -146,17 +146,18 @@ describe('Misc pipelines', () => {
   test('select', () => {
     expect(fix('sold', select({ options: ['sold', 'available']}))).toEqual('sold')
     expect(fix('hello, John', select({ options: ['bye bye', 'hello, John'] }))).toEqual('hello, John')
-    expect(() => fix(101, '[101, 202]')).toThrow('not a string')
+    // TODO: look into this!
+    expect(() => fix(101, select({ options: [101, 102]}))).toThrow('not a string')
   })
 
   test('trim', () => {
-    expect(fix(' hello there! ', [string(), 'trim'])).toBe('hello there!')
-    expect(() => fix(125.48, 'trim')).toThrow('not a string')
+    expect(fix(' hello there! ', [string(), trim()])).toBe('hello there!')
+    expect(() => fix(125.48, trim())).toThrow('not a string')
   })
 
   test('lower', () => {
-    expect(fix('Hello There!', [string(), 'lower'])).toBe('hello there!')
-    expect(() => fix(125.48, 'lower')).toThrow('not a string')
+    expect(fix('Hello There!', [string(), lower()])).toBe('hello there!')
+    expect(() => fix(125.48, lower())).toThrow('not a string')
   })
 
   test('upper', () => {
@@ -165,9 +166,9 @@ describe('Misc pipelines', () => {
   })
 
   test('combined pipelines', () => {
-    expect(fix(' Hello There! ', [string(), 'trim', 'lower'])).toBe('hello there!')
-    expect(fix(' Hello There! ', [string(), 'trim', upper()])).toBe('HELLO THERE!')
-    expect(fix(101, [string(), '[101, 202]'])).toEqual('101')
+    expect(fix(' Hello There! ', [string(), trim(), lower()])).toBe('hello there!')
+    expect(fix(' Hello There! ', [string(), trim(), upper()])).toBe('HELLO THERE!')
+    expect(fix(101, [string(), select({ options: ['101', '102'] })])).toEqual('101')
   })
 })
 
@@ -191,18 +192,18 @@ describe('Object validation', () => {
     }, {
       name: string({ coerce: false }),
       lastName: string({ require: true }),
-      pseudonym: ['lower', 'trim'],
-      age: 'float',
+      pseudonym: [lower(), trim()],
+      age: number(),
       single: boolean({ coerce: false }),
       location: { latitude: number(), longitude: number() },
-      novels: 'string[]',
+      novels: array({ type: string() }),
     })
 
     expect(errors).toMatchObject([
       { 'path': 'name', 'error': 'not a string' },
       { 'path': 'lastName', 'error': 'required' },
       { 'path': 'pseudonym', 'error': 'not a string' },
-      { 'path': 'age', 'error': 'unrecognized float pipe' },
+      { 'path': 'age', 'error': 'not a number' },
       { 'path': 'single', 'error': 'not a boolean' },
       { 'path': 'location', 'error': 'not an object' },
       {
