@@ -16,7 +16,7 @@ export const pipes: {
   number: PipeFactory<{ coerced?: boolean }, number>
   boolean: PipeFactory<{ coerced?: boolean }, boolean>
   array: PipeFactory<{ of: Schema }, any[]>
-  included: PipeFactory<{ in: string[] }, string>
+  some: PipeFactory<{ of: string[] }, string>
   trim: PipeFactory<{}, string>
   lower: PipeFactory<{}, string>
   upper: PipeFactory<{}, string>

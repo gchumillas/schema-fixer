@@ -52,16 +52,16 @@ const array = pipe((value, { of: type, parse, path }) => {
   return error('not an array')
 }, { default: [] })
 
-const included = pipe((value, { in: options }) => {
+const some = pipe((value, { of: values }) => {
   if (typeof value != 'string') {
     return error('not a string')
   }
 
-  if (options.includes(value)) {
+  if (values.includes(value)) {
     return ok(value)
   }
 
-  return error(`${value} is not in [${concat(options, ', ')}]`)
+  return error(`${value} is not in [${concat(values, ', ')}]`)
 })
 
 const trim = pipe(value => {
@@ -93,5 +93,5 @@ module.exports = {
   number,
   boolean,
   array,
-  included
+  some
 }
