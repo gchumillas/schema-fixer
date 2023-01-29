@@ -1,8 +1,8 @@
 const { fix, parse, pipe, error, ok } = require('./index')
 const { string, upper, lower, trim, number, boolean, array, included } = require('./pipes')
 
-describe('General', () => {
-  test('Validate README example', () => {
+describe('Validate README examples', () => {
+  test('General', () => {
     const data = {
       name: 'Stephen',
       middleName: undefined,
@@ -50,6 +50,40 @@ describe('General', () => {
       ]
       // metadata was ignored
     })
+  })
+
+  test('floorPipe', () => {
+    const floorPipe = pipe((value) => {
+      if (typeof value != 'number') {
+        return error('not a number')
+      }
+    
+      return ok(Math.floor(value))
+    })
+    
+    // Note that you can pass "scalar" values to the fix function.
+    const data = fix('105.48', [number(), floorPipe()])
+    expect(data).toBe(105)
+  })
+
+  test('colorPipe', () => {
+    const colorPipe = pipe((value) => {
+      if (typeof value != 'string' || !value.match(/^#[0-9A-F]{6}$/i)) {
+        return error('not a color')
+      }
+    
+      return ok(value)
+    })
+    
+    // note that we are using multiple pipes before applying our custom pipe
+    const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
+    expect(fixedColor).toBe('#AB783F')
+  })
+
+  test('Combine multiple pipes', () => {
+    const color = '  #aB4cf7  '
+    const fixedColor = fix(color, [string(), trim(), upper()])
+    expect(fixedColor).toBe('#AB4CF7')
   })
 })
 
