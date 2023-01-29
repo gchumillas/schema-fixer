@@ -100,13 +100,13 @@ describe('Float validation', () => {
 
 describe('Boolean validation', () => {
   test('basic', () => {
-    expect(fix(true, 'boolean')).toBe(true)
-    expect(fix(false, 'boolean')).toBe(false)
-    expect(fix(1, 'boolean')).toBe(true)
-    expect(fix(0, 'boolean')).toBe(false)
-    expect(fix('', 'boolean')).toBe(false)
-    expect(fix('lorem ipsum', 'boolean')).toBe(true)
-    expect(fix({}, 'boolean')).toBe(true)
+    expect(fix(true, boolean())).toBe(true)
+    expect(fix(false, boolean())).toBe(false)
+    expect(fix(1, boolean())).toBe(true)
+    expect(fix(0, boolean())).toBe(false)
+    expect(fix('', boolean())).toBe(false)
+    expect(fix('lorem ipsum', boolean())).toBe(true)
+    expect(fix({}, boolean())).toBe(true)
   })
 
   test('require option', () => {
@@ -114,7 +114,7 @@ describe('Boolean validation', () => {
   })
 
   test('default option', () => {
-    expect(fix(undefined, 'boolean')).toBe(false)
+    expect(fix(undefined, boolean())).toBe(false)
     expect(fix(undefined, boolean({ default: undefined }))).toBeUndefined()
     expect(fix(undefined, boolean({ default: true }))).toBe(true)
   })
