@@ -22,7 +22,7 @@ yarn add @gchumillas/schema-fixer
 
 ```js
 import { fix, pipes } from '@gchumillas/schema-fixer'
-const { string, number, boolean, array, upper } = pipes
+const { string, number, boolean, date, array, upper } = pipes
 
 const data = {
   name: 'Stephen',
