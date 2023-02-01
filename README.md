@@ -28,7 +28,8 @@ const data = {
   name: 'Stephen',
   middleName: undefined,
   lastName: 'King',
-  age: '74',
+  born: 'September 21, 1947',
+  age: '75',
   isMarried: 1,
   childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
   books: [
@@ -44,6 +45,7 @@ const schema = {
   name: string(),
   middleName: string(),
   lastName: string(),
+  born: date(),
   age: number(),
   isMarried: boolean(),
   childrend: array({ of: string() }),
@@ -69,7 +71,8 @@ The previous code outputs:
   name: 'Stephen',
   middleName: '',   // Undefined has been replaced by  ''.
   lastName: 'King',
-  age: 74,          // '74' has been replaced by 74.
+  born: '1947-09-20T23:00:00.000Z',
+  age: 75,          // '74' has been replaced by 74.
   isMarried: true,  // 1 has been replaced by true.
   childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
   books: [
@@ -214,6 +217,9 @@ function boolean({
   // When possible tries to convert the value into a number,
   // otherwise it throws an exception.
   coerced = true,
+  // Throws an exception if value is null or undefined.
+  // The 'default' parameter is ignored when [required = true]
+  required = false
 }) {}
 
 fix(true, boolean())                        // returns true
@@ -225,6 +231,24 @@ fix(undefined, boolean())                   // returns false
 fix(undefined, boolean({ default: true }))  // returns true
 fix(undefined, boolean({ required: true })) // throws 'required'
 fix(1, boolean({ coerced: false }))         // throws 'not a boolean'
+```
+
+```js
+// Validates or fixes a "string date".
+function date({
+  default = undefined,
+  // When possible tries to convert the value into a "string date",
+  // otherwise it throws an exception.
+  coerced = true,
+  // Throws an exception if value is null or undefined.
+  // The 'default' parameter is ignored when [required = true]
+  required = false
+}) {}
+
+fix('04 Dec 1995 00:12:00 GMT', date())  // returns '1995-12-04T00:12:00.000Z'
+fix('Wed 1 Feb, 2022', date())           // returns '2022-01-31T23:00:00.000Z'
+fix('2012-07-15 15:48', date())          // returns '2012-07-15T13:48:00.000Z'
+fix(undefined, date({ required: true })) // throws 'required'
 ```
 
 ```js
