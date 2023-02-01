@@ -159,7 +159,7 @@ describe('Boolean validation', () => {
   })
 })
 
-describe.only('Date validation', () => {
+describe('Date validation', () => {
   test('basic', () => {
     expect(fix('04 Dec 1995 00:12:00 GMT', date())).toBe('1995-12-04T00:12:00.000Z')
     expect(fix('Wed 1 Feb, 2022', date())).toBe('2022-01-31T23:00:00.000Z')
