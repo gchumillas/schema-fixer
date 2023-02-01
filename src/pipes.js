@@ -35,6 +35,16 @@ const boolean = pipe((value, { coerced = true }) => {
   return error('not a boolean')
 }, { default: false })
 
+const date = pipe((value) => {
+  const milliseconds = Date.parse(`${value}`)
+  if (isNaN(milliseconds)) {
+    return error('not a date')
+  }
+
+  const date = new Date(milliseconds)
+  return ok(date.toISOString())
+})
+
 const array = pipe((value, { of: type, parse, path }) => {
   if (Array.isArray(value)) {
     const [val, errors] = value.reduce(([prevVal, prevErrors], item, i) => {
@@ -92,6 +102,7 @@ module.exports = {
   string, trim, lower, upper,
   number,
   boolean,
+  date,
   array,
   included
 }
