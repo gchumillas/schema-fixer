@@ -7,7 +7,8 @@ describe('Validate README examples', () => {
       name: 'Stephen',
       middleName: undefined,
       lastName: 'King',
-      age: '74',
+      born: 'September 21, 1947',
+      age: '75',
       isMarried: 1,
       childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
       books: [
@@ -23,6 +24,7 @@ describe('Validate README examples', () => {
       name: string(),
       middleName: string(),
       lastName: string(),
+      born: date(),
       age: number(),
       isMarried: boolean(),
       childrend: array({ of: string() }),
@@ -41,7 +43,8 @@ describe('Validate README examples', () => {
       name: 'Stephen',
       middleName: '',   // undefined has been replaced by  ''
       lastName: 'King',
-      age: 74,          // '74' has been replaced by 74
+      born: '1947-09-20T23:00:00.000Z',
+      age: 75,          // '74' has been replaced by 74
       isMarried: true,  // 1 has been replaced by true
       childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
       books: [
