@@ -72,7 +72,7 @@ The previous code outputs:
   middleName: '',   // Undefined has been replaced by  ''.
   lastName: 'King',
   born: '1947-09-20T23:00:00.000Z',
-  age: 75,          // '74' has been replaced by 74.
+  age: 75,          // '75' has been replaced by 75.
   isMarried: true,  // 1 has been replaced by true.
   childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
   books: [
