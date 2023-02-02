@@ -1,4 +1,4 @@
-A library to "fix" external data.
+A library to "fix" arbitrary data.
 
 ## Motivation
 
