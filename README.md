@@ -272,7 +272,7 @@ included({ in: string[] })
 
 fix('sold', included({ in: ['sold', 'available']}))              // returns 'sold'
 fix('hello, John', included({ in: ['bye bye', 'hello, John'] })) // returns 'hello, John'
-fix('chocolate', included({ in: ['tea', 'coffee'] }))            // throws chocolate is not in [tea, coffee]
+fix('chocolate', included({ in: ['tea', 'coffee'] }))            // throws 'chocolate is not in [tea, coffee]'
 fix(101, included({ in: ['101', '102']}))                        // throws 'not a string'
 ```
 
