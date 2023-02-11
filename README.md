@@ -15,7 +15,7 @@ This library "fixes" the data so that it can be rendered or processed properly. 
 Just run the following command inside the project's folder:
 
 ```bash
-yarn add @gchumillas/schema-fixer
+npm i @gchumillas/schema-fixer
 ```
 
 ## Example
@@ -87,8 +87,8 @@ The previous code outputs:
 **Definitions:**
 
 - A `pipe` is any function used to "validate" and "fix" the data. This library
-  already contains some predefined pipes: `string`, `number`, `boolean`, `array`,
-  `included`, `trim`, `lower` and `upper`. **However you can write your own pipes**.
+  already contains some predefined pipes: `string`, `number`, `boolean`, `date`,
+  `array`, `included`, `trim`, `lower` and `upper`. **However you can write your own pipes**.
 - A `schema` is any combination of `pipes`. The following examples are schemas:
   ```js
   const schema1 = string()
@@ -272,6 +272,7 @@ included({ in: string[] })
 
 fix('sold', included({ in: ['sold', 'available']}))              // returns 'sold'
 fix('hello, John', included({ in: ['bye bye', 'hello, John'] })) // returns 'hello, John'
+fix('chocolate', included({ in: ['tea', 'coffee'] }))            // throws chocolate is not in [tea, coffee]
 fix(101, included({ in: ['101', '102']}))                        // throws 'not a string'
 ```
 
