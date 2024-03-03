@@ -1,4 +1,4 @@
-const { fix, parse, pipe, error, ok } = require('./index')
+const { fix, parse } = require('./parser')
 const { string, upper, lower, trim, number, boolean, array, included } = require('./pipes')
 
 describe('Validate README examples', () => {
@@ -53,13 +53,13 @@ describe('Validate README examples', () => {
   })
 
   test('floorPipe', () => {
-    const floorPipe = pipe((value) => {
+    const floorPipe = () => (value) => {
       if (typeof value != 'number') {
-        return error('not a number')
+        throw new Error('not a number')
       }
     
-      return ok(Math.floor(value))
-    })
+      return Math.floor(value)
+    }
     
     // Note that you can pass "scalar" values to the fix function.
     const data = fix('105.48', [number(), floorPipe()])
@@ -67,13 +67,13 @@ describe('Validate README examples', () => {
   })
 
   test('colorPipe', () => {
-    const colorPipe = pipe((value) => {
+    const colorPipe = () => (value) => {
       if (typeof value != 'string' || !value.match(/^#[0-9A-F]{6}$/i)) {
-        return error('not a color')
+        throw new Error('not a color')
       }
     
-      return ok(value)
-    })
+      return value
+    }
     
     // note that we are using multiple pipes before applying our custom pipe
     const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
@@ -101,7 +101,7 @@ describe('Text validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, string())).toBe('')
-    expect(fix(undefined, string({ default: undefined }))).toBeUndefined()
+    expect(fix(undefined, string({ default: null }))).toBeNull()
     expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
   })
 
@@ -124,7 +124,7 @@ describe('Float validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, number())).toBe(0)
-    expect(fix(undefined, number({ default: undefined }))).toBeUndefined()
+    expect(fix(undefined, number({ default: null }))).toBeNull()
     expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
   })
 
@@ -150,7 +150,7 @@ describe('Boolean validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, boolean())).toBe(false)
-    expect(fix(undefined, boolean({ default: undefined }))).toBeUndefined()
+    expect(fix(undefined, boolean({ default: null }))).toBeNull()
     expect(fix(undefined, boolean({ default: true }))).toBe(true)
   })
 
@@ -172,7 +172,7 @@ describe('Array validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, array({ of: string() }))).toEqual([])
-    expect(fix(undefined, array({ of: number(), default: undefined }))).toBeUndefined()
+    expect(fix(undefined, array({ of: number(), default: null }))).toBeNull()
     expect(fix(undefined, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
@@ -252,13 +252,13 @@ describe('Object validation', () => {
 
 describe('Custom pipes', () => {
   test('floor pipe', () => {
-    const floor = pipe(value => {
+    const floor = () => (value) => {
       if (typeof value != 'number') {
-        return error('not a number')
+        throw new Error('not a number')
       }
 
-      return ok(Math.floor(value))
-    })
+      return Math.floor(value)
+    }
 
     expect(fix('105.48', [number(), floor()])).toBe(105)
     expect(() => fix('105.48', floor())).toThrow('not a number')

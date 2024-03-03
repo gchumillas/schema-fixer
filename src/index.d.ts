@@ -1,6 +1,4 @@
 export type Result<T> = [value: T] | [value: undefined, error: any]
-export function error<T>(value: T): [undefined, T]
-export function ok<T>(value: T): [T]
 
 export type Pipe<T, S> = (value: any, options: T & { required: boolean, default: any, path: string }) => Result<S>
 export type PipeFactory<T, S> = (options?: T & { required?: boolean, default?: any }) => Pipe<T, S>

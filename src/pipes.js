@@ -1,51 +1,101 @@
-const { error, ok, concat } = require('./core/utils')
-const { pipe } = require('./core/pipe')
+const { parse } = require('./parser')
+const { concat, isNull } = require('./utils')
 
-const string = pipe((value, { coerced = true, required }) => {
-  if (typeof value == 'string') {
-    if (required && !value) {
-      return error('required')
+const string = (params = {}) => (value) => {
+  const { default: defValue = '', required = false, coerced = true } = params
+
+  if (isNull(value) || value === '') {
+    if (required) {
+      throw new Error('required')
     }
 
-    return ok(value)
+    return defValue
+  }
+
+  if (typeof value == 'string') {
+    if (required && !value) {
+      throw new Error('required')
+    }
+
+    return value
   } else if (coerced && ['boolean', 'number'].includes(typeof value)) {
-    return ok(`${value}`)
+    return `${value}`
   }
 
-  return error('not a string')
-}, { default: '' })
+  throw new Error('not a string')
+}
 
-const number = pipe((value, { coerced = true }) => {
+const number = (params = {}) => (value) => {
+  const { default: defValue = 0, required = false, coerced = true } = params
+
+  if (isNull(value)) {
+    if (required) {
+      throw new Error('required')
+    }
+
+    return defValue
+  }
+
   if (typeof value == 'number') {
-    return ok(value)
+    return value
   } else if (coerced && !isNaN(value)) {
-    return ok(+value)
+    return +value
   }
 
-  return error('not a number')
-}, { default: 0 })
+  throw new Error('not a number')
+}
 
-const boolean = pipe((value, { coerced = true }) => {
+const boolean = (params = {}) => (value) => {
+  const { default: defValue = false, required = false, coerced = true } = params
+
+  if (isNull(value)) {
+    if (required) {
+      throw new Error('required')
+    }
+
+    return defValue
+  }
+
   if (typeof value == 'boolean') {
-    return ok(value)
+    return value
   } else if (coerced) {
-    return ok(!!value)
+    return !!value
   }
 
-  return error('not a boolean')
-}, { default: false })
+  throw new Error('not a boolean')
+}
 
-const date = pipe((value) => {
+const date = (params = {}) => (value) => {
+  const { default: defValue, required = false } = params
+
+  if (isNull(value)) {
+    if (required) {
+      throw new Error('required')
+    }
+
+    return defValue
+  }
+
   const milliseconds = Date.parse(`${value}`)
   if (isNaN(milliseconds)) {
-    return error('not a date')
+    throw new Error('not a date')
   }
 
   const date = new Date(milliseconds)
-  return ok(date.toISOString())
-})
+  return date.toISOString()
+}
 
-const array = pipe((value, { of: type, parse, path }) => {
+const array = (params = {}) => (value, { path }) => {
+  const { default: defValue = [], required = false, of: type } = params
+
+  if (isNull(value)) {
+    if (required) {
+      throw new Error('required')
+    }
+
+    return defValue
+  }
+
   if (Array.isArray(value)) {
     const [val, errors] = value.reduce(([prevVal, prevErrors], item, i) => {
       const [val, errors] = parse(item, type, { path: `${path}[${i}]` })
@@ -53,50 +103,53 @@ const array = pipe((value, { of: type, parse, path }) => {
     }, [[], []])
 
     if (errors.length) {
-      return error(errors)
+      throw new Error('not an array', { cause: errors })
     }
 
-    return ok(val)
+    return val
   }
 
-  return error('not an array')
-}, { default: [] })
+  throw new Error('not an array')
+}
 
-const included = pipe((value, { in: values }) => {
+// TODO: remove this function
+const included = (params = {}) => (value) => {
+  const { in: values } = params
+
   if (typeof value != 'string') {
-    return error('not a string')
+    throw new Error('not a string')
   }
 
   if (values.includes(value)) {
-    return ok(value)
+    return value
   }
 
-  return error(`${value} is not in [${concat(values, ', ')}]`)
-})
+  throw new Error(`${value} is not in [${concat(values, ', ')}]`)
+}
 
-const trim = pipe(value => {
+const trim = () => (value) => {
   if (typeof value != 'string') {
-    return error('not a string')
+    throw new Error('not a string')
   }
 
-  return ok(value.trim())
-})
+  return value.trim()
+}
 
-const lower = pipe(value => {
+const lower = () => (value) => {
   if (typeof value != 'string') {
-    return error('not a string')
+    throw new Error('not a string')
   }
 
-  return ok(value.toLocaleLowerCase())
-})
+  return value.toLocaleLowerCase()
+}
 
-const upper = pipe(value => {
+const upper = () => value => {
   if (typeof value != 'string') {
-    return error('not a string')
+    throw new Error('not a string')
   }
 
-  return ok(value.toLocaleUpperCase())
-})
+  return value.toLocaleUpperCase()
+}
 
 module.exports = {
   string, trim, lower, upper,
