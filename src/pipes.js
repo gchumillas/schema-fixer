@@ -1,5 +1,5 @@
 const { parse } = require('./parser')
-const { concat, isNull } = require('./utils')
+const { isNull } = require('./utils')
 
 const string = (params = {}) => (value) => {
   const { default: defValue = '', required = false, coerced = true } = params
@@ -112,21 +112,6 @@ const array = (params = {}) => (value, { path }) => {
   throw new Error('not an array')
 }
 
-// TODO: remove this function
-const included = (params = {}) => (value) => {
-  const { in: values } = params
-
-  if (typeof value != 'string') {
-    throw new Error('not a string')
-  }
-
-  if (values.includes(value)) {
-    return value
-  }
-
-  throw new Error(`${value} is not in [${concat(values, ', ')}]`)
-}
-
 const trim = () => (value) => {
   if (typeof value != 'string') {
     throw new Error('not a string')
@@ -152,10 +137,12 @@ const upper = () => value => {
 }
 
 module.exports = {
-  string, trim, lower, upper,
+  string,
+  trim,
+  lower,
+  upper,
   number,
   boolean,
   date,
-  array,
-  included
+  array
 }
