@@ -24,10 +24,13 @@ const parse = (value, schema, { path = '' } = {}) => {
     return [value, [{ path, error }]]
   }
 
-  return Object.entries(schema).reduce(([prevVal, prevErrors], [field, fieldSchema]) => {
-    const [val, errors] = parse(value[field], fieldSchema, { path: concat([path, field], '.') })
-    return [{ ...prevVal, [field]: val }, [...prevErrors, ...errors]]
-  }, [{}, []])
+  return Object.entries(schema).reduce(
+    ([prevVal, prevErrors], [field, fieldSchema]) => {
+      const [val, errors] = parse(value[field], fieldSchema, { path: concat([path, field], '.') })
+      return [{ ...prevVal, [field]: val }, [...prevErrors, ...errors]]
+    },
+    [{}, []]
+  )
 }
 
 const fix = (value, schema) => {

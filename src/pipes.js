@@ -1,96 +1,110 @@
 const { parse } = require('./parser')
 const { isNull } = require('./utils')
 
-const string = (params = {}) => (value) => {
-  const { default: defValue = '', required = false, coerced = true } = params
+const string =
+  (params = {}) =>
+  (value) => {
+    const { default: defValue = '', required = false, coerced = true } = params
 
-  if (isNull(value) || value === '') {
-    if (required) {
-      throw new Error('required')
+    if (isNull(value) || value === '') {
+      if (required) {
+        throw new Error('required')
+      }
+
+      return defValue
     }
 
-    return defValue
-  }
+    if (typeof value == 'string') {
+      if (required && !value) {
+        throw new Error('required')
+      }
 
-  if (typeof value == 'string') {
-    if (required && !value) {
-      throw new Error('required')
+      return value
+    } else if (coerced && ['boolean', 'number'].includes(typeof value)) {
+      return `${value}`
     }
 
-    return value
-  } else if (coerced && ['boolean', 'number'].includes(typeof value)) {
-    return `${value}`
+    throw new Error('not a string')
   }
 
-  throw new Error('not a string')
-}
+const number =
+  (params = {}) =>
+  (value) => {
+    const { default: defValue = 0, required = false, coerced = true } = params
 
-const number = (params = {}) => (value) => {
-  const { default: defValue = 0, required = false, coerced = true } = params
+    if (isNull(value)) {
+      if (required) {
+        throw new Error('required')
+      }
 
-  if (isNull(value)) {
-    if (required) {
-      throw new Error('required')
+      return defValue
     }
 
-    return defValue
-  }
-
-  if (typeof value == 'number') {
-    return value
-  } else if (coerced && !isNaN(value)) {
-    return +value
-  }
-
-  throw new Error('not a number')
-}
-
-const boolean = (params = {}) => (value) => {
-  const { default: defValue = false, required = false, coerced = true } = params
-
-  if (isNull(value)) {
-    if (required) {
-      throw new Error('required')
+    if (typeof value == 'number') {
+      return value
+    } else if (coerced && !isNaN(value)) {
+      return +value
     }
 
-    return defValue
+    throw new Error('not a number')
   }
 
-  if (typeof value == 'boolean') {
-    return value
-  } else if (coerced) {
-    return !!value
-  }
+const boolean =
+  (params = {}) =>
+  (value) => {
+    const { default: defValue = false, required = false, coerced = true } = params
 
-  throw new Error('not a boolean')
-}
+    if (isNull(value)) {
+      if (required) {
+        throw new Error('required')
+      }
 
-const array = (params = {}) => (value, { path }) => {
-  const { default: defValue = [], required = false, of: type } = params
-
-  if (isNull(value)) {
-    if (required) {
-      throw new Error('required')
+      return defValue
     }
 
-    return defValue
-  }
-
-  if (Array.isArray(value)) {
-    const [val, errors] = value.reduce(([prevVal, prevErrors], item, i) => {
-      const [val, errors] = parse(item, type, { path: `${path}[${i}]` })
-      return [[...prevVal, val], [...prevErrors, ...errors]]
-    }, [[], []])
-
-    if (errors.length) {
-      throw new Error('not an array', { cause: errors })
+    if (typeof value == 'boolean') {
+      return value
+    } else if (coerced) {
+      return !!value
     }
 
-    return val
+    throw new Error('not a boolean')
   }
 
-  throw new Error('not an array')
-}
+const array =
+  (params = {}) =>
+  (value, { path }) => {
+    const { default: defValue = [], required = false, of: type } = params
+
+    if (isNull(value)) {
+      if (required) {
+        throw new Error('required')
+      }
+
+      return defValue
+    }
+
+    if (Array.isArray(value)) {
+      const [val, errors] = value.reduce(
+        ([prevVal, prevErrors], item, i) => {
+          const [val, errors] = parse(item, type, { path: `${path}[${i}]` })
+          return [
+            [...prevVal, val],
+            [...prevErrors, ...errors]
+          ]
+        },
+        [[], []]
+      )
+
+      if (errors.length) {
+        throw new Error('not an array', { cause: errors })
+      }
+
+      return val
+    }
+
+    throw new Error('not an array')
+  }
 
 const trim = () => (value) => {
   if (typeof value != 'string') {
@@ -108,7 +122,7 @@ const lower = () => (value) => {
   return value.toLocaleLowerCase()
 }
 
-const upper = () => value => {
+const upper = () => (value) => {
   if (typeof value != 'string') {
     throw new Error('not a string')
   }

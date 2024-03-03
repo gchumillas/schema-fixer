@@ -12,13 +12,13 @@ describe('Validate README examples', () => {
       childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
       books: [
         { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
-        { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
+        { title: "Salem's lot", year: '1975', id: 'isbn-0385007515' }
       ],
       // this property was accidentally passed and
       // will be removed from the fixed data
-      metadata: 'console.log(\'please ignore me\')'
+      metadata: "console.log('please ignore me')"
     }
-  
+
     const fixedData = fix(data, {
       name: string(),
       middleName: string(),
@@ -33,20 +33,20 @@ describe('Validate README examples', () => {
           year: number(),
           // we can combine multiple 'pipes'
           id: [string(), upper()]
-        }}
-      )
+        }
+      })
     })
-  
+
     expect(fixedData).toMatchObject({
       name: 'Stephen',
-      middleName: '',   // undefined has been replaced by  ''
+      middleName: '', // undefined has been replaced by  ''
       lastName: 'King',
-      age: 75,          // '74' has been replaced by 74
-      isMarried: true,  // 1 has been replaced by true
-      childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
+      age: 75, // '74' has been replaced by 74
+      isMarried: true, // 1 has been replaced by true
+      childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
       books: [
         { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
-        { title: 'Salem\'s lot', year: 1975, id: 'ISBN-0385007515' }
+        { title: "Salem's lot", year: 1975, id: 'ISBN-0385007515' }
       ]
       // metadata was ignored
     })
@@ -57,10 +57,10 @@ describe('Validate README examples', () => {
       if (typeof value != 'number') {
         throw new Error('not a number')
       }
-    
+
       return Math.floor(value)
     }
-    
+
     // Note that you can pass "scalar" values to the fix function.
     const data = fix('105.48', [number(), floorPipe()])
     expect(data).toBe(105)
@@ -71,10 +71,10 @@ describe('Validate README examples', () => {
       if (typeof value != 'string' || !value.match(/^#[0-9A-F]{6}$/i)) {
         throw new Error('not a color')
       }
-    
+
       return value
     }
-    
+
     // note that we are using multiple pipes before applying our custom pipe
     const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
     expect(fixedColor).toBe('#AB783F')
@@ -205,26 +205,29 @@ describe('Object validation', () => {
     expect(() => fix(true, { id: string() })).toThrow('not an object')
     expect(() => fix('lorem ipsum', { id: string() })).toThrow('not an object')
 
-    const [, errors] = parse({
-      name: 125.48,
-      lastName: '',
-      pseudonym: 78945,
-      age: 'old',
-      single: 1,
-      location: 102,
-      novels: [
-        { title: 'Book 1', year: 2011 },
-        { title: 'Book 2', year: 2012 }
-      ]
-    }, {
-      name: string({ coerced: false }),
-      lastName: string({ required: true }),
-      pseudonym: [lower(), trim()],
-      age: number(),
-      single: boolean({ coerced: false }),
-      location: { latitude: number(), longitude: number() },
-      novels: array({ of: string() }),
-    })
+    const [, errors] = parse(
+      {
+        name: 125.48,
+        lastName: '',
+        pseudonym: 78945,
+        age: 'old',
+        single: 1,
+        location: 102,
+        novels: [
+          { title: 'Book 1', year: 2011 },
+          { title: 'Book 2', year: 2012 }
+        ]
+      },
+      {
+        name: string({ coerced: false }),
+        lastName: string({ required: true }),
+        pseudonym: [lower(), trim()],
+        age: number(),
+        single: boolean({ coerced: false }),
+        location: { latitude: number(), longitude: number() },
+        novels: array({ of: string() })
+      }
+    )
 
     expect(errors).toMatchObject([
       { 'path': 'name', 'error': 'not a string' },
@@ -234,7 +237,8 @@ describe('Object validation', () => {
       { 'path': 'single', 'error': 'not a boolean' },
       { 'path': 'location', 'error': 'not an object' },
       {
-        'path': 'novels', 'error': [
+        'path': 'novels',
+        'error': [
           { 'path': 'novels[0]', 'error': 'not a string' },
           { 'path': 'novels[1]', 'error': 'not a string' }
         ]
