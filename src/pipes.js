@@ -65,26 +65,6 @@ const boolean = (params = {}) => (value) => {
   throw new Error('not a boolean')
 }
 
-const date = (params = {}) => (value) => {
-  const { default: defValue, required = false } = params
-
-  if (isNull(value)) {
-    if (required) {
-      throw new Error('required')
-    }
-
-    return defValue
-  }
-
-  const milliseconds = Date.parse(`${value}`)
-  if (isNaN(milliseconds)) {
-    throw new Error('not a date')
-  }
-
-  const date = new Date(milliseconds)
-  return date.toISOString()
-}
-
 const array = (params = {}) => (value, { path }) => {
   const { default: defValue = [], required = false, of: type } = params
 
@@ -143,6 +123,5 @@ module.exports = {
   upper,
   number,
   boolean,
-  date,
   array
 }
