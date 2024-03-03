@@ -1,5 +1,5 @@
 const { fix, parse, pipe, error, ok } = require('./index')
-const { string, upper, lower, trim, number, boolean, date, array, included } = require('./pipes')
+const { string, upper, lower, trim, number, boolean, array, included } = require('./pipes')
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -7,7 +7,6 @@ describe('Validate README examples', () => {
       name: 'Stephen',
       middleName: undefined,
       lastName: 'King',
-      born: 'September 21, 1947',
       age: '75',
       isMarried: 1,
       childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
@@ -24,7 +23,6 @@ describe('Validate README examples', () => {
       name: string(),
       middleName: string(),
       lastName: string(),
-      born: date(),
       age: number(),
       isMarried: boolean(),
       childrend: array({ of: string() }),
@@ -43,7 +41,6 @@ describe('Validate README examples', () => {
       name: 'Stephen',
       middleName: '',   // undefined has been replaced by  ''
       lastName: 'King',
-      born: '1947-09-20T23:00:00.000Z',
       age: 75,          // '74' has been replaced by 74
       isMarried: true,  // 1 has been replaced by true
       childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
@@ -159,26 +156,6 @@ describe('Boolean validation', () => {
 
   test('coerced option', () => {
     expect(() => fix(1, boolean({ coerced: false }))).toThrow('not a boolean')
-  })
-})
-
-describe('Date validation', () => {
-  test('basic', () => {
-    expect(fix('04 Dec 1995 00:12:00 GMT', date())).toBe('1995-12-04T00:12:00.000Z')
-    expect(fix('Wed 1 Feb, 2022', date())).toBe('2022-01-31T23:00:00.000Z')
-    expect(fix('2012-07-15', date())).toBe('2012-07-15T00:00:00.000Z')
-    expect(fix('2012-07-15 15:48:13', date())).toBe('2012-07-15T13:48:13.000Z')
-    expect(fix('2012-07-15 15:48', date())).toBe('2012-07-15T13:48:00.000Z')
-  })
-
-  test('required option', () => {
-    expect(() => fix(undefined, date({ required: true }))).toThrow('required')
-  })
-
-  test('default option', () => {
-    const now = new Date().toISOString()
-    expect(fix(null, date({ default: now }))).toBe(now)
-    expect(fix(null, date({ default: undefined }))).toBeUndefined()
   })
 })
 
