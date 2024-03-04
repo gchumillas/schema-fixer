@@ -8,10 +8,11 @@ export type Value<T> = T extends FixerRecord
   ? ReturnType<T>
   : never
 
-export function fix<T extends Schema>(schema: T): Value<T>
-export function fix<T extends Fixer[]>(schema: [...T]): { [Prop in keyof T]: ReturnType<T[Prop]> } & {}
+export function fix<T extends Schema>(value: any, schema: T): Value<T>
+export function parse<T extends Schema>(value: any, schema: T): [Value<T>, errors: any[]]
 
 // fixers
+export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
 export function string(_?: { default?: string; required?: boolean; coerced?: boolean }): (value: any) => string
 export function number(_?: { default?: number; required?: boolean; coerced?: boolean }): (value: any) => number
 export function boolean(_?: { default?: boolean; required?: boolean; coerced?: boolean }): (value: any) => boolean

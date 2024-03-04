@@ -1,5 +1,22 @@
 const { parse } = require('./parser')
-const { isNull } = require('./utils')
+const { isNull, isObject } = require('./utils')
+
+// this is a convenient fixer to allow nested schemas
+const schema = (schema) => (value) => {
+  const defValue = isObject(schema) ? {} : undefined
+
+  if (isNull(value)) {
+    value = defValue
+  }
+
+  const [val, errors] = parse(value, schema)
+
+  if (errors.length) {
+    throw new Error('not a valid schema', { cause: errors })
+  }
+
+  return val
+}
 
 const string =
   (params = {}) =>
@@ -11,7 +28,7 @@ const string =
         throw new Error('required')
       }
 
-      return defValue
+      value = defValue
     }
 
     if (typeof value == 'string') {
@@ -37,7 +54,7 @@ const number =
         throw new Error('required')
       }
 
-      return defValue
+      value = defValue
     }
 
     if (typeof value == 'number') {
@@ -59,7 +76,7 @@ const boolean =
         throw new Error('required')
       }
 
-      return defValue
+      value = defValue
     }
 
     if (typeof value == 'boolean') {
@@ -81,7 +98,7 @@ const array =
         throw new Error('required')
       }
 
-      return defValue
+      value = defValue
     }
 
     if (Array.isArray(value)) {
@@ -131,6 +148,7 @@ const upper = () => (value) => {
 }
 
 module.exports = {
+  schema,
   string,
   trim,
   lower,

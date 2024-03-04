@@ -1,7 +1,7 @@
 const { tryCatch, isObject, concat } = require('./utils')
 
 const parse = (value, schema, { path = '' } = {}) => {
-  if (['function', 'string'].includes(typeof schema)) {
+  if (typeof schema == 'function') {
     schema = [schema]
   }
 

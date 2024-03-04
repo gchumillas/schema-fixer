@@ -1,5 +1,5 @@
 const { fix, parse } = require('./parser')
-const { string, upper, lower, trim, number, boolean, array } = require('./pipes')
+const { schema, string, upper, lower, trim, number, boolean, array } = require('./pipes')
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -10,6 +10,11 @@ describe('Validate README examples', () => {
       age: '75',
       isMarried: 1,
       childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
+      address: {
+        street: '107-211 Parkview Ave, Bangor, ME 04401, USA',
+        city: 'Portland',
+        state: 'Oregon'
+      },
       books: [
         { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
         { title: "Salem's lot", year: '1975', id: 'isbn-0385007515' }
@@ -26,6 +31,11 @@ describe('Validate README examples', () => {
       age: number(),
       isMarried: boolean(),
       childrend: array({ of: string() }),
+      address: schema({
+        street: string(),
+        city: string(),
+        state: string()
+      }),
       // array of complex objects
       books: array({
         of: {
@@ -44,6 +54,11 @@ describe('Validate README examples', () => {
       age: 75, // '74' has been replaced by 74
       isMarried: true, // 1 has been replaced by true
       childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
+      address: {
+        street: '107-211 Parkview Ave, Bangor, ME 04401, USA',
+        city: 'Portland',
+        state: 'Oregon'
+      },
       books: [
         { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
         { title: "Salem's lot", year: 1975, id: 'ISBN-0385007515' }
@@ -87,6 +102,68 @@ describe('Validate README examples', () => {
   })
 })
 
+describe('Nested validations', () => {
+  test('General', () => {
+    const data = {
+      name: 'John Smith',
+      address: {
+        street: 'Clover alley, 123',
+        postalCode: 35000
+      }
+    }
+
+    const fixedData = fix(data, {
+      name: string(),
+      address: schema({
+        street: string(),
+        postalCode: string({ required: true }),
+        city: string({ default: 'Portland' })
+      })
+    })
+
+    expect(fixedData).toMatchObject({
+      name: 'John Smith',
+      address: {
+        street: 'Clover alley, 123',
+        postalCode: '35000',
+        city: 'Portland'
+      }
+    })
+  })
+
+  test('with errors', () => {
+    const [, errors] = parse(
+      {
+        name: 'John Smith'
+      },
+      {
+        name: string(),
+        address: schema({
+          street: string({ required: true }),
+          postalCode: string()
+        })
+      }
+    )
+
+    expect(errors).toMatchObject([
+      {
+        'path': 'address',
+        'error': [{ 'path': 'street', 'error': 'required' }]
+      }
+    ])
+  })
+
+  test('with aliases', () => {
+    expect(fix(100, schema(string()))).toBe('100')
+    expect(fix(undefined, schema(string()))).toBe('')
+    expect(fix('hello there!', schema(string()))).toBe('hello there!')
+    expect(fix('   Hello there!   ', schema([string(), trim(), lower()]))).toBe('hello there!')
+
+    expect(fix('100', schema(number()))).toBe(100)
+    expect(fix(undefined, schema(number()))).toBe(0)
+  })
+})
+
 describe('Text validation', () => {
   test('basic', () => {
     expect(fix('hello there!', string())).toBe('hello there!')
@@ -101,7 +178,6 @@ describe('Text validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, string())).toBe('')
-    expect(fix(undefined, string({ default: null }))).toBeNull()
     expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
   })
 
@@ -124,7 +200,6 @@ describe('Float validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, number())).toBe(0)
-    expect(fix(undefined, number({ default: null }))).toBeNull()
     expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
   })
 
@@ -150,7 +225,6 @@ describe('Boolean validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, boolean())).toBe(false)
-    expect(fix(undefined, boolean({ default: null }))).toBeNull()
     expect(fix(undefined, boolean({ default: true }))).toBe(true)
   })
 
@@ -172,7 +246,6 @@ describe('Array validation', () => {
 
   test('default option', () => {
     expect(fix(undefined, array({ of: string() }))).toEqual([])
-    expect(fix(undefined, array({ of: number(), default: null }))).toBeNull()
     expect(fix(undefined, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
