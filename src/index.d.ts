@@ -1,21 +1,26 @@
-export type Result<T> = [value: T] | [value: undefined, error: any]
+export type Fixer = (value: any) => unknown
+export type FixerRecord = Record<string, Fixer>
+export type Schema = Fixer | FixerRecord
 
-export type Pipe<T, S> = (value: any, options: T & { required: boolean; default: any; path: string }) => Result<S>
-export type PipeFactory<T, S> = (options?: T & { required?: boolean; default?: any }) => Pipe<T, S>
-export function pipe<T = {}, S = any>(fn: Pipe<T, S>, options?: { default: S }): PipeFactory<T, S>
+export type Value<T> = T extends FixerRecord
+  ? { [Prop in keyof T]: ReturnType<T[Prop]> } & {}
+  : T extends Fixer
+  ? ReturnType<T>
+  : never
 
-interface SchemaRecord extends Record<string, Schema> {}
-export type Schema = Pipe<any, any> | Pipe<any, any>[] | SchemaRecord
-export function fix(value: any, schema: Schema): any
-export function parse(value: any, schema: Schema, options?: { path?: string }): [value: any, errors: any[]]
+export function fix<T extends Schema>(schema: T): Value<T>
+export function fix<T extends Fixer[]>(schema: [...T]): { [Prop in keyof T]: ReturnType<T[Prop]> } & {}
 
 export const pipes: {
-  string: PipeFactory<{ coerced?: boolean }, string>
-  number: PipeFactory<{ coerced?: boolean }, number>
-  boolean: PipeFactory<{ coerced?: boolean }, boolean>
-  date: PipeFactory<{}, string>
-  array: PipeFactory<{ of: Schema }, any[]>
-  trim: PipeFactory<{}, string>
-  lower: PipeFactory<{}, string>
-  upper: PipeFactory<{}, string>
+  string: (_?: { default?: string; required?: boolean; coerced?: boolean }) => (value: any) => string
+  number: (_?: { default?: number; required?: boolean; coerced?: boolean }) => (value: any) => number
+  boolean: (_?: { default?: boolean; required?: boolean; coerced?: boolean }) => (value: any) => boolean
+  array: <T extends Schema>(_: {
+    default?: Array<Value<T>>
+    required?: boolean
+    of: T
+  }) => (value: any) => Array<Value<T>>
+  trim: () => (value: any) => string
+  lower: () => (value: any) => string
+  upper: () => (value: any) => string
 }
