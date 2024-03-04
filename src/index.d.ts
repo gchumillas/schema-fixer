@@ -11,16 +11,15 @@ export type Value<T> = T extends FixerRecord
 export function fix<T extends Schema>(schema: T): Value<T>
 export function fix<T extends Fixer[]>(schema: [...T]): { [Prop in keyof T]: ReturnType<T[Prop]> } & {}
 
-export const pipes: {
-  string: (_?: { default?: string; required?: boolean; coerced?: boolean }) => (value: any) => string
-  number: (_?: { default?: number; required?: boolean; coerced?: boolean }) => (value: any) => number
-  boolean: (_?: { default?: boolean; required?: boolean; coerced?: boolean }) => (value: any) => boolean
-  array: <T extends Schema>(_: {
-    default?: Array<Value<T>>
-    required?: boolean
-    of: T
-  }) => (value: any) => Array<Value<T>>
-  trim: () => (value: any) => string
-  lower: () => (value: any) => string
-  upper: () => (value: any) => string
-}
+// fixers
+export function string(_?: { default?: string; required?: boolean; coerced?: boolean }): (value: any) => string
+export function number(_?: { default?: number; required?: boolean; coerced?: boolean }): (value: any) => number
+export function boolean(_?: { default?: boolean; required?: boolean; coerced?: boolean }): (value: any) => boolean
+export function array<T extends Schema>(_: {
+  default?: Array<Value<T>>
+  required?: boolean
+  of: T
+}): (value: any) => Array<Value<T>>
+export function trim(): (value: any) => string
+export function lower(): (value: any) => string
+export function upper(): (value: any) => string
