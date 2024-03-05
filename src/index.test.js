@@ -1,5 +1,6 @@
-const { fix, parse } = require('./parser')
-const { schema, string, upper, lower, trim, number, boolean, array } = require('./pipes')
+const { fix, parse } = require('./main')
+const { schema } = require('./utilities')
+const { string, upper, lower, trim, number, boolean, array } = require('./pipes')
 
 describe('Validate README examples', () => {
   test('General', () => {

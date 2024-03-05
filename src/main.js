@@ -1,4 +1,4 @@
-const { tryCatch, isObject, concat } = require('./utils')
+const { tryCatch, isObject, concat } = require('./_utils')
 
 const parse = (value, schema, { path = '' } = {}) => {
   if (typeof schema == 'function') {

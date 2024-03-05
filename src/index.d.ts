@@ -1,4 +1,4 @@
-export type Fixer = (value: any) => unknown
+export type Fixer<S = unknown> = (value: any) => S
 export type FixerRecord = Record<string, Fixer>
 export type Schema = Fixer | FixerRecord
 
@@ -8,11 +8,15 @@ export type Value<T> = T extends FixerRecord
   ? ReturnType<T>
   : never
 
+// main
 export function fix<T extends Schema>(value: any, schema: T): Value<T>
 export function parse<T extends Schema>(value: any, schema: T): [Value<T>, errors: any[]]
 
-// fixers
+// utilities
 export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
+export function join<T>(...fixers: Fixer<T>[]): Fixer<T>
+
+// pipes
 export function string(_?: { default?: string; required?: boolean; coerced?: boolean }): (value: any) => string
 export function number(_?: { default?: number; required?: boolean; coerced?: boolean }): (value: any) => number
 export function boolean(_?: { default?: boolean; required?: boolean; coerced?: boolean }): (value: any) => boolean

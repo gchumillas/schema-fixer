@@ -1,22 +1,5 @@
-const { parse } = require('./parser')
-const { isNull, isObject } = require('./utils')
-
-// this is a convenient fixer to allow nested schemas
-const schema = (schema) => (value) => {
-  const defValue = isObject(schema) ? {} : undefined
-
-  if (isNull(value)) {
-    value = defValue
-  }
-
-  const [val, errors] = parse(value, schema)
-
-  if (errors.length) {
-    throw new Error('not a valid schema', { cause: errors })
-  }
-
-  return val
-}
+const { parse } = require('./main')
+const { isNull } = require('./_utils')
 
 const string =
   (params = {}) =>
@@ -148,7 +131,6 @@ const upper = () => (value) => {
 }
 
 module.exports = {
-  schema,
   string,
   trim,
   lower,
