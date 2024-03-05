@@ -295,7 +295,7 @@ describe('Object validation', () => {
       {
         name: string({ coerced: false }),
         lastName: string({ required: true }),
-        pseudonym: [lower(), trim()],
+        pseudonym: join(lower(), trim()),
         age: number(),
         single: boolean({ coerced: false }),
         location: { latitude: number(), longitude: number() },
@@ -331,7 +331,7 @@ describe('Custom pipes', () => {
       return Math.floor(value)
     }
 
-    expect(fix('105.48', [number(), floor()])).toBe(105)
+    expect(fix('105.48', join(number(), floor()))).toBe(105)
     expect(() => fix('105.48', floor())).toThrow('not a number')
   })
 })

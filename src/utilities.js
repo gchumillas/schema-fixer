@@ -11,7 +11,10 @@ const schema = (schema) => (value) => {
 
   const [val, errors] = parse(value, schema)
 
-  if (errors.length) {
+  if (errors.length == 1) {
+    const { path, error } = errors[0]
+    throw new Error('', { cause: path ? errors : error })
+  } else if (errors.length > 0) {
     throw new Error('not a valid schema', { cause: errors })
   }
 
@@ -24,7 +27,10 @@ const join =
   (value) => {
     const [val, errors] = parse(value, fixers)
 
-    if (errors.length) {
+    if (errors.length == 1) {
+      const { path, error } = errors[0]
+      throw new Error('', { cause: path ? errors : error })
+    } else if (errors.length > 0) {
       throw new Error('not a valid schema', { cause: errors })
     }
 
