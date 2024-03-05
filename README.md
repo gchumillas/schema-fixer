@@ -73,4 +73,4 @@ upper()               - upper case
 
 ## Need more examples?
 
-Take a look at Take a look at the [TESTS FILE](./src/index.test.js).
+Take a look at the [TESTS FILE](./src/index.test.js).
