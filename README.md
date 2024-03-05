@@ -10,7 +10,7 @@ import sf from '@gchumillas/schema-fixer'
 function getAuthor = async (authorId: string) => {
   const res = await axios.get(`/api/authors/${authorId}`)
 
-  // 'repair' the data and ensure it is returned as expected
+  // 'repairs' the data and ensure it is returned as expected
   return sf.fix(res.data, {
     name: sf.string(),
     middleName: sf.string(),
@@ -54,21 +54,21 @@ import sf from '@gchumillas/schema-fixer'
 
 ```
 // main functions
-fix(data, schema)     - repair the data against a schema
-parse(data, schema)   - repair the data againts a schema and return the errors
+fix(data, schema)     - repairs the data against a schema
+parse(data, schema)   - repairs the data againts a schema and return the errors
 
 // utilities
-schema(schema)        - allow nested schemas
-join(fixers[])        - combine multiple "fixers"
+schema(schema)        - allows nested schemas
+join(fixers[])        - combines multiple "fixers"
 
 // fixers
-string()              - fix a string
-number()              - fix a number
-boolean()             - fix a boolean
-array({ of: schema }) - fix an array
-trim()                - remove whitespaces
-lower()               - lower case
-upper()               - upper case
+string()              - fixes a string
+number()              - fixes a number
+boolean()             - fixes a boolean
+array({ of: schema }) - fixes an array
+trim()                - removes whitespaces
+lower()               - converts text to lowercase
+upper()               - converts text to uppercase
 ```
 
 ## Need more examples?
