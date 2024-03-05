@@ -251,25 +251,25 @@ describe('Array validation', () => {
   })
 })
 
-describe('Misc pipelines', () => {
+describe('Combine multiple pipelines', () => {
   test('trim', () => {
-    expect(fix(' hello there! ', [string(), trim()])).toBe('hello there!')
+    expect(fix(' hello there! ', join(string(), trim()))).toBe('hello there!')
     expect(() => fix(125.48, trim())).toThrow('not a string')
   })
 
   test('lower', () => {
-    expect(fix('Hello There!', [string(), lower()])).toBe('hello there!')
+    expect(fix('Hello There!', join(string(), lower()))).toBe('hello there!')
     expect(() => fix(125.48, lower())).toThrow('not a string')
   })
 
   test('upper', () => {
-    expect(fix('hello there!', [string(), upper()])).toBe('HELLO THERE!')
+    expect(fix('hello there!', join(string(), upper()))).toBe('HELLO THERE!')
     expect(() => fix(125.48, upper())).toThrow('not a string')
   })
 
   test('combined pipelines', () => {
-    expect(fix(' Hello There! ', [string(), trim(), lower()])).toBe('hello there!')
-    expect(fix(' Hello There! ', [string(), trim(), upper()])).toBe('HELLO THERE!')
+    expect(fix(' Hello There! ', join(string(), trim(), lower()))).toBe('hello there!')
+    expect(fix(' Hello There! ', join(string(), trim(), upper()))).toBe('HELLO THERE!')
   })
 })
 
