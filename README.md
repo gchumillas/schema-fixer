@@ -7,8 +7,8 @@ Schema-Fixer is just a small library for "repairing" data from external sources 
 ```ts
 import sf from '@gchumillas/schema-fixer'
 
-function getAuthor = (authorId) => {
-  const res = axios.get(`/authors/${authorId}`)
+function getAuthor = async (authorId: string) => {
+  const res = await axios.get(`/authors/${authorId}`)
 
   // 'repair' the data and ensure it is returned as expected
   return sf.fix(res.data, {
