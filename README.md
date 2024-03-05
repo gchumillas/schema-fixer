@@ -1,291 +1,76 @@
-A library to "fix" arbitrary data.
+Schema-Fixer is just a small library for "repairing" data from external sources with **full TypeScript support**.
 
-## Motivation
+> Don't let your application break just because the server doesn't return data in the proper format.
 
-When working with external data, be it data from databases or forms, it's common that it's not presented in the proper format. And it can lead to serious problems, such as [Code Injection](https://en.wikipedia.org/wiki/Code_injection) or [Data Corruption](https://en.wikipedia.org/wiki/Data_corruption).
+> No more undefined errors!
 
-This library "fixes" the data so that it can be rendered or processed properly. It is especially suitable when working with APIs or NoSQL databases. Here are some features:
+```ts
+import sf from '@gchumillas/schema-fixer'
 
-1. Avoid `null` and `undefined` values. Those values are replaced by "default values", so that the front-end developers don't have to worry about to recheck the data to prevent "null/undefined errors".
-2. Remove undesired extra-properties. This way we can prevent Code Injection.
-3. Coercion. Transform numbers, booleans, etc. to the correct types to prevent Data Corruption.
+function getAuthor = (authorId) => {
+  const res = axios.get(`/authors/${authorId}`)
+
+  // 'repair' the data and ensure it is returned as expected
+  return sf.fix(res.data, {
+    name: sf.string(),
+    middleName: sf.string(),
+    lastName: sf.string(),
+    age: sf.number(),
+    isMarried: sf.boolean(),
+    childrend: sf.array({ of: sf.string() }),
+    address: sf.schema({
+      street: sf.string(),
+      city: sf.string(),
+      state: sf.string()
+    }),
+    // array of complex objects
+    books: sf.array({
+      of: {
+        title: sf.string(),
+        year: sf.number(),
+        // we can combine multiple 'pipes'
+        id: sf.join(sf.string(), sf.upper())
+      }
+    })
+  })
+}
+```
 
 ## Install
 
-Just run the following command inside the project's folder:
+Simply execute the following command from your project directory:
 
 ```bash
-npm i @gchumillas/schema-fixer
+npm install @gchumillas/schema-fixer
 ```
 
-## Example
+and import the library:
 
 ```js
-import { fix, pipes } from '@gchumillas/schema-fixer'
-const { string, number, boolean, date, array, upper } = pipes
-
-const data = {
-  name: 'Stephen',
-  middleName: undefined,
-  lastName: 'King',
-  born: 'September 21, 1947',
-  age: '75',
-  isMarried: 1,
-  childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
-  books: [
-    { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
-    { title: 'Salem\'s lot', year: '1975', id: 'isbn-0385007515' }
-  ],
-  // this property was accidentally passed and
-  // will be removed from the fixed data
-  metadata: 'console.log(\'please ignore me\')'
-}
-
-const schema = {
-  name: string(),
-  middleName: string(),
-  lastName: string(),
-  born: date(),
-  age: number(),
-  isMarried: boolean(),
-  childrend: array({ of: string() }),
-  // array of complex objects
-  books: array({
-    of: {
-      title: string(),
-      year: number(),
-      // we can combine multiple 'pipes'
-      id: [string(), upper()]
-    }}
-  )
-}
-
-// fix the data against the schema
-const fixedData = fix(data, schema)
-console.log(fixedData)
+import sf from '@gchumillas/schema-fixer'
 ```
 
-The previous code outputs:
-```js
-{
-  name: 'Stephen',
-  middleName: '',   // Undefined has been replaced by  ''.
-  lastName: 'King',
-  born: '1947-09-20T23:00:00.000Z',
-  age: 75,          // '75' has been replaced by 75.
-  isMarried: true,  // 1 has been replaced by true.
-  childrend: [ 'Joe Hill', 'Owen King', 'Naomi King' ],
-  books: [
-    { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
-    { title: 'Salem\'s lot', year: 1975, id: 'ISBN-0385007515' }
-  ]
-  // the "metadata" property was removed from the result
-  // as it wasn't part of the schema
-}
+## API
+
 ```
+// main functions
+fix(data, schema)     - repair the data against a schema
+parse(data, schema)   - repair the data againts a schema and return the errors
 
-**Definitions:**
+// utilities
+schema(schema)        - allow nested schemas
+join(fixers[])        - combine multiple "fixers"
 
-- A `pipe` is any function used to "validate" and "fix" the data. This library
-  already contains some predefined pipes: `string`, `number`, `boolean`, `date`,
-  `array`, `included`, `trim`, `lower` and `upper`. **However you can write your own pipes**.
-- A `schema` is any combination of `pipes`. The following examples are schemas:
-  ```js
-  const schema1 = string()
-  const schema2 = [string(), upper()]
-  const schema3 = { title: string(), year: number(), id: [string(), upper()] }
-  ```
-  The data is "validated" and "fixed" against the schemas.
-
-## Combining multiple pipes
-
-You can apply multiple pipes to the same data. For example
-```js
-const color = '  #aB4cf7  '
-const fixedColor = fix(color, [string(), trim(), upper()])
-console.log(fixedColor) // outputs: #AB4CF7
-```
-
-## Custom pipes
-
-Creating new pipes is pretty simple. For example:
-
-```js
-import { pipes, fix, pipe, error, ok } from '@gchumillas/schema-fixer'
-const { number } = pipes
-
-const floorPipe = pipe((value) => {
-  if (typeof value != 'number') {
-    return error('not a number')
-  }
-
-  return ok(Math.floor(value))
-})
-
-// Note that you can pass "scalar" values to the fix function.
-const data = fix('105.48', [number(), floorPipe()])
-console.log(data) // outputs: 105
-```
-
-Another example:
-```js
-import { pipes, fix, pipe, ok, error } from '@gchumillas/schema-fixer'
-const { string, upper, trim } = pipes
-
-const colorPipe = pipe((value) => {
-  if (typeof value != 'string' || !value.match(/^\#[0-9A-F]{6}$/i)) {
-    return error('not a color')
-  }
-
-  return ok(value)
-})
-
-// note that we are using multiple pipes before applying our custom pipe
-const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
-console.log(fixedColor) // outputs: #AB783F
-```
-
-## fix vs. parse
-
-The `parse` function, unlike the `fix` function, doesn't throw any exceptions.
-Instead, it returns an array of errors that can be inspected later. For example:
-
-```js
-// May throw an exception if "data" does not satisfy the "schema".
-try {
-  const fixedData = fix(data, schema)
-} catch (reason) {
-  console.log(reason)
-}
-
-// The "parse" function never fails.
-// Instead it returns a list of errors.
-const [fixedData, errors] = parse(data, schema)
-if (errors.length > 0) {
-  console.log(errors)
-}
-```
-
-## Predefined pipes
-
-This library includes the following predefined pipes:
-
-```js
-// Validates or converts a value into a string when possible.
-function string({
-  default = '',
-  // When possible tries to convert the value into a string,
-  // otherwise it throws an exception.
-  coerced = true,
-  // Throws an exception if value is '', null or undefined.
-  // The 'default' parameter is ignored when [required = true]
-  required = false
-}) {}
-
-fix('hello there!', string())              // returns 'hello there!'
-fix(true, string())                        // returns 'true' (string)
-fix('', string({ default: 'John Smith' })) // returns 'John Smith'
-fix(undefined, string({ required: true })) // throws 'required'
-fix(125.48, string({ coerced: false }))    // throws 'not a string'
-fix({ id: 101 }, string())                 // throws 'not a string'
-```
-
-```js
-// Validates or converts a value into a number when possible.
-function number({
-  default = 0,
-  // When possible tries to convert the value into a number,
-  // otherwise it throws an exception.
-  coerced = true,
-  // Throws an exception if value is null or undefined.
-  // The 'default' parameter is ignored when [required = true]
-  required = false
-}) {}
-
-fix(125.48, number())                  // returns 125.48
-fix('125.48', number())                // returns 125.48
-fix(undefined, number())               // returns 0
-fix(null, number({ default: 125.48 })) // returns 125.48
-fix(null, number({ required: true }))  // throws 'required'
-fix('lorem ipsum', number())           // throws 'not a number'
-```
-
-```js
-// Validates or converts a value into a boolean when possible.
-function boolean({
-  default: false,
-  // When possible tries to convert the value into a number,
-  // otherwise it throws an exception.
-  coerced = true,
-  // Throws an exception if value is null or undefined.
-  // The 'default' parameter is ignored when [required = true]
-  required = false
-}) {}
-
-fix(true, boolean())                        // returns true
-fix(1, boolean())                           // returns true
-fix('', boolean())                          // returns false
-fix('lorem ipsum', boolean())               // returns true
-fix({}, boolean())                          // returns true
-fix(undefined, boolean())                   // returns false
-fix(undefined, boolean({ default: true }))  // returns true
-fix(undefined, boolean({ required: true })) // throws 'required'
-fix(1, boolean({ coerced: false }))         // throws 'not a boolean'
-```
-
-```js
-// Validates or fixes a "string date".
-function date({
-  default = undefined,
-  // When possible tries to convert the value into a "string date",
-  // otherwise it throws an exception.
-  coerced = true,
-  // Throws an exception if value is null or undefined.
-  // The 'default' parameter is ignored when [required = true]
-  required = false
-}) {}
-
-fix('04 Dec 1995 00:12:00 GMT', date())  // returns '1995-12-04T00:12:00.000Z'
-fix('Wed 1 Feb, 2022', date())           // returns '2022-01-31T23:00:00.000Z'
-fix('2012-07-15 15:48', date())          // returns '2012-07-15T13:48:00.000Z'
-fix(undefined, date({ required: true })) // throws 'required'
-```
-
-```js
-// Validates or fixes an array.
-function array({
-  of: pipe | pipes[] | schema,
-  default: []
-}) {}
-
-fix([true, false], array({ of: string() }))                 // returns ['true', 'false']
-fix([0, 1], array({ of: boolean() }))                       // returns [false, true]
-fix([1, '2', 3], array({ of: number() }))                   // returns [1, 2, 3]
-fix(undefined, array({ of: string() }))                     // returns []
-fix(undefined, array({ of: number(), default: [1, 2, 3] })) // returns [1, 2, 3]
-fix(undefined, array({ of: number(), required: true }))     // throws 'required'
-```
-
-```js
-// Verifies that the value is included in a list of values.
-included({ in: string[] })
-
-fix('sold', included({ in: ['sold', 'available']}))              // returns 'sold'
-fix('hello, John', included({ in: ['bye bye', 'hello, John'] })) // returns 'hello, John'
-fix('chocolate', included({ in: ['tea', 'coffee'] }))            // throws 'chocolate is not in [tea, coffee]'
-fix(101, included({ in: ['101', '102']}))                        // throws 'not a string'
-```
-
-```js
-function trim() {}
-function lower() {}
-function upper() {}
-
-fix(' hello there! ', trim()) // returns 'hello there!'
-fix('Hello There!', lower())  // returns 'hello there!'
-fix('hello there!', upper())  // returns 'HELLO THERE!'
+// fixers
+string()              - fix a string
+number()              - fix a number
+boolean()             - fix a boolean
+array({ of: schema }) - fix an array
+trim()                - remove whitespaces
+lower()               - lower case
+upper()               - upper case
 ```
 
 ## Need more examples?
 
-Take a look at the [PIPES FILE](./src/pipes.js) and the [TEST FILE](./src/index.test.js).
+Take a look at Take a look at the [TESTS FILE](./src/index.test.js).
