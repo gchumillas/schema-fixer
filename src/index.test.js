@@ -1,5 +1,5 @@
 const { fix, parse } = require('./main')
-const { schema } = require('./utilities')
+const { schema, join } = require('./utilities')
 const { string, upper, lower, trim, number, boolean, array } = require('./pipes')
 
 describe('Validate README examples', () => {
@@ -43,7 +43,7 @@ describe('Validate README examples', () => {
           title: string(),
           year: number(),
           // we can combine multiple 'pipes'
-          id: [string(), upper()]
+          id: join(string(), upper())
         }
       })
     })
@@ -78,7 +78,7 @@ describe('Validate README examples', () => {
     }
 
     // Note that you can pass "scalar" values to the fix function.
-    const data = fix('105.48', [number(), floorPipe()])
+    const data = fix('105.48', join(number(), floorPipe()))
     expect(data).toBe(105)
   })
 
@@ -92,13 +92,13 @@ describe('Validate README examples', () => {
     }
 
     // note that we are using multiple pipes before applying our custom pipe
-    const fixedColor = fix('#ab783F', [string(), upper(), trim(), colorPipe()])
+    const fixedColor = fix('#ab783F', join(string(), upper(), trim(), colorPipe()))
     expect(fixedColor).toBe('#AB783F')
   })
 
   test('Combine multiple pipes', () => {
     const color = '  #aB4cf7  '
-    const fixedColor = fix(color, [string(), trim(), upper()])
+    const fixedColor = fix(color, join(string(), trim(), upper()))
     expect(fixedColor).toBe('#AB4CF7')
   })
 })
@@ -158,7 +158,7 @@ describe('Nested validations', () => {
     expect(fix(100, schema(string()))).toBe('100')
     expect(fix(undefined, schema(string()))).toBe('')
     expect(fix('hello there!', schema(string()))).toBe('hello there!')
-    expect(fix('   Hello there!   ', schema([string(), trim(), lower()]))).toBe('hello there!')
+    expect(fix('   Hello there!   ', schema(join(string(), trim(), lower())))).toBe('hello there!')
 
     expect(fix('100', schema(number()))).toBe(100)
     expect(fix(undefined, schema(number()))).toBe(0)
@@ -236,9 +236,9 @@ describe('Boolean validation', () => {
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], array({ of: [string()] }))).toEqual(['true', 'false'])
-    expect(fix([0, 1], array({ of: [boolean()] }))).toEqual([false, true])
-    expect(fix([1, '2', 3], array({ of: [number()] }))).toEqual([1, 2, 3])
+    expect(fix([true, false], array({ of: string() }))).toEqual(['true', 'false'])
+    expect(fix([0, 1], array({ of: boolean() }))).toEqual([false, true])
+    expect(fix([1, '2', 3], array({ of: number() }))).toEqual([1, 2, 3])
   })
 
   test('required option', () => {

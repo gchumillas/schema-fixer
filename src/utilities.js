@@ -18,6 +18,20 @@ const schema = (schema) => (value) => {
   return val
 }
 
+// this is a convenient utility to join pipes
+const join =
+  (...fixers) =>
+  (value) => {
+    const [val, errors] = parse(value, fixers)
+
+    if (errors.length) {
+      throw new Error('not a valid schema', { cause: errors })
+    }
+
+    return val
+  }
+
 module.exports = {
-  schema
+  schema,
+  join
 }
