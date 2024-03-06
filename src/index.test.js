@@ -174,12 +174,15 @@ describe('Text validation', () => {
 
   test('required option', () => {
     expect(() => fix(undefined, string({ required: true }))).toThrow('required')
+    expect(() => fix(null, string({ required: true }))).toThrow('required')
     expect(() => fix('', string({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
     expect(fix(undefined, string())).toBe('')
+    expect(fix(null, string())).toBe('')
     expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
+    expect(fix(null, string({ default: 'John Smith' }))).toBe('John Smith')
   })
 
   test('coerced option', () => {
@@ -191,6 +194,7 @@ describe('Text validation', () => {
 describe('Float validation', () => {
   test('basic', () => {
     expect(fix(undefined, number())).toBe(0)
+    expect(fix(null, number())).toBe(0)
     expect(fix(125.48, number())).toBe(125.48)
     expect(fix('125.48', number())).toBe(125.48)
     expect(() => fix('lorem ipsum', number())).toThrow('not a number')
@@ -198,11 +202,13 @@ describe('Float validation', () => {
 
   test('required option', () => {
     expect(() => fix(undefined, number({ required: true }))).toThrow('required')
+    expect(() => fix(null, number({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
     expect(fix('', number({ default: 100 }))).toBe(100)
     expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
+    expect(fix(null, number({ default: 125.48 }))).toBe(125.48)
   })
 
   test('coerced option', () => {
@@ -223,11 +229,14 @@ describe('Boolean validation', () => {
 
   test('required option', () => {
     expect(() => fix(undefined, boolean({ required: true }))).toThrow('required')
+    expect(() => fix(null, boolean({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
     expect(fix(undefined, boolean())).toBe(false)
+    expect(fix(null, boolean())).toBe(false)
     expect(fix(undefined, boolean({ default: true }))).toBe(true)
+    expect(fix(null, boolean({ default: true }))).toBe(true)
   })
 
   test('coerced option', () => {
@@ -244,11 +253,14 @@ describe('Array validation', () => {
 
   test('required option', () => {
     expect(() => fix(undefined, array({ of: number(), required: true }))).toThrow('required')
+    expect(() => fix(null, array({ of: number(), required: true }))).toThrow('required')
   })
 
   test('default option', () => {
     expect(fix(undefined, array({ of: string() }))).toEqual([])
+    expect(fix(null, array({ of: string() }))).toEqual([])
     expect(fix(undefined, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(null, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
