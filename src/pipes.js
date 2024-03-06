@@ -1,12 +1,12 @@
 const { parse } = require('./main')
-const { isNull } = require('./_utils')
+const { isEmpty } = require('./_utils')
 
 const string =
   (params = {}) =>
   (value) => {
     const { default: defValue = '', required = false, coerced = true } = params
 
-    if (isNull(value) || value === '') {
+    if (isEmpty(value) || value === '') {
       if (required) {
         throw new Error('required')
       }
@@ -32,7 +32,7 @@ const number =
   (value) => {
     const { default: defValue = 0, required = false, coerced = true } = params
 
-    if (isNull(value)) {
+    if (isEmpty(value)) {
       if (required) {
         throw new Error('required')
       }
@@ -54,7 +54,7 @@ const boolean =
   (value) => {
     const { default: defValue = false, required = false, coerced = true } = params
 
-    if (isNull(value)) {
+    if (isEmpty(value)) {
       if (required) {
         throw new Error('required')
       }
@@ -76,7 +76,7 @@ const array =
   (value, { path }) => {
     const { default: defValue = [], required = false, of: type } = params
 
-    if (isNull(value)) {
+    if (isEmpty(value)) {
       if (required) {
         throw new Error('required')
       }

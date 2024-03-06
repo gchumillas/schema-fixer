@@ -1,11 +1,11 @@
 const { parse } = require('./main')
-const { isNull, isObject } = require('./_utils')
+const { isEmpty, isObject } = require('./_utils')
 
 // this is a convenient utility to allow nested schemas
 const schema = (schema) => (value) => {
   const defValue = isObject(schema) ? {} : undefined
 
-  if (isNull(value)) {
+  if (isEmpty(value)) {
     value = defValue
   }
 
