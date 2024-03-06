@@ -18,6 +18,7 @@ function getAuthor = async (authorId: string) => {
     age: sf.number(),
     isMarried: sf.boolean(),
     childrend: sf.array({ of: sf.string() }),
+    // nested schema
     address: sf.schema({
       street: sf.string(),
       city: sf.string(),
