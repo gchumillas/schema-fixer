@@ -72,6 +72,26 @@ lower()               - converts text to lowercase
 upper()               - converts text to uppercase
 ```
 
+## Examples
+
+```js
+// no more `undefined` or `null` values
+fix(undefined, string())           // => ''
+fix(null, number())                // => 0
+fix(undefined, boolean())          // => false
+fix(null, array({ of: string() })) // => []
+
+// use default values
+fix('', string({ default: 'John Smith' })) // => 'John Smith'
+fix('', number({ default: 100 }))          // => 100
+fix(undefined, boolean({ default: true })) // => true
+
+fix({}, {
+  name: string({ default: 'John' }),
+  surname: string({ default: 'Smith' })
+}) // => { name: 'John', surname: 'Smith' }
+```
+
 ## Need more examples?
 
 Take a look at the [TESTS FILE](./src/index.test.js).
