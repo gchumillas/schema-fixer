@@ -190,6 +190,7 @@ describe('Text validation', () => {
 
 describe('Float validation', () => {
   test('basic', () => {
+    expect(fix(undefined, number())).toBe(0)
     expect(fix(125.48, number())).toBe(125.48)
     expect(fix('125.48', number())).toBe(125.48)
     expect(() => fix('lorem ipsum', number())).toThrow('not a number')
@@ -200,7 +201,7 @@ describe('Float validation', () => {
   })
 
   test('default option', () => {
-    expect(fix(undefined, number())).toBe(0)
+    expect(fix('', number({ default: 100 }))).toBe(100)
     expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
   })
 
