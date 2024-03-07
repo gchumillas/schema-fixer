@@ -101,7 +101,7 @@ Take a look at the [TESTS FILE](./src/index.test.js).
 ```ts
 import sf from '@gchumillas/schema-fixer'
 
-// tries to fix a "human date" to ensure it is returned in UTC format
+// tries to fix a "human date" to ensure it is returned in ISO format
 const date = () => (value: any) => {
   const milliseconds = Date.parse(`${value}`)
 
