@@ -29,7 +29,7 @@ function getAuthor = async (authorId: string) => {
       of: {
         title: sf.string(),
         year: sf.number(),
-        // we can combine multiple 'pipes'
+        // combine multiple 'fixers'
         id: sf.join(sf.string(), sf.upper())
       }
     })
@@ -72,7 +72,7 @@ lower()               - converts text to lowercase
 upper()               - converts text to uppercase
 ```
 
-## Examples
+## Basic examples
 
 ```js
 // no more `undefined` or `null` values
@@ -92,6 +92,30 @@ fix({}, {
 }) // => { name: 'John', surname: 'Smith' }
 ```
 
-## Need more examples?
+**>> Need more examples?**
 
 Take a look at the [TESTS FILE](./src/index.test.js).
+
+## Write your own "fixers"
+
+```ts
+import sf from '@gchumillas/schema-fixer'
+
+// tries to fix a "human date" to ensure it is returned in UTC format
+const date = () => (value: any) => {
+  const milliseconds = Date.parse(`${value}`)
+
+  if (isNaN(milliseconds)) {
+    throw new Error('not a date')
+  }
+
+  const date = new Date(milliseconds)
+  return date.toISOString()
+}
+
+// Examples
+fix('1 Feb 2022', date()) // => '2022-02-01T00:00:00.000Z'
+fix('2012-07-15', date()) // => '2012-07-15T00:00:00.000Z'
+fix('2023-08-03 15:48')   // => '2023-08-03T14:48:00.000Z'
+fix('1/1/1')              // => throws an error!
+```
