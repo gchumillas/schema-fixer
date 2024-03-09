@@ -4,10 +4,12 @@ Just a small library for "repairing" data from external sources with **full Type
 > 
 > No more `undefined` errors!
 
-**Basic considerations:**
+**Important notes:**
 
-- **The values "null" and "undefined" are considered harmful** and will be converted to the desired types.
+- **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(null, string())` returns the string `""` and `fix(null, number())` returns the number `0`.
 - **Values are converted by default**. For example `fix(100, string())` returns the string `"100"` and `fix("100", number())` returns the number `100`. However `fix(100, string({ coerced: false }))` throws an error.
+
+See more examples in the [Basic examples](#basic-examples) section.
 
 ```ts
 // In the next example the `fix` function tries to "repair" the data against an schema,
