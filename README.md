@@ -1,7 +1,6 @@
 Schema-Fixer is just a small library for "repairing" data from external sources with **full TypeScript support**.
 
 > Don't let your application break just because the server doesn't return data in the proper format.
->
 > No more undefined errors!
 
 ```ts
