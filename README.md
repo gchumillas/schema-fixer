@@ -4,9 +4,10 @@ Just a small library for "repairing" data from external sources with **full Type
 > 
 > No more `undefined` errors!
 
-**Important notes:**
+**Preliminar notes:**
 
 - **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(null, string())` returns the string `""` and `fix(null, number())` returns the number `0`.
+
 - **Values are converted by default**. For example `fix(100, string())` returns the string `"100"` and `fix("100", number())` returns the number `100`. However `fix(100, string({ coerced: false }))` throws an error.
 
 See more examples in the [Basic examples](#basic-examples) section.
@@ -130,4 +131,29 @@ fix('1 Feb 2022', date())       // => '2022-02-01T00:00:00.000Z'
 fix('2012-07-15', date())       // => '2012-07-15T00:00:00.000Z'
 fix('2023-08-03 15:48', date()) // => '2023-08-03T14:48:00.000Z'
 fix('1/1/1', date())            // => throws an error!
+```
+
+## Alternatives
+
+The goal of this library is to fix the most common problems quickly and comfortably. For more advanced cases I recommend using the [Zod](https://github.com/colinhacks/zod) library.
+
+Here some differences:
+
+```ts
+import { z } from "zod";
+import sf from "@gchumillas/schema-fixer";
+
+const ZodAuthor = z.object({
+  name: z.coerce.string().min(1),
+  surname: z.coerce.string().default(""),
+  age: z.coerce.number().default(0)
+});
+
+// values are converted by default (no need for "coerce")
+// empty values are converted by default (no need for "default")
+const SchemaFixerAuthor = sf.schema({
+  name: sf.string({ required: true }),
+  surname: sf.string(),
+  age: sf.number()
+});
 ```
