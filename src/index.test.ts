@@ -1,6 +1,4 @@
-const { fix, parse } = require('./main')
-const { schema, join } = require('./utilities')
-const { string, upper, lower, trim, number, boolean, array } = require('./pipes')
+import { fix, parse, schema, join, string, upper, lower, trim, number, boolean, array } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -311,7 +309,7 @@ describe('Object validation', () => {
         pseudonym: join(lower(), trim()),
         age: number(),
         single: boolean({ coerced: false }),
-        location: { latitude: number(), longitude: number() },
+        location: schema({ latitude: number(), longitude: number() }),
         novels: array({ of: string() })
       }
     )
