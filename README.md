@@ -94,7 +94,7 @@ fix(null, number())                // => 0
 fix(undefined, boolean())          // => false
 fix(null, array({ of: string() })) // => []
 
-// use default values
+// replaces "empty values" with default values
 fix('', string({ default: 'John Smith' })) // => 'John Smith'
 fix('', number({ default: 100 }))          // => 100
 fix(undefined, boolean({ default: true })) // => true
