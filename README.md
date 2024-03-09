@@ -6,9 +6,9 @@ Just a small library for "repairing" data from external sources with **full Type
 
 **Preliminar notes:**
 
-- **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(null, string())` returns the string `""` and `fix(null, number())` returns the number `0`.
+- **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(null, string())` returns `""` and `fix(null, number())` returns `0`.
 
-- **Values are converted by default**. For example `fix(100, string())` returns the string `"100"` and `fix("100", number())` returns the number `100`. However `fix(100, string({ coerced: false }))` throws an error.
+- **Values are converted by default**. For example `fix(100, string())` returns `"100"` and `fix("100", number())` returns `100`. However `fix(100, string({ coerced: false }))` throws an error.
 
 See more examples in the [Basic examples](#basic-examples) section.
 
@@ -143,12 +143,15 @@ Here some differences:
 import { z } from "zod";
 import sf from "@gchumillas/schema-fixer";
 
+// Zod
 const ZodAuthor = z.object({
   name: z.coerce.string().min(1),
   surname: z.coerce.string().default(""),
   age: z.coerce.number().default(0)
 });
 
+// Schema Fixer
+//
 // values are converted by default (no need for "coerce")
 // empty values are converted by default (no need for "default")
 const SchemaFixerAuthor = sf.schema({
