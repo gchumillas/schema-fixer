@@ -16,7 +16,7 @@ See more examples in the [Basic examples](#basic-examples) section.
 // In the next example the `fix` function tries to "repair" the data against an schema,
 // which consists of any combination of "fixers".
 //
-// You can also create your own "fixes".
+// You can also create your own "fixers".
 
 import sf from '@gchumillas/schema-fixer'
 
