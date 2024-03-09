@@ -137,7 +137,7 @@ fix('1/1/1', date())            // => throws an error!
 
 The goal of this library is to fix the most common problems quickly and comfortably. For more advanced cases I recommend using the [Zod](https://github.com/colinhacks/zod) library.
 
-Here some differences:
+Here are some differences:
 
 ```ts
 import { z } from "zod";
