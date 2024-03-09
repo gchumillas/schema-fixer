@@ -6,7 +6,7 @@ Just a small library for "repairing" data from external sources with **full Type
 
 **Preliminary notes:**
 
-- **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(null, string())` returns `""` and `fix(null, number())` returns `0`.
+- **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(undefined, string())` returns `""` and `fix(null, number())` returns `0`.
 
 - **Values are converted by default**. For example `fix(100, string())` returns `"100"` and `fix("100", number())` returns `100`. However `fix(100, string({ coerced: false }))` throws an error.
 
