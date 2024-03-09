@@ -3,6 +3,8 @@ Schema-Fixer is just a small library for "repairing" data from external sources 
 > Don't let your application break just because the server doesn't return data in the proper format.
 > No more undefined errors!
 
+The `fix` function tries to "repair" the data against an schema, which consists of any combination of "fixers". You can [create your own fixers](#write-your-own-fixers).
+
 ```ts
 import sf from '@gchumillas/schema-fixer'
 
