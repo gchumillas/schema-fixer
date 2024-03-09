@@ -4,7 +4,7 @@ Just a small library for "repairing" data from external sources with **full Type
 > 
 > No more `undefined` errors!
 
-**Preliminar notes:**
+**Preliminary notes:**
 
 - **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(null, string())` returns `""` and `fix(null, number())` returns `0`.
 
