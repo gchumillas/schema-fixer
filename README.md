@@ -12,7 +12,7 @@ sf.fix(null, sf.number())                   // returns 0
 sf.fix(null, sf.boolean({ default: true })) // returns true
 ```
 
-### Use Schema-Fixer in combination to Axios
+### Use in combination with Axios (a typical example)
 
 The following code shows a typical case of using "schema-fixer" in combination with "axios":
 
