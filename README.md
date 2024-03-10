@@ -1,3 +1,6 @@
+Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
+
+
 Just a small library for "repairing" data from external sources with **full TypeScript support**.
 
 > Don't let your application break just because the server doesn't return data in the proper format.
