@@ -1,6 +1,6 @@
 Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
 
-## `null` and `undefiend` are harmful values
+### `undefined` and `null` are harmful values
 
 The values `undefined` and `null` are considered "harmful" and they are converted to "default values". For example:
 
@@ -12,7 +12,7 @@ sf.fix(null, sf.number())                   // returns 0
 sf.fix(null, sf.boolean({ default: true })) // returns true
 ```
 
-## Use Schema-Fixer in combination to Axios
+### Use Schema-Fixer in combination to Axios
 
 The following code shows a typical case of using "schema-fixer" in combination with "axios":
 
