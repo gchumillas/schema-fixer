@@ -1,3 +1,7 @@
+# Schema-Fixer
+
+A small library to fix external data sources.
+
 Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
 
 ### `undefined` and `null` are harmful values
