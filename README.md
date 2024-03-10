@@ -1,23 +1,26 @@
-Just a small library for "repairing" data from external sources with **full TypeScript support**.
+# Schema-Fixer
 
-> Don't let your application break just because the server doesn't return data in the proper format.
-> 
-> No more `undefined` errors!
+A small library to fix external data sources.
 
-**Preliminary notes:**
+Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
 
-- **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(undefined, string())` returns `""` and `fix(null, number())` returns `0`.
+### `undefined` and `null` are harmful values
 
-- **Values are converted by default**. For example `fix(100, string())` returns `"100"` and `fix("100", number())` returns `100`. However `fix(100, string({ coerced: false }))` throws an error.
-
-See more examples in the [Basic examples](#basic-examples) section.
+The values `undefined` and `null` are considered "harmful" and they are converted to "default values". For example:
 
 ```ts
-// In the next example the `fix` function tries to "repair" the data against an schema,
-// which consists of any combination of "fixers".
-//
-// You can also create your own "fixers".
+import sf from '@gchumillas/schema-fixer'
 
+sf.fix(undefined, sf.string())              // returns ""
+sf.fix(null, sf.number())                   // returns 0
+sf.fix(null, sf.boolean({ default: true })) // returns true
+```
+
+### Use in combination with Axios (a typical example)
+
+The following code shows a typical example of using "schema-fixer" in combination with Axios to "repair" data coming from the server:
+
+```ts
 import sf from '@gchumillas/schema-fixer'
 
 function getAuthor = async (authorId: string) => {
@@ -48,6 +51,18 @@ function getAuthor = async (authorId: string) => {
     })
   })
 }
+```
+
+### Not all data can be fixed
+
+It's important to note that **not all data can be fixed**. In those cases the `fix` function throws an error. For example:
+
+```ts
+import sf from '@gchumillas/schema-fixer'
+
+fix("", string({ required: true }))                  // throws an error
+fix("I'm not a number", number())                    // throws an error
+fix({ name: 'John Smith' }, array({ of: string() })) // throws an error
 ```
 
 ## Install
@@ -133,17 +148,14 @@ fix('2023-08-03 15:48', date()) // => '2023-08-03T14:48:00.000Z'
 fix('1/1/1', date())            // => throws an error!
 ```
 
-## Alternatives
+## Compared to Zod
 
-The goal of this library is to fix the most common problems quickly and comfortably. For more advanced cases I recommend using the [Zod](https://github.com/colinhacks/zod) library.
-
-Here are some differences:
+This library was designed to simplify the process of "fixing data", rather than validating it. Here are some differences:
 
 ```ts
-import { z } from "zod";
-import sf from "@gchumillas/schema-fixer";
-
 // Zod
+import { z } from "zod";
+
 const ZodAuthor = z.object({
   name: z.coerce.string().min(1),
   surname: z.coerce.string().default(""),
@@ -151,9 +163,10 @@ const ZodAuthor = z.object({
 });
 
 // Schema Fixer
-//
-// values are converted by default (no need for "coerce")
-// empty values are converted by default (no need for "default")
+import sf from "@gchumillas/schema-fixer";
+
+// - values are converted by default (no need for "coerce")
+// - empty values are converted by default (no need for "default")
 const SchemaFixerAuthor = sf.schema({
   name: sf.string({ required: true }),
   surname: sf.string(),
