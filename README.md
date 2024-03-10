@@ -1,8 +1,8 @@
 Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
 
-The values `undefined` and `null` are considered "harmful" and will be converted to "default values". For example:
+The values `undefined` and `null` are considered "harmful" and they are converted to "default values". For example:
 
-```js
+```ts
 import sf from '@gchumillas/schema-fixer'
 
 sf.fix(undefined, sf.string())              // returns ""
@@ -10,12 +10,9 @@ sf.fix(null, sf.number())                   // returns 0
 sf.fix(null, sf.boolean({ default: true })) // returns true
 ```
 
-```ts
-// In the next example the `fix` function tries to "repair" the data against an schema,
-// which consists of any combination of "fixers".
-//
-// You can also create your own "fixers".
+The following code shows a typical case of using "schema-fixer" in combination with "axios":
 
+```ts
 import sf from '@gchumillas/schema-fixer'
 
 function getAuthor = async (authorId: string) => {
@@ -46,6 +43,16 @@ function getAuthor = async (authorId: string) => {
     })
   })
 }
+```
+
+It's important to note that **not all data can be fixed**. In those cases the `fix` function throws an error. For example:
+
+```ts
+import sf from '@gchumillas/schema-fixer'
+
+fix("", string({ required: true }))                  // throws an error
+fix("I'm not a number", number())                    // throws an error
+fix({ name: 'John Smith' }, array({ of: string() })) // throws an error
 ```
 
 ## Install
@@ -131,17 +138,14 @@ fix('2023-08-03 15:48', date()) // => '2023-08-03T14:48:00.000Z'
 fix('1/1/1', date())            // => throws an error!
 ```
 
-## Alternatives
+## Compared to Zod
 
-The goal of this library is to fix the most common problems quickly and comfortably. For more advanced cases I recommend using the [Zod](https://github.com/colinhacks/zod) library.
-
-Here are some differences:
+This library was designed to simplify the process of "fixing data", rather than validating it. Here are some differences:
 
 ```ts
-import { z } from "zod";
-import sf from "@gchumillas/schema-fixer";
-
 // Zod
+import { z } from "zod";
+
 const ZodAuthor = z.object({
   name: z.coerce.string().min(1),
   surname: z.coerce.string().default(""),
@@ -149,9 +153,10 @@ const ZodAuthor = z.object({
 });
 
 // Schema Fixer
-//
-// values are converted by default (no need for "coerce")
-// empty values are converted by default (no need for "default")
+import sf from "@gchumillas/schema-fixer";
+
+// - values are converted by default (no need for "coerce")
+// - empty values are converted by default (no need for "default")
 const SchemaFixerAuthor = sf.schema({
   name: sf.string({ required: true }),
   surname: sf.string(),
