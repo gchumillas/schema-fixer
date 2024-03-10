@@ -14,7 +14,7 @@ sf.fix(null, sf.boolean({ default: true })) // returns true
 
 ### Use in combination with Axios (a typical example)
 
-The following code shows a typical case of using "schema-fixer" in combination with "axios":
+The following code shows a typical example of using "schema-fixer" in combination with Axios to "repair" data coming from the server:
 
 ```ts
 import sf from '@gchumillas/schema-fixer'
