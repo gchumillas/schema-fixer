@@ -49,7 +49,7 @@ function getAuthor = async (authorId: string) => {
 }
 ```
 
-## Not all data can be fixed
+### Not all data can be fixed
 
 It's important to note that **not all data can be fixed**. In those cases the `fix` function throws an error. For example:
 
