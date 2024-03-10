@@ -1,5 +1,7 @@
 Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
 
+## The values `null` and `undefiend` are harmful
+
 The values `undefined` and `null` are considered "harmful" and they are converted to "default values". For example:
 
 ```ts
@@ -9,6 +11,8 @@ sf.fix(undefined, sf.string())              // returns ""
 sf.fix(null, sf.number())                   // returns 0
 sf.fix(null, sf.boolean({ default: true })) // returns true
 ```
+
+## Use Schema-Fixer in combination to Axios
 
 The following code shows a typical case of using "schema-fixer" in combination with "axios":
 
@@ -44,6 +48,8 @@ function getAuthor = async (authorId: string) => {
   })
 }
 ```
+
+## Not all data can be fixed
 
 It's important to note that **not all data can be fixed**. In those cases the `fix` function throws an error. For example:
 
