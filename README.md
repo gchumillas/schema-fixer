@@ -1,6 +1,6 @@
 Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
 
-## The values `null` and `undefiend` are harmful
+## `null` and `undefiend` are harmful values
 
 The values `undefined` and `null` are considered "harmful" and they are converted to "default values". For example:
 
