@@ -1,19 +1,14 @@
 Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
 
+The values `undefined` and `null` are considered "harmful" and will be converted to "default values". For example:
 
-Just a small library for "repairing" data from external sources with **full TypeScript support**.
+```js
+import sf from '@gchumillas/schema-fixer'
 
-> Don't let your application break just because the server doesn't return data in the proper format.
-> 
-> No more `undefined` errors!
-
-**Preliminary notes:**
-
-- **The values `null` and `undefined` are considered harmful** and will be converted to the desired value types. For example `fix(undefined, string())` returns `""` and `fix(null, number())` returns `0`.
-
-- **Values are converted by default**. For example `fix(100, string())` returns `"100"` and `fix("100", number())` returns `100`. However `fix(100, string({ coerced: false }))` throws an error.
-
-See more examples in the [Basic examples](#basic-examples) section.
+sf.fix(undefined, sf.string())              // returns ""
+sf.fix(null, sf.number())                   // returns 0
+sf.fix(null, sf.boolean({ default: true })) // returns true
+```
 
 ```ts
 // In the next example the `fix` function tries to "repair" the data against an schema,
