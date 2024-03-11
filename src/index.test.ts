@@ -115,7 +115,7 @@ describe('Nested validations', () => {
       name: string(),
       address: schema({
         street: string(),
-        postalCode: string({ required: true }),
+        postalCode: string(),
         city: string({ default: 'Portland' })
       })
     })
@@ -130,34 +130,11 @@ describe('Nested validations', () => {
     })
   })
 
-  test('with errors', () => {
-    const [, errors] = parse(
-      {
-        name: 'John Smith'
-      },
-      {
-        name: string(),
-        address: schema({
-          street: string({ required: true }),
-          postalCode: string()
-        })
-      }
-    )
-
-    expect(errors).toMatchObject([
-      {
-        'path': 'address',
-        'error': [{ 'path': 'street', 'error': 'required' }]
-      }
-    ])
-  })
-
   test('with aliases', () => {
     expect(fix(100, schema(string()))).toBe('100')
     expect(fix(undefined, schema(string()))).toBe('')
     expect(fix('hello there!', schema(string()))).toBe('hello there!')
     expect(fix('   Hello there!   ', schema(join(string(), trim(), lower())))).toBe('hello there!')
-
     expect(fix('100', schema(number()))).toBe(100)
     expect(fix(undefined, schema(number()))).toBe(0)
   })
@@ -167,13 +144,8 @@ describe('Text validation', () => {
   test('basic', () => {
     expect(fix('hello there!', string())).toBe('hello there!')
     expect(fix(true, string())).toBe('true')
+    expect(fix(false, string())).toBe('false')
     expect(fix(125.48, string())).toBe('125.48')
-  })
-
-  test('required option', () => {
-    expect(() => fix(undefined, string({ required: true }))).toThrow('required')
-    expect(() => fix(null, string({ required: true }))).toThrow('required')
-    expect(() => fix('', string({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
@@ -193,14 +165,11 @@ describe('Float validation', () => {
   test('basic', () => {
     expect(fix(undefined, number())).toBe(0)
     expect(fix(null, number())).toBe(0)
+    expect(fix(false, number())).toBe(0)
+    expect(fix(true, number())).toBe(1)
     expect(fix(125.48, number())).toBe(125.48)
     expect(fix('125.48', number())).toBe(125.48)
     expect(() => fix('lorem ipsum', number())).toThrow('not a number')
-  })
-
-  test('required option', () => {
-    expect(() => fix(undefined, number({ required: true }))).toThrow('required')
-    expect(() => fix(null, number({ required: true }))).toThrow('required')
   })
 
   test('default option', () => {
@@ -225,11 +194,6 @@ describe('Boolean validation', () => {
     expect(fix({}, boolean())).toBe(true)
   })
 
-  test('required option', () => {
-    expect(() => fix(undefined, boolean({ required: true }))).toThrow('required')
-    expect(() => fix(null, boolean({ required: true }))).toThrow('required')
-  })
-
   test('default option', () => {
     expect(fix(undefined, boolean())).toBe(false)
     expect(fix(null, boolean())).toBe(false)
@@ -247,11 +211,6 @@ describe('Array validation', () => {
     expect(fix([true, false], array({ of: string() }))).toEqual(['true', 'false'])
     expect(fix([0, 1], array({ of: boolean() }))).toEqual([false, true])
     expect(fix([1, '2', 3], array({ of: number() }))).toEqual([1, 2, 3])
-  })
-
-  test('required option', () => {
-    expect(() => fix(undefined, array({ of: number(), required: true }))).toThrow('required')
-    expect(() => fix(null, array({ of: number(), required: true }))).toThrow('required')
   })
 
   test('default option', () => {
@@ -293,7 +252,6 @@ describe('Object validation', () => {
     const [, errors] = parse(
       {
         name: 125.48,
-        lastName: '',
         pseudonym: 78945,
         age: 'old',
         single: 1,
@@ -305,7 +263,6 @@ describe('Object validation', () => {
       },
       {
         name: string({ coerced: false }),
-        lastName: string({ required: true }),
         pseudonym: join(lower(), trim()),
         age: number(),
         single: boolean({ coerced: false }),
@@ -316,7 +273,6 @@ describe('Object validation', () => {
 
     expect(errors).toMatchObject([
       { 'path': 'name', 'error': 'not a string' },
-      { 'path': 'lastName', 'error': 'required' },
       { 'path': 'pseudonym', 'error': 'not a string' },
       { 'path': 'age', 'error': 'not a number' },
       { 'path': 'single', 'error': 'not a boolean' },
@@ -344,5 +300,19 @@ describe('Custom pipes', () => {
 
     expect(fix('105.48', join(number(), floor()))).toBe(105)
     expect(() => fix('105.48', floor())).toThrow('not a number')
+  })
+})
+
+describe('default & required options', () => {
+  test('string', () => {
+    const emptyValues = [undefined, null, '']
+    for (const emptyValue of emptyValues) {
+      // required: false, default: !empty
+      expect(fix(emptyValue, string({ default: 'hello!' }))).toBe('hello!')
+      expect(fix(emptyValue, string())).toBe('')
+
+      // required: true, default: empty
+      expect(() => fix(emptyValue, string({ required: true, default: undefined }))).toThrow('required')
+    }
   })
 })

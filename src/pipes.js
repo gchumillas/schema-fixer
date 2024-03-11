@@ -1,66 +1,43 @@
-const { parse } = require('./main')
-const { isEmpty } = require('./_utils')
+const { parse, createParser } = require('./main')
 
-const string =
-  (params = {}) =>
-  (value) => {
-    const { default: defValue = '', required = false, coerced = true } = params
-
-    if (isEmpty(value) || value === '') {
-      if (required) {
-        throw new Error('required')
-      }
-
-      value = defValue
-    }
+const string = createParser(
+  (value, params) => {
+    const { coerced = true } = params
 
     if (typeof value == 'string') {
-      if (required && !value) {
-        throw new Error('required')
-      }
-
       return value
     } else if (coerced && ['boolean', 'number'].includes(typeof value)) {
       return `${value}`
     }
 
     throw new Error('not a string')
-  }
+  },
+  { default: '' }
+)
 
-const number =
-  (params = {}) =>
-  (value) => {
-    const { default: defValue = 0, required = false, coerced = true } = params
-
-    if (isEmpty(value)) {
-      if (required) {
-        throw new Error('required')
-      }
-
-      value = defValue
-    }
+const number = createParser(
+  (value, params) => {
+    const { coerced = true } = params
 
     if (typeof value == 'number') {
       return value
-    } else if (coerced && !isNaN(value)) {
+    } else if (coerced && ['boolean', 'string'].includes(typeof value)) {
+      const val = +value
+      if (isNaN(val)) {
+        throw new Error('not a number')
+      }
+
       return +value
     }
 
     throw new Error('not a number')
-  }
+  },
+  { default: 0 }
+)
 
-const boolean =
-  (params = {}) =>
-  (value) => {
-    const { default: defValue = false, required = false, coerced = true } = params
-
-    if (isEmpty(value)) {
-      if (required) {
-        throw new Error('required')
-      }
-
-      value = defValue
-    }
+const boolean = createParser(
+  (value, params) => {
+    const { coerced = true } = params
 
     if (typeof value == 'boolean') {
       return value
@@ -69,20 +46,13 @@ const boolean =
     }
 
     throw new Error('not a boolean')
-  }
+  },
+  { default: false }
+)
 
-const array =
-  (params = {}) =>
-  (value, { path }) => {
-    const { default: defValue = [], required = false, of: type } = params
-
-    if (isEmpty(value)) {
-      if (required) {
-        throw new Error('required')
-      }
-
-      value = defValue
-    }
+const array = createParser(
+  (value, params) => {
+    const { of: type, path } = params
 
     if (Array.isArray(value)) {
       const [val, errors] = value.reduce(
@@ -104,31 +74,42 @@ const array =
     }
 
     throw new Error('not an array')
-  }
+  },
+  { default: [] }
+)
 
-const trim = () => (value) => {
-  if (typeof value != 'string') {
-    throw new Error('not a string')
-  }
+const trim = createParser(
+  (value) => {
+    if (typeof value != 'string') {
+      throw new Error('not a string')
+    }
 
-  return value.trim()
-}
+    return value.trim()
+  },
+  { default: '' }
+)
 
-const lower = () => (value) => {
-  if (typeof value != 'string') {
-    throw new Error('not a string')
-  }
+const lower = createParser(
+  (value) => {
+    if (typeof value != 'string') {
+      throw new Error('not a string')
+    }
 
-  return value.toLocaleLowerCase()
-}
+    return value.toLocaleLowerCase()
+  },
+  { default: '' }
+)
 
-const upper = () => (value) => {
-  if (typeof value != 'string') {
-    throw new Error('not a string')
-  }
+const upper = createParser(
+  (value) => {
+    if (typeof value != 'string') {
+      throw new Error('not a string')
+    }
 
-  return value.toLocaleUpperCase()
-}
+    return value.toLocaleUpperCase()
+  },
+  { default: '' }
+)
 
 module.exports = {
   string,

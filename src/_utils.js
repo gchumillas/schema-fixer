@@ -1,5 +1,5 @@
 const concat = (texts, glue = '') => texts.filter((x) => !!x).join(glue)
-const isEmpty = (value) => value === null || value === undefined || value === ''
+const isNone = (value) => value === null || value === undefined
 const isObject = (value) => value !== null && typeof value == 'object' && !Array.isArray(value)
 
 const tryCatch = (fn) => {
@@ -12,4 +12,4 @@ const tryCatch = (fn) => {
   return [val, err]
 }
 
-module.exports = { concat, isEmpty, isObject, tryCatch }
+module.exports = { concat, isNone, isObject, tryCatch }

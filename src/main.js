@@ -1,4 +1,4 @@
-const { tryCatch, isObject, concat } = require('./_utils')
+const { tryCatch, isObject, concat, isNone } = require('./_utils')
 
 const parse = (value, schema, { path = '' } = {}) => {
   if (typeof schema == 'function') {
@@ -42,4 +42,25 @@ const fix = (value, schema) => {
   return val
 }
 
-module.exports = { parse, fix }
+function createParser(fn, options = {}) {
+  return (options1) => (value, options2) => {
+    const params = { ...options, ...options1, ...options2 }
+    const { default: defValue, required = true } = params
+
+    if (isNone(value) || value === '') {
+      value = defValue
+
+      if (isNone(value)) {
+        if (required) {
+          throw new Error('required')
+        }
+
+        return value
+      }
+    }
+
+    return fn(value, { ...params, required })
+  }
+}
+
+module.exports = { parse, fix, createParser }
