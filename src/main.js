@@ -7,8 +7,8 @@ const parse = (value, schema, { path = '' } = {}) => {
 
   if (Array.isArray(schema)) {
     let acc = value
-    for (const pipe of schema) {
-      const [val, error] = tryCatch(() => pipe(acc, { path }))
+    for (const parser of schema) {
+      const [val, error] = tryCatch(() => parser(acc, { path }))
       if (error) {
         return [value, [{ path, error }]]
       }

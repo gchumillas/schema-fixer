@@ -1,4 +1,6 @@
-import { fix, parse, schema, join, string, upper, lower, trim, number, boolean, array } from './index'
+import { fix, parse } from './main'
+import { schema, join } from './utilities'
+import { string, upper, lower, trim, number, boolean, array } from './parsers'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -40,7 +42,7 @@ describe('Validate README examples', () => {
         of: {
           title: string(),
           year: number(),
-          // we can combine multiple 'pipes'
+          // we can combine multiple 'parsers'
           id: join(string(), upper())
         }
       })
@@ -66,8 +68,8 @@ describe('Validate README examples', () => {
     })
   })
 
-  test('floorPipe', () => {
-    const floorPipe = () => (value) => {
+  test('floorParser', () => {
+    const floorParser = () => (value) => {
       if (typeof value != 'number') {
         throw new Error('not a number')
       }
@@ -76,12 +78,12 @@ describe('Validate README examples', () => {
     }
 
     // Note that you can pass "scalar" values to the fix function.
-    const data = fix('105.48', join(number(), floorPipe()))
+    const data = fix('105.48', join(number(), floorParser()))
     expect(data).toBe(105)
   })
 
-  test('colorPipe', () => {
-    const colorPipe = () => (value) => {
+  test('colorParser', () => {
+    const colorParser = () => (value) => {
       if (typeof value != 'string' || !value.match(/^#[0-9A-F]{6}$/i)) {
         throw new Error('not a color')
       }
@@ -89,12 +91,12 @@ describe('Validate README examples', () => {
       return value
     }
 
-    // note that we are using multiple pipes before applying our custom pipe
-    const fixedColor = fix('#ab783F', join(string(), upper(), trim(), colorPipe()))
+    // note that we are using multiple parsers before applying our custom parser
+    const fixedColor = fix('#ab783F', join(upper(), trim(), colorParser()))
     expect(fixedColor).toBe('#AB783F')
   })
 
-  test('Combine multiple pipes', () => {
+  test('Combine multiple parsers', () => {
     const color = '  #aB4cf7  '
     const fixedColor = fix(color, join(string(), trim(), upper()))
     expect(fixedColor).toBe('#AB4CF7')
@@ -221,7 +223,7 @@ describe('Array validation', () => {
   })
 })
 
-describe('Combine multiple pipelines', () => {
+describe('Combine multiple parsers', () => {
   test('trim', () => {
     expect(fix(' hello there! ', join(string(), trim()))).toBe('hello there!')
     expect(() => fix(125.48, trim())).toThrow('not a string')
@@ -237,7 +239,7 @@ describe('Combine multiple pipelines', () => {
     expect(() => fix(125.48, upper())).toThrow('not a string')
   })
 
-  test('combined pipelines', () => {
+  test('combined parsers', () => {
     expect(fix(' Hello There! ', join(string(), trim(), lower()))).toBe('hello there!')
     expect(fix(' Hello There! ', join(string(), trim(), upper()))).toBe('HELLO THERE!')
   })
@@ -288,8 +290,8 @@ describe('Object validation', () => {
   })
 })
 
-describe('Custom pipes', () => {
-  test('floor pipe', () => {
+describe('Custom parsers', () => {
+  test('floor parser', () => {
     const floor = () => (value) => {
       if (typeof value != 'number') {
         throw new Error('not a number')

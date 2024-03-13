@@ -1,5 +1,5 @@
 const { parse, fix } = require('./main')
 const { schema, join } = require('./utilities')
-const pipes = require('./pipes')
+const parsers = require('./parsers')
 
-module.exports = { parse, fix, schema, join, ...pipes }
+module.exports = { parse, fix, schema, join, ...parsers }

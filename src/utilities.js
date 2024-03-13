@@ -21,7 +21,7 @@ const schema = (schema) => (value) => {
   return val
 }
 
-// this is a convenient utility to join pipes
+// this is a convenient utility to join parsers
 const join =
   (...fixers) =>
   (value) => {

@@ -28,7 +28,7 @@ declare function createParser<T, S extends Record<string, any>>(
 export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
 export function join<T>(...fixers: Fixer<T>[]): Fixer<T>
 
-// pipes
+// parsers
 export const string: ReturnType<typeof createParser<string, { coerced?: boolean }>>
 export const number: ReturnType<typeof createParser<number, { coerced?: boolean }>>
 export const boolean: ReturnType<typeof createParser<boolean, { coerced?: boolean }>>
