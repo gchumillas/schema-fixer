@@ -307,12 +307,91 @@ describe('default & required options', () => {
   test('string', () => {
     const emptyValues = [undefined, null, '']
     for (const emptyValue of emptyValues) {
-      // required: false, default: !empty
+      // required: false, default: undefined
+      expect(fix(emptyValue, string({ required: false, default: undefined }))).toBeUndefined()
+
+      // required: false, default: !undefined
+      expect(fix(emptyValue, string({ required: false, default: 'hello!' }))).toBe('hello!')
+      expect(fix(emptyValue, string({ required: false }))).toBe('')
+
+      // required: true, default: undefined
+      expect(() => fix(emptyValue, string({ required: true, default: undefined }))).toThrow('required')
+      expect(() => fix(emptyValue, string({ default: undefined }))).toThrow('required')
+
+      // required: true, default: !undefined
+      expect(fix(emptyValue, string({ required: true, default: 'hello!' }))).toBe('hello!')
       expect(fix(emptyValue, string({ default: 'hello!' }))).toBe('hello!')
       expect(fix(emptyValue, string())).toBe('')
+    }
+  })
 
-      // required: true, default: empty
-      expect(() => fix(emptyValue, string({ required: true, default: undefined }))).toThrow('required')
+  test('number', () => {
+    const emptyValues = [undefined, null, '']
+    for (const emptyValue of emptyValues) {
+      // required: false, default: undefined
+      expect(fix(emptyValue, number({ required: false, default: undefined }))).toBeUndefined()
+
+      // required: false, default: !undefined
+      expect(fix(emptyValue, number({ required: false, default: 123 }))).toBe(123)
+      expect(fix(emptyValue, number({ required: false }))).toBe(0)
+
+      // required: true, default: undefined
+      expect(() => fix(emptyValue, number({ required: true, default: undefined }))).toThrow('required')
+      expect(() => fix(emptyValue, number({ default: undefined }))).toThrow('required')
+
+      // required: true, default: !undefined
+      expect(fix(emptyValue, number({ required: true, default: 123 }))).toBe(123)
+      expect(fix(emptyValue, number({ default: 123 }))).toBe(123)
+      expect(fix(emptyValue, number())).toBe(0)
+    }
+  })
+
+  test('boolean', () => {
+    const emptyValues = [undefined, null, '']
+    for (const emptyValue of emptyValues) {
+      // required: false, default: undefined
+      expect(fix(emptyValue, boolean({ required: false, default: undefined }))).toBeUndefined()
+
+      // required: false, default: !undefined
+      expect(fix(emptyValue, boolean({ required: false, default: true }))).toBe(true)
+      expect(fix(emptyValue, boolean({ required: false }))).toBe(false)
+
+      // required: true, default: undefined
+      expect(() => fix(emptyValue, boolean({ required: true, default: undefined }))).toThrow('required')
+      expect(() => fix(emptyValue, boolean({ default: undefined }))).toThrow('required')
+
+      // required: true, default: !undefined
+      expect(fix(emptyValue, boolean({ required: true, default: true }))).toBe(true)
+      expect(fix(emptyValue, boolean({ default: true }))).toBe(true)
+      expect(fix(emptyValue, boolean())).toBe(false)
+    }
+  })
+
+  test('array', () => {
+    const parsers = [
+      { parser: string(), default: ['aaa', 'bbb', 'ccc'] },
+      { parser: number(), default: [1, 2, 3] },
+      { parser: boolean(), default: [false, true] }
+    ]
+    const emptyValues = [undefined, null, '']
+    for (const emptyValue of emptyValues) {
+      for (const { parser, default: defValue } of parsers) {
+        // required: false, default: undefined
+        expect(fix(emptyValue, array({ of: parser, required: false, default: undefined }))).toBeUndefined()
+
+        // required: false, default: !undefined
+        expect(fix(emptyValue, array({ of: parser, required: false, default: defValue }))).toEqual(defValue)
+        expect(fix(emptyValue, array({ of: parser, required: false }))).toEqual([])
+
+        // required: true, default: undefined
+        expect(() => fix(emptyValue, array({ of: parser, required: true, default: undefined }))).toThrow('required')
+        expect(() => fix(emptyValue, array({ of: parser, default: undefined }))).toThrow('required')
+
+        // required: true, default: !undefined
+        expect(fix(emptyValue, array({ of: parser, required: true, default: defValue }))).toEqual(defValue)
+        expect(fix(emptyValue, array({ of: parser, default: defValue }))).toEqual(defValue)
+        expect(fix(emptyValue, array({ of: parser }))).toEqual([])
+      }
     }
   })
 })
