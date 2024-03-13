@@ -46,7 +46,7 @@ function getAuthor = async (authorId: string) => {
         title: sf.string(),
         year: sf.number(),
         // combine multiple 'fixers'
-        id: sf.join(sf.string(), sf.upper())
+        id: sf.join(sf.trim(), sf.upper())
       }
     })
   })
@@ -60,9 +60,9 @@ It's important to note that **not all data can be fixed**. In those cases the `f
 ```ts
 import sf from '@gchumillas/schema-fixer'
 
-fix("", string({ required: true }))                  // throws an error
-fix("I'm not a number", number())                    // throws an error
-fix({ name: 'John Smith' }, array({ of: string() })) // throws an error
+fix({ text: "I'm not a string" }, string())      // throws an error
+fix("I'm not a number", number())                // throws an error
+fix("I'm not an array", array({ of: string() })) // throws an error
 ```
 
 ## Install
@@ -83,21 +83,24 @@ import sf from '@gchumillas/schema-fixer'
 
 ```
 // main functions
-fix(data, schema)     - repairs the data against a schema
-parse(data, schema)   - repairs the data againts a schema and return the errors
+fix(data, schema)      - repairs the data against a schema
+parse(data, schema)    - repairs the data againts a schema and return the errors
+
+// create parsers
+createParser(fn, opts) - create a custom parser
 
 // utilities
-schema(schema)        - allows nested schemas
-join(fixers[])        - combines multiple "fixers"
+schema(schema)         - allows nested schemas
+join(fixers[])         - combines multiple "fixers"
 
 // fixers
-string()              - fixes a string
-number()              - fixes a number
-boolean()             - fixes a boolean
-array({ of: schema }) - fixes an array
-trim()                - removes whitespaces
-lower()               - converts text to lowercase
-upper()               - converts text to uppercase
+string()               - fixes a string
+number()               - fixes a number
+boolean()              - fixes a boolean
+array({ of: schema })  - fixes an array
+trim()                 - removes whitespaces
+lower()                - converts text to lowercase
+upper()                - converts text to uppercase
 ```
 
 ## Basic examples
@@ -124,13 +127,13 @@ fix({}, {
 
 Take a look at the [TESTS FILE](./src/index.test.js).
 
-## Write your own "fixers"
+## Write your own "parsers"
 
 ```ts
 import sf from '@gchumillas/schema-fixer'
 
 // tries to fix a "human date" to ensure it is returned in ISO format
-const date = () => (value: any) => {
+const date = sf.createParser((value: any) => {
   const milliseconds = Date.parse(`${value}`)
 
   if (isNaN(milliseconds)) {
@@ -139,7 +142,7 @@ const date = () => (value: any) => {
 
   const date = new Date(milliseconds)
   return date.toISOString()
-}
+})
 
 // Examples
 fix('1 Feb 2022', date())       // => '2022-02-01T00:00:00.000Z'
@@ -148,28 +151,6 @@ fix('2023-08-03 15:48', date()) // => '2023-08-03T14:48:00.000Z'
 fix('1/1/1', date())            // => throws an error!
 ```
 
-## Compared to Zod
+## Compared with Zod
 
-This library was designed to simplify the process of "fixing data", rather than validating it. Here are some differences:
-
-```ts
-// Zod
-import { z } from "zod";
-
-const ZodAuthor = z.object({
-  name: z.coerce.string().min(1),
-  surname: z.coerce.string().default(""),
-  age: z.coerce.number().default(0)
-});
-
-// Schema Fixer
-import sf from "@gchumillas/schema-fixer";
-
-// - values are converted by default (no need for "coerce")
-// - empty values are converted by default (no need for "default")
-const SchemaFixerAuthor = sf.schema({
-  name: sf.string({ required: true }),
-  surname: sf.string(),
-  age: sf.number()
-});
-```
+Keep in mind that this library was designed to **simplify the process of "fixing" data**, rather than validating it against a given schema. For other uses Zod may offer better features.
