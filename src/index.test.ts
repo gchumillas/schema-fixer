@@ -1,6 +1,8 @@
-import { fix, parse } from './main'
-import { schema, join } from './utilities'
-import { string, upper, lower, trim, number, boolean, array } from './parsers'
+import {
+  fix, parse,
+  string, upper, lower, trim, number, boolean, array,
+  schema, join
+} from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
