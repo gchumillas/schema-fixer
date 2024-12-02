@@ -71,7 +71,7 @@ describe('Validate README examples', () => {
   })
 
   test('floorParser', () => {
-    const floorParser = () => (value) => {
+    const floorParser = () => (value: any) => {
       if (typeof value != 'number') {
         throw new Error('not a number')
       }
@@ -85,7 +85,7 @@ describe('Validate README examples', () => {
   })
 
   test('colorParser', () => {
-    const colorParser = () => (value) => {
+    const colorParser = () => (value: any) => {
       if (typeof value != 'string' || !value.match(/^#[0-9A-F]{6}$/i)) {
         throw new Error('not a color')
       }
@@ -294,7 +294,7 @@ describe('Object validation', () => {
 
 describe('Custom parsers', () => {
   test('floor parser', () => {
-    const floor = () => (value) => {
+    const floor = () => (value: any) => {
       if (typeof value != 'number') {
         throw new Error('not a number')
       }
