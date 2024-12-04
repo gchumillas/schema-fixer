@@ -399,3 +399,46 @@ describe('default & required options', () => {
     }
   })
 })
+
+describe('fix invalid data', () => {
+  test('invalid strings', () => {
+    const [x] = parse({}, string())
+    expect(x).toBe('')
+
+    const [y] = parse({}, string({ default: 'hello!' }))
+    expect(y).toBe('hello!')
+
+    const [z] = parse(100, trim({ default: 'zzz'}))
+    expect(z).toBe('zzz')
+
+    const [v] = parse(100, lower({ default: 'vvv'}))
+    expect(v).toBe('vvv')
+
+    const [w] = parse(100, upper({ default: 'www'}))
+    expect(w).toBe('www')
+  })
+
+  test('invalid numbers', () => {
+    const [x] = parse('aaa', number())
+    expect(x).toBe(0)
+
+    const [y] = parse('aaa', number({ default: 100 }))
+    expect(y).toBe(100)
+  })
+
+  test('invalid booleans', () => {
+    const [x] = parse({}, boolean({ coerced: false }))
+    expect(x).toBe(false)
+
+    const [y] = parse({}, boolean({ coerced: false, default: true }))
+    expect(y).toBe(true)
+  })
+
+  test('invalid arrays', () => {
+    const [x] = parse('aaa', array({ of: string() }))
+    expect(x).toEqual([])
+
+    const [y] = parse({}, array({ of: number(), default: [1, 2, 3] }))
+    expect(y).toEqual([1, 2, 3])
+  })
+})
