@@ -19,17 +19,18 @@ const parse = (value, schema, { path = '' } = {}) => {
     return [acc, []]
   }
 
+  const errors = []
   if (!isObject(value)) {
-    const error = 'not an object'
-    return [value, [{ path, error }]]
+    errors.push({ path, error: 'not an object' })
+    value = {}
   }
 
   return Object.entries(schema).reduce(
     ([prevVal, prevErrors], [field, fieldSchema]) => {
-      const [val, errors] = parse(value[field], fieldSchema, { path: concat([path, field], '.') })
-      return [{ ...prevVal, [field]: val }, [...prevErrors, ...errors]]
+      const [val, errs] = parse(value[field], fieldSchema, { path: concat([path, field], '.') })
+      return [{ ...prevVal, [field]: val }, [...prevErrors, ...errs]]
     },
-    [{}, []]
+    [{}, errors]
   )
 }
 

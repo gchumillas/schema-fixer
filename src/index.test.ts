@@ -441,4 +441,12 @@ describe('fix invalid data', () => {
     const [y] = parse({}, array({ of: number(), default: [1, 2, 3] }))
     expect(y).toEqual([1, 2, 3])
   })
+
+  test('invalid objects', () => {
+    const [x] = parse(100, { name: string(), age: number() })
+    expect(x).toEqual({ name: '', age: 0 })
+
+    const [y] = parse(100, { name: string({ default: 'John' }), age: number({ default: 35 }) })
+    expect(y).toEqual({ name: 'John', age: 35 })
+  })
 })
