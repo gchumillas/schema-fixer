@@ -10,7 +10,7 @@ const parse = (value, schema, { path = '' } = {}) => {
     for (const parser of schema) {
       const [val, error] = tryCatch(() => parser(acc, { path }))
       if (error) {
-        return [value, [{ path, error }]]
+        return [parser.defValue, [{ path, error }]]
       }
 
       acc = val
@@ -43,23 +43,27 @@ const fix = (value, schema) => {
 }
 
 function createParser(fn, options = {}) {
-  return (options1) => (value, options2) => {
-    const params = { ...options, ...options1, ...options2 }
-    const { default: defValue, required = true } = params
+  return (options1) => {
+    const { default: defValue, required = true } = { ...options, ...options1 }
 
-    if (isNone(value) || value === '') {
-      value = defValue
+    const parser = (value, options2) => {
+      if (isNone(value) || value === '') {
+        value = defValue
 
-      if (isNone(value)) {
-        if (required) {
-          throw new Error('required')
+        if (isNone(value)) {
+          if (required) {
+            throw new Error('required')
+          }
+
+          return value
         }
-
-        return value
       }
+
+      return fn(value, { ...options, ...options1, ...options2 })
     }
 
-    return fn(value, { ...params, required })
+    parser.defValue = defValue
+    return parser
   }
 }
 

@@ -71,7 +71,7 @@ describe('Validate README examples', () => {
   })
 
   test('floorParser', () => {
-    const floorParser = () => (value) => {
+    const floorParser = () => (value: any) => {
       if (typeof value != 'number') {
         throw new Error('not a number')
       }
@@ -85,7 +85,7 @@ describe('Validate README examples', () => {
   })
 
   test('colorParser', () => {
-    const colorParser = () => (value) => {
+    const colorParser = () => (value: any) => {
       if (typeof value != 'string' || !value.match(/^#[0-9A-F]{6}$/i)) {
         throw new Error('not a color')
       }
@@ -294,7 +294,7 @@ describe('Object validation', () => {
 
 describe('Custom parsers', () => {
   test('floor parser', () => {
-    const floor = () => (value) => {
+    const floor = () => (value: any) => {
       if (typeof value != 'number') {
         throw new Error('not a number')
       }
@@ -397,5 +397,48 @@ describe('default & required options', () => {
         expect(fix(emptyValue, array({ of: parser }))).toEqual([])
       }
     }
+  })
+})
+
+describe('fix invalid data', () => {
+  test('invalid strings', () => {
+    const [x] = parse({}, string())
+    expect(x).toBe('')
+
+    const [y] = parse({}, string({ default: 'hello!' }))
+    expect(y).toBe('hello!')
+
+    const [z] = parse(100, trim({ default: 'zzz'}))
+    expect(z).toBe('zzz')
+
+    const [v] = parse(100, lower({ default: 'vvv'}))
+    expect(v).toBe('vvv')
+
+    const [w] = parse(100, upper({ default: 'www'}))
+    expect(w).toBe('www')
+  })
+
+  test('invalid numbers', () => {
+    const [x] = parse('aaa', number())
+    expect(x).toBe(0)
+
+    const [y] = parse('aaa', number({ default: 100 }))
+    expect(y).toBe(100)
+  })
+
+  test('invalid booleans', () => {
+    const [x] = parse({}, boolean({ coerced: false }))
+    expect(x).toBe(false)
+
+    const [y] = parse({}, boolean({ coerced: false, default: true }))
+    expect(y).toBe(true)
+  })
+
+  test('invalid arrays', () => {
+    const [x] = parse('aaa', array({ of: string() }))
+    expect(x).toEqual([])
+
+    const [y] = parse({}, array({ of: number(), default: [1, 2, 3] }))
+    expect(y).toEqual([1, 2, 3])
   })
 })
