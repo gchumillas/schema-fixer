@@ -23,8 +23,7 @@ const fix = (value, schema, { path = '' } = {}) => {
   }), {})
 }
 
-// TODO: rename to createFixer
-function createParser(fn, options = {}) {
+function createFixer(fn, options = {}) {
   return (options1) => {
     const { default: defValue, required = true } = { ...options, ...options1 }
 
@@ -44,4 +43,4 @@ function createParser(fn, options = {}) {
   }
 }
 
-module.exports = { fix, createParser }
+module.exports = { fix, createFixer }

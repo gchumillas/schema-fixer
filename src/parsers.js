@@ -1,6 +1,6 @@
-const { fix, createParser } = require('./main')
+const { fix, createFixer } = require('./main')
 
-const string = createParser(
+const string = createFixer(
   (value, params) => {
     const { coerce = true, default: defValue } = params
 
@@ -16,7 +16,7 @@ const string = createParser(
   { default: '' }
 )
 
-const number = createParser(
+const number = createFixer(
   (value, params) => {
     const { coerce = true, default: defValue } = params
 
@@ -38,7 +38,7 @@ const number = createParser(
   { default: 0 }
 )
 
-const boolean = createParser(
+const boolean = createFixer(
   (value, params) => {
     const { coerce = true, default: defValue } = params
 
@@ -54,7 +54,7 @@ const boolean = createParser(
   { default: false }
 )
 
-const array = createParser(
+const array = createFixer(
   (value, params) => {
     const { of: type, default: defValue, path } = params
 
@@ -76,7 +76,7 @@ const array = createParser(
   { default: [] }
 )
 
-const trim = createParser(
+const trim = createFixer(
   (value, params) => {
     const { default: defValue } = params
 
@@ -90,7 +90,7 @@ const trim = createParser(
   { default: '' }
 )
 
-const lower = createParser(
+const lower = createFixer(
   (value, params) => {
     const { default: defValue } = params
 
@@ -104,7 +104,7 @@ const lower = createParser(
   { default: '' }
 )
 
-const upper = createParser(
+const upper = createFixer(
   (value, params) => {
     const { default: defValue } = params
 

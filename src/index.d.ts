@@ -16,7 +16,7 @@ export function fix<T extends Schema>(value: any, schema: T): Value<T>
 // create custom parsers
 declare function parser<T, S>(options: Prettify<{ required: false } & S>): (value: any) => T | undefined
 declare function parser<T, S>(options?: Prettify<{ default?: T } & S>): (value: any) => T
-declare function createParser<T, S extends Record<string, any>>(
+declare function createFixer<T, S extends Record<string, any>>(
   fn: (value: any, options: S) => T,
   // TODO: default should be required
   options?: { default?: T }
@@ -27,12 +27,12 @@ export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
 export function join<T>(...fixers: Fixer<T>[]): Fixer<T>
 
 // parsers
-export const string: ReturnType<typeof createParser<string, { coerce?: boolean }>>
-export const number: ReturnType<typeof createParser<number, { coerce?: boolean }>>
-export const boolean: ReturnType<typeof createParser<boolean, { coerce?: boolean }>>
-export const trim: ReturnType<typeof createParser<string, {}>>
-export const lower: ReturnType<typeof createParser<string, {}>>
-export const upper: ReturnType<typeof createParser<string, {}>>
+export const string: ReturnType<typeof createFixer<string, { coerce?: boolean }>>
+export const number: ReturnType<typeof createFixer<number, { coerce?: boolean }>>
+export const boolean: ReturnType<typeof createFixer<boolean, { coerce?: boolean }>>
+export const trim: ReturnType<typeof createFixer<string, {}>>
+export const lower: ReturnType<typeof createFixer<string, {}>>
+export const upper: ReturnType<typeof createFixer<string, {}>>
 
 export function array<T extends Schema>(_: { required: false, of: T}): (value: any) => Array<Value<T>> | undefined
 export function array<T extends Schema>(_: { default?: Array<Value<T>>, of: T}): (value: any) => Array<Value<T>>

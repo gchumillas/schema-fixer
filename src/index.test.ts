@@ -1,5 +1,5 @@
 import {
-  fix, createParser,
+  fix, createFixer,
   string, upper, lower, trim, number, boolean, array,
   schema, join
 } from './index'
@@ -291,7 +291,7 @@ describe('Object validation', () => {
 
 describe('Custom parsers', () => {
   test('floor parser', () => {
-    const floor = createParser((value, options) => {
+    const floor = createFixer((value, options) => {
       const { default: defValue } = options
 
       if (typeof value != 'number') {
