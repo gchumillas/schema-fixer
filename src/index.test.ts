@@ -29,7 +29,7 @@ describe('Validate README examples', () => {
 
     const fixedData = fix(data, {
       name: string(),
-      middleName: string(),
+      middleName: string({ required: false }),
       lastName: string(),
       age: number(),
       isMarried: boolean(),
@@ -52,7 +52,7 @@ describe('Validate README examples', () => {
 
     expect(fixedData).toMatchObject({
       name: 'Stephen',
-      middleName: '', // undefined has been replaced by  ''
+      middleName: undefined,
       lastName: 'King',
       age: 75, // '74' has been replaced by 74
       isMarried: true, // 1 has been replaced by true
@@ -217,6 +217,7 @@ describe('Array validation', () => {
     expect(fix([true, false], array({ of: string() }))).toEqual(['true', 'false'])
     expect(fix([0, 1], array({ of: boolean() }))).toEqual([false, true])
     expect(fix([1, '2', 3], array({ of: number() }))).toEqual([1, 2, 3])
+    expect(fix(null, array({ required: false, of: string() }))).toBeUndefined()
   })
 
   test('default option', () => {
@@ -345,6 +346,9 @@ describe('fix invalid data', () => {
 
     const y = fix({}, array({ of: number(), default: [1, 2, 3] }))
     expect(y).toEqual([1, 2, 3])
+
+    const z = fix(undefined, array({ required: false, of: number() }))
+    expect(z).toBeUndefined()
   })
 
   test('invalid objects', () => {

@@ -14,10 +14,8 @@ export type Value<T> = T extends FixerRecord
 export function fix<T extends Schema>(value: any, schema: T): Value<T>
 
 // create custom parsers
-declare function parser<T, S>(
-  options: Prettify<{ required: false; default?: undefined } & S>
-): (value: any) => T | undefined
-declare function parser<T, S>(options?: Prettify<{ required?: boolean; default?: T } & S>): (value: any) => T
+declare function parser<T, S>(options: Prettify<{ required: false } & S>): (value: any) => T | undefined
+declare function parser<T, S>(options?: Prettify<{ default?: T } & S>): (value: any) => T
 declare function createParser<T, S extends Record<string, any>>(
   fn: (value: any, options: S) => T,
   // TODO: default should be required
@@ -36,13 +34,5 @@ export const trim: ReturnType<typeof createParser<string, {}>>
 export const lower: ReturnType<typeof createParser<string, {}>>
 export const upper: ReturnType<typeof createParser<string, {}>>
 
-export function array<T extends Schema>(_: {
-  required: false
-  default?: undefined
-  of: T
-}): (value: any) => Array<Value<T>> | undefined
-export function array<T extends Schema>(_: {
-  required?: boolean
-  default?: Array<Value<T>>
-  of: T
-}): (value: any) => Array<Value<T>>
+export function array<T extends Schema>(_: { required: false, of: T}): (value: any) => Array<Value<T>> | undefined
+export function array<T extends Schema>(_: { default?: Array<Value<T>>, of: T}): (value: any) => Array<Value<T>>
