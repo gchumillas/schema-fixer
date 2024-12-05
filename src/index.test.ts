@@ -159,9 +159,9 @@ describe('Text validation', () => {
     expect(fix(null, string({ default: 'John Smith' }))).toBe('John Smith')
   })
 
-  test('coerced option', () => {
-    expect(fix(true, string({ coerced: false }))).toBe('')
-    expect(fix(125.48, string({ coerced: false, default: 'xxx' }))).toBe('xxx')
+  test('coerce option', () => {
+    expect(fix(true, string({ coerce: false }))).toBe('')
+    expect(fix(125.48, string({ coerce: false, default: 'xxx' }))).toBe('xxx')
   })
 })
 
@@ -182,9 +182,9 @@ describe('Float validation', () => {
     expect(fix(null, number({ default: 125.48 }))).toBe(125.48)
   })
 
-  test('coerced option', () => {
-    expect(fix('125.48', number({ coerced: false }))).toBe(0)
-    expect(fix('125.48', number({ coerced: false, default: 100 }))).toBe(100)
+  test('coerce option', () => {
+    expect(fix('125.48', number({ coerce: false }))).toBe(0)
+    expect(fix('125.48', number({ coerce: false, default: 100 }))).toBe(100)
   })
 })
 
@@ -206,9 +206,9 @@ describe('Boolean validation', () => {
     expect(fix(null, boolean({ default: true }))).toBe(true)
   })
 
-  test('coerced option', () => {
-    expect(fix(1, boolean({ coerced: false }))).toBe(false)
-    expect(fix(1, boolean({ coerced: false, default: true }))).toBe(true)
+  test('coerce option', () => {
+    expect(fix(1, boolean({ coerce: false }))).toBe(false)
+    expect(fix(1, boolean({ coerce: false, default: true }))).toBe(true)
   })
 })
 
@@ -269,10 +269,10 @@ describe('Object validation', () => {
         ]
       },
       {
-        name: string({ coerced: false }),
+        name: string({ coerce: false }),
         pseudonym: join(lower(), trim()),
         age: number(),
-        single: boolean({ coerced: false }),
+        single: boolean({ coerce: false }),
         location: schema({ latitude: number(), longitude: number() }),
         novels: array({ of: string() })
       }
@@ -333,10 +333,10 @@ describe('fix invalid data', () => {
   })
 
   test('invalid booleans', () => {
-    const x = fix({}, boolean({ coerced: false }))
+    const x = fix({}, boolean({ coerce: false }))
     expect(x).toBe(false)
 
-    const y = fix({}, boolean({ coerced: false, default: true }))
+    const y = fix({}, boolean({ coerce: false, default: true }))
     expect(y).toBe(true)
   })
 

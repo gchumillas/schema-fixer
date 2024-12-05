@@ -1,13 +1,12 @@
 const { fix, createParser } = require('./main')
 
-// TODO: (all) coerced is confusing, remove it. It should be alwasy 'true'
 const string = createParser(
   (value, params) => {
-    const { coerced = true, default: defValue } = params
+    const { coerce = true, default: defValue } = params
 
     if (typeof value == 'string') {
       return value
-    } else if (coerced && ['boolean', 'number'].includes(typeof value)) {
+    } else if (coerce && ['boolean', 'number'].includes(typeof value)) {
       return `${value}`
     }
 
@@ -19,11 +18,11 @@ const string = createParser(
 
 const number = createParser(
   (value, params) => {
-    const { coerced = true, default: defValue } = params
+    const { coerce = true, default: defValue } = params
 
     if (typeof value == 'number') {
       return value
-    } else if (coerced && ['boolean', 'string'].includes(typeof value)) {
+    } else if (coerce && ['boolean', 'string'].includes(typeof value)) {
       const val = +value
       if (isNaN(val)) {
         // console.log('not a number')
@@ -41,11 +40,11 @@ const number = createParser(
 
 const boolean = createParser(
   (value, params) => {
-    const { coerced = true, default: defValue } = params
+    const { coerce = true, default: defValue } = params
 
     if (typeof value == 'boolean') {
       return value
-    } else if (coerced) {
+    } else if (coerce) {
       return !!value
     }
 
