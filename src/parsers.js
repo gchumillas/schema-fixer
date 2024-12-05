@@ -1,8 +1,9 @@
-const { parse, createParser } = require('./main')
+const { fix, createParser } = require('./main')
 
+// TODO: (all) coerced is confusing, remove it. It should be alwasy 'true'
 const string = createParser(
   (value, params) => {
-    const { coerced = true } = params
+    const { coerced = true, default: defValue } = params
 
     if (typeof value == 'string') {
       return value
@@ -10,34 +11,37 @@ const string = createParser(
       return `${value}`
     }
 
-    throw new Error('not a string')
+    // console.log('not a string')
+    return defValue
   },
   { default: '' }
 )
 
 const number = createParser(
   (value, params) => {
-    const { coerced = true } = params
+    const { coerced = true, default: defValue } = params
 
     if (typeof value == 'number') {
       return value
     } else if (coerced && ['boolean', 'string'].includes(typeof value)) {
       const val = +value
       if (isNaN(val)) {
-        throw new Error('not a number')
+        // console.log('not a number')
+        return defValue
       }
 
       return +value
     }
 
-    throw new Error('not a number')
+    // console.log('not a number')
+    return defValue
   },
   { default: 0 }
 )
 
 const boolean = createParser(
   (value, params) => {
-    const { coerced = true } = params
+    const { coerced = true, default: defValue } = params
 
     if (typeof value == 'boolean') {
       return value
@@ -45,43 +49,41 @@ const boolean = createParser(
       return !!value
     }
 
-    throw new Error('not a boolean')
+    // console.log('not a boolean')
+    return defValue
   },
   { default: false }
 )
 
 const array = createParser(
   (value, params) => {
-    const { of: type, path } = params
+    const { of: type, default: defValue, path } = params
 
     if (Array.isArray(value)) {
-      const [val, errors] = value.reduce(
-        ([prevVal, prevErrors], item, i) => {
-          const [val, errors] = parse(item, type, { path: `${path}[${i}]` })
-          return [
-            [...prevVal, val],
-            [...prevErrors, ...errors]
-          ]
+      const val = value.reduce(
+        (prevVal, item, i) => {
+          const val = fix(item, type, { path: `${path}[${i}]` })
+          return [...prevVal, val]
         },
-        [[], []]
+        []
       )
-
-      if (errors.length) {
-        throw new Error('not an array', { cause: errors })
-      }
 
       return val
     }
 
-    throw new Error('not an array')
+    // console.log('not an array')
+    return defValue
   },
   { default: [] }
 )
 
 const trim = createParser(
-  (value) => {
+  (value, params) => {
+    const { default: defValue } = params
+
     if (typeof value != 'string') {
-      throw new Error('not a string')
+      // console.log('not a string')
+      return defValue
     }
 
     return value.trim()
@@ -90,9 +92,12 @@ const trim = createParser(
 )
 
 const lower = createParser(
-  (value) => {
+  (value, params) => {
+    const { default: defValue } = params
+
     if (typeof value != 'string') {
-      throw new Error('not a string')
+      // console.log('not a string')
+      return defValue
     }
 
     return value.toLocaleLowerCase()
@@ -101,9 +106,12 @@ const lower = createParser(
 )
 
 const upper = createParser(
-  (value) => {
+  (value, params) => {
+    const { default: defValue } = params
+
     if (typeof value != 'string') {
-      throw new Error('not a string')
+      // console.log('not a string')
+      return defValue
     }
 
     return value.toLocaleUpperCase()

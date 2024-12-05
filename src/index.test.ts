@@ -1,5 +1,5 @@
 import {
-  fix, parse,
+  fix, createParser,
   string, upper, lower, trim, number, boolean, array,
   schema, join
 } from './index'
@@ -160,8 +160,8 @@ describe('Text validation', () => {
   })
 
   test('coerced option', () => {
-    expect(() => fix(true, string({ coerced: false }))).toThrow('not a string')
-    expect(() => fix(125.48, string({ coerced: false }))).toThrow('not a string')
+    expect(fix(true, string({ coerced: false }))).toBe('')
+    expect(fix(125.48, string({ coerced: false, default: 'xxx' }))).toBe('xxx')
   })
 })
 
@@ -173,7 +173,7 @@ describe('Float validation', () => {
     expect(fix(true, number())).toBe(1)
     expect(fix(125.48, number())).toBe(125.48)
     expect(fix('125.48', number())).toBe(125.48)
-    expect(() => fix('lorem ipsum', number())).toThrow('not a number')
+    expect(fix('lorem ipsum', number())).toBe(0)
   })
 
   test('default option', () => {
@@ -183,7 +183,8 @@ describe('Float validation', () => {
   })
 
   test('coerced option', () => {
-    expect(() => fix('125.48', number({ coerced: false }))).toThrow('not a number')
+    expect(fix('125.48', number({ coerced: false }))).toBe(0)
+    expect(fix('125.48', number({ coerced: false, default: 100 }))).toBe(100)
   })
 })
 
@@ -206,7 +207,8 @@ describe('Boolean validation', () => {
   })
 
   test('coerced option', () => {
-    expect(() => fix(1, boolean({ coerced: false }))).toThrow('not a boolean')
+    expect(fix(1, boolean({ coerced: false }))).toBe(false)
+    expect(fix(1, boolean({ coerced: false, default: true }))).toBe(true)
   })
 })
 
@@ -228,17 +230,17 @@ describe('Array validation', () => {
 describe('Combine multiple parsers', () => {
   test('trim', () => {
     expect(fix(' hello there! ', join(string(), trim()))).toBe('hello there!')
-    expect(() => fix(125.48, trim())).toThrow('not a string')
+    expect(fix(125.48, trim())).toBe('')
   })
 
   test('lower', () => {
     expect(fix('Hello There!', join(string(), lower()))).toBe('hello there!')
-    expect(() => fix(125.48, lower())).toThrow('not a string')
+    expect(fix(125.48, lower())).toBe('')
   })
 
   test('upper', () => {
     expect(fix('hello there!', join(string(), upper()))).toBe('HELLO THERE!')
-    expect(() => fix(125.48, upper())).toThrow('not a string')
+    expect(fix(125.48, upper())).toBe('')
   })
 
   test('combined parsers', () => {
@@ -249,11 +251,11 @@ describe('Combine multiple parsers', () => {
 
 describe('Object validation', () => {
   test('check errors', () => {
-    expect(() => fix(100, { id: string() })).toThrow('not an object')
-    expect(() => fix(true, { id: string() })).toThrow('not an object')
-    expect(() => fix('lorem ipsum', { id: string() })).toThrow('not an object')
+    expect(fix(100, { id: string() })).toEqual({ id: '' })
+    expect(fix(true, { id: string() })).toEqual({ id: '' })
+    expect(fix('lorem ipsum', { id: string() })).toEqual({ id: '' })
 
-    const [, errors] = parse(
+    const data = fix(
       {
         name: 125.48,
         pseudonym: 78945,
@@ -275,178 +277,81 @@ describe('Object validation', () => {
       }
     )
 
-    expect(errors).toMatchObject([
-      { 'path': 'name', 'error': 'not a string' },
-      { 'path': 'pseudonym', 'error': 'not a string' },
-      { 'path': 'age', 'error': 'not a number' },
-      { 'path': 'single', 'error': 'not a boolean' },
-      { 'path': 'location', 'error': 'not an object' },
-      {
-        'path': 'novels',
-        'error': [
-          { 'path': 'novels[0]', 'error': 'not a string' },
-          { 'path': 'novels[1]', 'error': 'not a string' }
-        ]
-      }
-    ])
+    expect(data).toEqual({
+      name: '',
+      pseudonym: '',
+      age: 0,
+      single: false,
+      location: { latitude: 0, longitude: 0 },
+      novels: ['', '']
+    })
   })
 })
 
 describe('Custom parsers', () => {
   test('floor parser', () => {
-    const floor = () => (value: any) => {
+    const floor = createParser((value, options) => {
+      const { default: defValue } = options
+
       if (typeof value != 'number') {
-        throw new Error('not a number')
+        return +defValue
       }
 
       return Math.floor(value)
-    }
+    }, { default: 0 })
 
     expect(fix('105.48', join(number(), floor()))).toBe(105)
-    expect(() => fix('105.48', floor())).toThrow('not a number')
-  })
-})
-
-describe('default & required options', () => {
-  test('string', () => {
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      // required: false, default: undefined
-      expect(fix(emptyValue, string({ required: false, default: undefined }))).toBeUndefined()
-
-      // required: false, default: !undefined
-      expect(fix(emptyValue, string({ required: false, default: 'hello!' }))).toBe('hello!')
-      expect(fix(emptyValue, string({ required: false }))).toBe('')
-
-      // required: true, default: undefined
-      expect(() => fix(emptyValue, string({ required: true, default: undefined }))).toThrow('required')
-      expect(() => fix(emptyValue, string({ default: undefined }))).toThrow('required')
-
-      // required: true, default: !undefined
-      expect(fix(emptyValue, string({ required: true, default: 'hello!' }))).toBe('hello!')
-      expect(fix(emptyValue, string({ default: 'hello!' }))).toBe('hello!')
-      expect(fix(emptyValue, string())).toBe('')
-    }
-  })
-
-  test('number', () => {
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      // required: false, default: undefined
-      expect(fix(emptyValue, number({ required: false, default: undefined }))).toBeUndefined()
-
-      // required: false, default: !undefined
-      expect(fix(emptyValue, number({ required: false, default: 123 }))).toBe(123)
-      expect(fix(emptyValue, number({ required: false }))).toBe(0)
-
-      // required: true, default: undefined
-      expect(() => fix(emptyValue, number({ required: true, default: undefined }))).toThrow('required')
-      expect(() => fix(emptyValue, number({ default: undefined }))).toThrow('required')
-
-      // required: true, default: !undefined
-      expect(fix(emptyValue, number({ required: true, default: 123 }))).toBe(123)
-      expect(fix(emptyValue, number({ default: 123 }))).toBe(123)
-      expect(fix(emptyValue, number())).toBe(0)
-    }
-  })
-
-  test('boolean', () => {
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      // required: false, default: undefined
-      expect(fix(emptyValue, boolean({ required: false, default: undefined }))).toBeUndefined()
-
-      // required: false, default: !undefined
-      expect(fix(emptyValue, boolean({ required: false, default: true }))).toBe(true)
-      expect(fix(emptyValue, boolean({ required: false }))).toBe(false)
-
-      // required: true, default: undefined
-      expect(() => fix(emptyValue, boolean({ required: true, default: undefined }))).toThrow('required')
-      expect(() => fix(emptyValue, boolean({ default: undefined }))).toThrow('required')
-
-      // required: true, default: !undefined
-      expect(fix(emptyValue, boolean({ required: true, default: true }))).toBe(true)
-      expect(fix(emptyValue, boolean({ default: true }))).toBe(true)
-      expect(fix(emptyValue, boolean())).toBe(false)
-    }
-  })
-
-  test('array', () => {
-    const parsers = [
-      { parser: string(), default: ['aaa', 'bbb', 'ccc'] },
-      { parser: number(), default: [1, 2, 3] },
-      { parser: boolean(), default: [false, true] }
-    ]
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      for (const { parser, default: defValue } of parsers) {
-        // required: false, default: undefined
-        expect(fix(emptyValue, array({ of: parser, required: false, default: undefined }))).toBeUndefined()
-
-        // required: false, default: !undefined
-        expect(fix(emptyValue, array({ of: parser, required: false, default: defValue }))).toEqual(defValue)
-        expect(fix(emptyValue, array({ of: parser, required: false }))).toEqual([])
-
-        // required: true, default: undefined
-        expect(() => fix(emptyValue, array({ of: parser, required: true, default: undefined }))).toThrow('required')
-        expect(() => fix(emptyValue, array({ of: parser, default: undefined }))).toThrow('required')
-
-        // required: true, default: !undefined
-        expect(fix(emptyValue, array({ of: parser, required: true, default: defValue }))).toEqual(defValue)
-        expect(fix(emptyValue, array({ of: parser, default: defValue }))).toEqual(defValue)
-        expect(fix(emptyValue, array({ of: parser }))).toEqual([])
-      }
-    }
+    expect(fix('105.48', floor())).toBe(0)
   })
 })
 
 describe('fix invalid data', () => {
   test('invalid strings', () => {
-    const [x] = parse({}, string())
+    const x = fix({}, string())
     expect(x).toBe('')
 
-    const [y] = parse({}, string({ default: 'hello!' }))
+    const y = fix({}, string({ default: 'hello!' }))
     expect(y).toBe('hello!')
 
-    const [z] = parse(100, trim({ default: 'zzz'}))
+    const z = fix(100, trim({ default: 'zzz'}))
     expect(z).toBe('zzz')
 
-    const [v] = parse(100, lower({ default: 'vvv'}))
+    const v = fix(100, lower({ default: 'vvv'}))
     expect(v).toBe('vvv')
 
-    const [w] = parse(100, upper({ default: 'www'}))
+    const w = fix(100, upper({ default: 'www'}))
     expect(w).toBe('www')
   })
 
   test('invalid numbers', () => {
-    const [x] = parse('aaa', number())
+    const x = fix('aaa', number())
     expect(x).toBe(0)
 
-    const [y] = parse('aaa', number({ default: 100 }))
+    const y = fix('aaa', number({ default: 100 }))
     expect(y).toBe(100)
   })
 
   test('invalid booleans', () => {
-    const [x] = parse({}, boolean({ coerced: false }))
+    const x = fix({}, boolean({ coerced: false }))
     expect(x).toBe(false)
 
-    const [y] = parse({}, boolean({ coerced: false, default: true }))
+    const y = fix({}, boolean({ coerced: false, default: true }))
     expect(y).toBe(true)
   })
 
   test('invalid arrays', () => {
-    const [x] = parse('aaa', array({ of: string() }))
+    const x = fix('aaa', array({ of: string() }))
     expect(x).toEqual([])
 
-    const [y] = parse({}, array({ of: number(), default: [1, 2, 3] }))
+    const y = fix({}, array({ of: number(), default: [1, 2, 3] }))
     expect(y).toEqual([1, 2, 3])
   })
 
   test('invalid objects', () => {
-    const [x] = parse(100, { name: string(), age: number() })
+    const x = fix(100, { name: string(), age: number() })
     expect(x).toEqual({ name: '', age: 0 })
 
-    const [y] = parse(100, { name: string({ default: 'John' }), age: number({ default: 35 }) })
+    const y = fix(100, { name: string({ default: 'John' }), age: number({ default: 35 }) })
     expect(y).toEqual({ name: 'John', age: 35 })
   })
 })

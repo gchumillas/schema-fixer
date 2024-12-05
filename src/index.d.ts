@@ -12,7 +12,6 @@ export type Value<T> = T extends FixerRecord
 
 // main functions
 export function fix<T extends Schema>(value: any, schema: T): Value<T>
-export function parse<T extends Schema>(value: any, schema: T): [Value<T>, errors: any[]]
 
 // create custom parsers
 declare function parser<T, S>(
@@ -21,6 +20,7 @@ declare function parser<T, S>(
 declare function parser<T, S>(options?: Prettify<{ required?: boolean; default?: T } & S>): (value: any) => T
 declare function createParser<T, S extends Record<string, any>>(
   fn: (value: any, options: S) => T,
+  // TODO: default should be required
   options?: { default?: T }
 ): typeof parser<T, S>
 

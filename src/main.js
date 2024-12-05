@@ -1,71 +1,47 @@
-const { tryCatch, isObject, concat, isNone } = require('./_utils')
+const { isObject, concat, isNone } = require('./_utils')
 
-const parse = (value, schema, { path = '' } = {}) => {
+const fix = (value, schema, { path = '' } = {}) => {
   if (typeof schema == 'function') {
     schema = [schema]
   }
 
+  // parses an array
   if (Array.isArray(schema)) {
-    let acc = value
-    for (const parser of schema) {
-      const [val, error] = tryCatch(() => parser(acc, { path }))
-      if (error) {
-        return [parser.defValue, [{ path, error }]]
-      }
-
-      acc = val
-    }
-
-    return [acc, []]
+    return schema.reduce((acc, parser) => parser(acc, { path }), value)
   }
 
-  const errors = []
   if (!isObject(value)) {
-    errors.push({ path, error: 'not an object' })
+    // TODO: (all) show path or type information
+    // console.log('not an object')
     value = {}
   }
 
-  return Object.entries(schema).reduce(
-    ([prevVal, prevErrors], [field, fieldSchema]) => {
-      const [val, errs] = parse(value[field], fieldSchema, { path: concat([path, field], '.') })
-      return [{ ...prevVal, [field]: val }, [...prevErrors, ...errs]]
-    },
-    [{}, errors]
-  )
+  // parses an object
+  return Object.entries(schema).reduce((props, [prop, parser]) => ({
+    ...props,
+    [prop]: fix(value[prop], parser, { path: concat([path, prop], '.') })
+  }), {})
 }
 
-const fix = (value, schema) => {
-  const [val, errors] = parse(value, schema)
-  if (errors.length) {
-    const [{ path, error }] = errors
-    throw new Error(!path ? error : JSON.stringify(errors))
-  }
-  return val
-}
-
+// TODO: rename to createFixer
 function createParser(fn, options = {}) {
   return (options1) => {
     const { default: defValue, required = true } = { ...options, ...options1 }
 
-    const parser = (value, options2) => {
+    return (value, options2) => {
+      // TODO: remove value === '' (optional)
       if (isNone(value) || value === '') {
-        value = defValue
-
-        if (isNone(value)) {
-          if (required) {
-            throw new Error('required')
-          }
-
-          return value
+        if (required) {
+          // console.log('required')
+          return defValue
         }
+
+        return undefined
       }
 
       return fn(value, { ...options, ...options1, ...options2 })
     }
-
-    parser.defValue = defValue
-    return parser
   }
 }
 
-module.exports = { parse, fix, createParser }
+module.exports = { fix, createParser }
