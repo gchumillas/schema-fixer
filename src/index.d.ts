@@ -26,7 +26,7 @@ export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
 export function join<T>(...fixers: Fixer<T>[]): Fixer<T>
 
 // parsers
-export const string: ReturnType<typeof createFixer<string, { coerce?: boolean }>>
+export const text: ReturnType<typeof createFixer<string, { coerce?: boolean }>>
 export const number: ReturnType<typeof createFixer<number, { coerce?: boolean }>>
 export const boolean: ReturnType<typeof createFixer<boolean, { coerce?: boolean }>>
 export const trim: ReturnType<typeof createFixer<string, {}>>

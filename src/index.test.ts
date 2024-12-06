@@ -1,4 +1,4 @@
-import { fix, createFixer, string, upper, lower, trim, number, boolean, array, schema, join } from './index'
+import { fix, createFixer, text, upper, lower, trim, number, boolean, array, schema, join } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -24,24 +24,24 @@ describe('Validate README examples', () => {
     }
 
     const fixedData = fix(data, {
-      name: string(),
-      middleName: string({ required: false }),
-      lastName: string(),
+      name: text(),
+      middleName: text({ required: false }),
+      lastName: text(),
       age: number(),
       isMarried: boolean(),
-      childrend: array({ of: string() }),
+      childrend: array({ of: text() }),
       address: schema({
-        street: string(),
-        city: string(),
-        state: string()
+        street: text(),
+        city: text(),
+        state: text()
       }),
       // array of complex objects
       books: array({
         of: {
-          title: string(),
+          title: text(),
           year: number(),
           // we can combine multiple 'parsers'
-          id: join(string(), upper())
+          id: join(text(), upper())
         }
       })
     })
@@ -96,7 +96,7 @@ describe('Validate README examples', () => {
 
   test('Combine multiple parsers', () => {
     const color = '  #aB4cf7  '
-    const fixedColor = fix(color, join(string(), trim(), upper()))
+    const fixedColor = fix(color, join(text(), trim(), upper()))
     expect(fixedColor).toBe('#AB4CF7')
   })
 })
@@ -112,11 +112,11 @@ describe('Nested validations', () => {
     }
 
     const fixedData = fix(data, {
-      name: string(),
+      name: text(),
       address: schema({
-        street: string(),
-        postalCode: string(),
-        city: string({ def: 'Portland' })
+        street: text(),
+        postalCode: text(),
+        city: text({ def: 'Portland' })
       })
     })
 
@@ -131,10 +131,10 @@ describe('Nested validations', () => {
   })
 
   test('with aliases', () => {
-    expect(fix(100, schema(string()))).toBe('100')
-    expect(fix(undefined, schema(string()))).toBe('')
-    expect(fix('hello there!', schema(string()))).toBe('hello there!')
-    expect(fix('   Hello there!   ', schema(join(string(), trim(), lower())))).toBe('hello there!')
+    expect(fix(100, schema(text()))).toBe('100')
+    expect(fix(undefined, schema(text()))).toBe('')
+    expect(fix('hello there!', schema(text()))).toBe('hello there!')
+    expect(fix('   Hello there!   ', schema(join(text(), trim(), lower())))).toBe('hello there!')
     expect(fix('100', schema(number()))).toBe(100)
     expect(fix(undefined, schema(number()))).toBe(0)
   })
@@ -142,22 +142,22 @@ describe('Nested validations', () => {
 
 describe('Text validation', () => {
   test('basic', () => {
-    expect(fix('hello there!', string())).toBe('hello there!')
-    expect(fix(true, string())).toBe('true')
-    expect(fix(false, string())).toBe('false')
-    expect(fix(125.48, string())).toBe('125.48')
+    expect(fix('hello there!', text())).toBe('hello there!')
+    expect(fix(true, text())).toBe('true')
+    expect(fix(false, text())).toBe('false')
+    expect(fix(125.48, text())).toBe('125.48')
   })
 
   test('def option', () => {
-    expect(fix(undefined, string())).toBe('')
-    expect(fix(null, string())).toBe('')
-    expect(fix(undefined, string({ def: 'John Smith' }))).toBe('John Smith')
-    expect(fix(null, string({ def: 'John Smith' }))).toBe('John Smith')
+    expect(fix(undefined, text())).toBe('')
+    expect(fix(null, text())).toBe('')
+    expect(fix(undefined, text({ def: 'John Smith' }))).toBe('John Smith')
+    expect(fix(null, text({ def: 'John Smith' }))).toBe('John Smith')
   })
 
   test('coerce option', () => {
-    expect(fix(true, string({ coerce: false }))).toBe('')
-    expect(fix(125.48, string({ coerce: false, def: 'xxx' }))).toBe('xxx')
+    expect(fix(true, text({ coerce: false }))).toBe('')
+    expect(fix(125.48, text({ coerce: false, def: 'xxx' }))).toBe('xxx')
   })
 })
 
@@ -210,15 +210,15 @@ describe('Boolean validation', () => {
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], array({ of: string() }))).toEqual(['true', 'false'])
+    expect(fix([true, false], array({ of: text() }))).toEqual(['true', 'false'])
     expect(fix([0, 1], array({ of: boolean() }))).toEqual([false, true])
     expect(fix([1, '2', 3], array({ of: number() }))).toEqual([1, 2, 3])
-    expect(fix(null, array({ required: false, of: string() }))).toBeUndefined()
+    expect(fix(null, array({ required: false, of: text() }))).toBeUndefined()
   })
 
   test('def option', () => {
-    expect(fix(undefined, array({ of: string() }))).toEqual([])
-    expect(fix(null, array({ of: string() }))).toEqual([])
+    expect(fix(undefined, array({ of: text() }))).toEqual([])
+    expect(fix(null, array({ of: text() }))).toEqual([])
     expect(fix(undefined, array({ of: number(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
     expect(fix(null, array({ of: number(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
@@ -226,31 +226,31 @@ describe('Array validation', () => {
 
 describe('Combine multiple parsers', () => {
   test('trim', () => {
-    expect(fix(' hello there! ', join(string(), trim()))).toBe('hello there!')
+    expect(fix(' hello there! ', join(text(), trim()))).toBe('hello there!')
     expect(fix(125.48, trim())).toBe('')
   })
 
   test('lower', () => {
-    expect(fix('Hello There!', join(string(), lower()))).toBe('hello there!')
+    expect(fix('Hello There!', join(text(), lower()))).toBe('hello there!')
     expect(fix(125.48, lower())).toBe('')
   })
 
   test('upper', () => {
-    expect(fix('hello there!', join(string(), upper()))).toBe('HELLO THERE!')
+    expect(fix('hello there!', join(text(), upper()))).toBe('HELLO THERE!')
     expect(fix(125.48, upper())).toBe('')
   })
 
   test('combined parsers', () => {
-    expect(fix(' Hello There! ', join(string(), trim(), lower()))).toBe('hello there!')
-    expect(fix(' Hello There! ', join(string(), trim(), upper()))).toBe('HELLO THERE!')
+    expect(fix(' Hello There! ', join(text(), trim(), lower()))).toBe('hello there!')
+    expect(fix(' Hello There! ', join(text(), trim(), upper()))).toBe('HELLO THERE!')
   })
 })
 
 describe('Object validation', () => {
   test('check errors', () => {
-    expect(fix(100, { id: string() })).toEqual({ id: '' })
-    expect(fix(true, { id: string() })).toEqual({ id: '' })
-    expect(fix('lorem ipsum', { id: string() })).toEqual({ id: '' })
+    expect(fix(100, { id: text() })).toEqual({ id: '' })
+    expect(fix(true, { id: text() })).toEqual({ id: '' })
+    expect(fix('lorem ipsum', { id: text() })).toEqual({ id: '' })
 
     const data = fix(
       {
@@ -265,12 +265,12 @@ describe('Object validation', () => {
         ]
       },
       {
-        name: string({ coerce: false }),
+        name: text({ coerce: false }),
         pseudonym: join(lower(), trim()),
         age: number(),
         single: boolean({ coerce: false }),
         location: schema({ latitude: number(), longitude: number() }),
-        novels: array({ of: string() })
+        novels: array({ of: text() })
       }
     )
 
@@ -302,10 +302,10 @@ describe('Custom parsers', () => {
 
 describe('fix invalid data', () => {
   test('invalid strings', () => {
-    const x = fix({}, string())
+    const x = fix({}, text())
     expect(x).toBe('')
 
-    const y = fix({}, string({ def: 'hello!' }))
+    const y = fix({}, text({ def: 'hello!' }))
     expect(y).toBe('hello!')
 
     const z = fix(100, trim({ def: 'zzz' }))
@@ -335,7 +335,7 @@ describe('fix invalid data', () => {
   })
 
   test('invalid arrays', () => {
-    const x = fix('aaa', array({ of: string() }))
+    const x = fix('aaa', array({ of: text() }))
     expect(x).toEqual([])
 
     const y = fix({}, array({ of: number(), def: [1, 2, 3] }))
@@ -346,10 +346,10 @@ describe('fix invalid data', () => {
   })
 
   test('invalid objects', () => {
-    const x = fix(100, { name: string(), age: number() })
+    const x = fix(100, { name: text(), age: number() })
     expect(x).toEqual({ name: '', age: 0 })
 
-    const y = fix(100, { name: string({ def: 'John' }), age: number({ def: 35 }) })
+    const y = fix(100, { name: text({ def: 'John' }), age: number({ def: 35 }) })
     expect(y).toEqual({ name: 'John', age: 35 })
   })
 })

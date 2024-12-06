@@ -1,7 +1,6 @@
 const { fix, createFixer } = require('./main')
 
-// TODO: replace string with text
-const string = createFixer('', (value, params) => {
+const text = createFixer('', (value, params) => {
   const { coerce = true } = params
 
   if (typeof value == 'string') {
@@ -85,7 +84,7 @@ const upper = createFixer('', (value) => {
 })
 
 module.exports = {
-  string,
+  text,
   trim,
   lower,
   upper,
