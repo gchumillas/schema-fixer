@@ -29,8 +29,7 @@ const float = createFixer(0, (value, params) => {
   throw new TypeError('not a number')
 })
 
-// TODO: replace boolean with bool
-const boolean = createFixer(false, (value, params) => {
+const bool = createFixer(false, (value, params) => {
   const { coerce = true } = params
 
   if (typeof value == 'boolean') {
@@ -88,6 +87,6 @@ module.exports = {
   lower,
   upper,
   float,
-  boolean,
+  bool,
   array
 }

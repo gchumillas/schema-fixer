@@ -1,4 +1,4 @@
-import { fix, createFixer, text, upper, lower, trim, float, boolean, array, schema, join } from './index'
+import { fix, createFixer, text, upper, lower, trim, float, bool, array, schema, join } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -28,7 +28,7 @@ describe('Validate README examples', () => {
       middleName: text({ required: false }),
       lastName: text(),
       age: float(),
-      isMarried: boolean(),
+      isMarried: bool(),
       childrend: array({ of: text() }),
       address: schema({
         street: text(),
@@ -186,32 +186,32 @@ describe('Float validation', () => {
 
 describe('Boolean validation', () => {
   test('basic', () => {
-    expect(fix(true, boolean())).toBe(true)
-    expect(fix(false, boolean())).toBe(false)
-    expect(fix(1, boolean())).toBe(true)
-    expect(fix(0, boolean())).toBe(false)
-    expect(fix('', boolean())).toBe(false)
-    expect(fix('lorem ipsum', boolean())).toBe(true)
-    expect(fix({}, boolean())).toBe(true)
+    expect(fix(true, bool())).toBe(true)
+    expect(fix(false, bool())).toBe(false)
+    expect(fix(1, bool())).toBe(true)
+    expect(fix(0, bool())).toBe(false)
+    expect(fix('', bool())).toBe(false)
+    expect(fix('lorem ipsum', bool())).toBe(true)
+    expect(fix({}, bool())).toBe(true)
   })
 
   test('def option', () => {
-    expect(fix(undefined, boolean())).toBe(false)
-    expect(fix(null, boolean())).toBe(false)
-    expect(fix(undefined, boolean({ def: true }))).toBe(true)
-    expect(fix(null, boolean({ def: true }))).toBe(true)
+    expect(fix(undefined, bool())).toBe(false)
+    expect(fix(null, bool())).toBe(false)
+    expect(fix(undefined, bool({ def: true }))).toBe(true)
+    expect(fix(null, bool({ def: true }))).toBe(true)
   })
 
   test('coerce option', () => {
-    expect(fix(1, boolean({ coerce: false }))).toBe(false)
-    expect(fix(1, boolean({ coerce: false, def: true }))).toBe(true)
+    expect(fix(1, bool({ coerce: false }))).toBe(false)
+    expect(fix(1, bool({ coerce: false, def: true }))).toBe(true)
   })
 })
 
 describe('Array validation', () => {
   test('basic', () => {
     expect(fix([true, false], array({ of: text() }))).toEqual(['true', 'false'])
-    expect(fix([0, 1], array({ of: boolean() }))).toEqual([false, true])
+    expect(fix([0, 1], array({ of: bool() }))).toEqual([false, true])
     expect(fix([1, '2', 3], array({ of: float() }))).toEqual([1, 2, 3])
     expect(fix(null, array({ required: false, of: text() }))).toBeUndefined()
   })
@@ -268,7 +268,7 @@ describe('Object validation', () => {
         name: text({ coerce: false }),
         pseudonym: join(lower(), trim()),
         age: float(),
-        single: boolean({ coerce: false }),
+        single: bool({ coerce: false }),
         location: schema({ latitude: float(), longitude: float() }),
         novels: array({ of: text() })
       }
@@ -327,10 +327,10 @@ describe('fix invalid data', () => {
   })
 
   test('invalid booleans', () => {
-    const x = fix({}, boolean({ coerce: false }))
+    const x = fix({}, bool({ coerce: false }))
     expect(x).toBe(false)
 
-    const y = fix({}, boolean({ coerce: false, def: true }))
+    const y = fix({}, bool({ coerce: false, def: true }))
     expect(y).toBe(true)
   })
 
