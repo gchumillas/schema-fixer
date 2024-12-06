@@ -1,7 +1,7 @@
 const { fix, createFixer } = require('./main')
 
 // TODO: replace string with text
-const string = createFixer(
+const string = createFixer('',
   (value, params) => {
     const { coerce = true } = params
 
@@ -12,12 +12,11 @@ const string = createFixer(
     }
 
     throw new TypeError('not a string')
-  },
-  { def: '' }
+  }
 )
 
 // TODO: replace number with float
-const number = createFixer(
+const number = createFixer(0,
   (value, params) => {
     const { coerce = true } = params
 
@@ -33,12 +32,11 @@ const number = createFixer(
     }
 
     throw new TypeError('not a number')
-  },
-  { def: 0 }
+  }
 )
 
 // TODO: replace boolean with bool
-const boolean = createFixer(
+const boolean = createFixer(false,
   (value, params) => {
     const { coerce = true } = params
 
@@ -49,12 +47,11 @@ const boolean = createFixer(
     }
 
     throw new TypeError('not a boolean')
-  },
-  { def: false }
+  }
 )
 
 // TODO: replace array with list
-const array = createFixer(
+const array = createFixer([],
   (value, params) => {
     const { of: type, path } = params
 
@@ -71,41 +68,37 @@ const array = createFixer(
     }
 
     throw new TypeError('not an array')
-  },
-  { def: [] }
+  }
 )
 
-const trim = createFixer(
+const trim = createFixer('',
   (value) => {
     if (typeof value != 'string') {
       throw new TypeError('not a string')
     }
 
     return value.trim()
-  },
-  { def: '' }
+  }
 )
 
-const lower = createFixer(
+const lower = createFixer('',
   (value) => {
     if (typeof value != 'string') {
       throw new TypeError('not a string')
     }
 
     return value.toLocaleLowerCase()
-  },
-  { def: '' }
+  }
 )
 
-const upper = createFixer(
+const upper = createFixer('',
   (value) => {
     if (typeof value != 'string') {
       throw new TypeError('not a string')
     }
 
     return value.toLocaleUpperCase()
-  },
-  { def: '' }
+  }
 )
 
 module.exports = {

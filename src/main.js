@@ -21,19 +21,19 @@ const fix = (value, schema, { path = '' } = {}) => {
   }), {})
 }
 
-function createFixer(fn, options) {
+function createFixer(def, fn) {
   return (options1) => {
     // TODO: (all) replace default with def, since "default" is a reserver word
-    const { def, required = true } = { ...options, ...options1 }
+    const { def: defValue, required = true } = { def, ...options1 }
 
     return (value, options2) => {
-      const params = { ...options, ...options1, ...options2 }
+      const params = { ...options1, ...options2 }
       const { path } = params
 
       // TODO: remove value === '' (optional)
       if (isNone(value) || value === '') {
         if (required) {
-          return def
+          return defValue
         }
 
         return undefined
@@ -43,7 +43,7 @@ function createFixer(fn, options) {
         return fn(value, params)
       } catch(e) {
         console.error([path, e.message ?? `${e}`].filter(x => !!x).join(': '))
-        return required ? def : undefined
+        return required ? defValue : undefined
       }
     }
   }

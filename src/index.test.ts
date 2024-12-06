@@ -291,13 +291,13 @@ describe('Object validation', () => {
 
 describe('Custom parsers', () => {
   test('floor parser', () => {
-    const floor = createFixer((value) => {
+    const floor = createFixer(0, (value) => {
       if (typeof value != 'number') {
         throw TypeError('not a number')
       }
 
       return Math.floor(value)
-    }, { def: 0 })
+    })
 
     expect(fix('105.48', join(number(), floor()))).toBe(105)
     expect(fix('105.48', floor())).toBe(0)

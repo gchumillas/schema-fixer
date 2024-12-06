@@ -16,10 +16,7 @@ export function fix<T extends Schema>(value: any, schema: T): Value<T>
 // create custom parsers
 declare function parser<T, S>(options: Prettify<{ required: false } & S>): (value: any) => T | undefined
 declare function parser<T, S>(options?: Prettify<{ def?: T } & S>): (value: any) => T
-declare function createFixer<T, S extends Record<string, any>>(
-  fn: (value: any, options: S) => T,
-  options: { def: T }
-): typeof parser<T, S>
+declare function createFixer<T, S extends Record<string, any>>(def: T, fn: (value: any, options: S) => T): typeof parser<T, S>
 
 // utilities
 export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
