@@ -173,7 +173,7 @@ describe('Float validation', () => {
   })
 
   test('def option', () => {
-    expect(fix('', float({ def: 100 }))).toBe(100)
+    expect(fix({}, float({ def: 100 }))).toBe(100)
     expect(fix(undefined, float({ def: 125.48 }))).toBe(125.48)
     expect(fix(null, float({ def: 125.48 }))).toBe(125.48)
   })
