@@ -1,8 +1,9 @@
 const { fix, createFixer } = require('./main')
 
+// TODO: replace string with text
 const string = createFixer(
   (value, params) => {
-    const { coerce = true, default: defValue } = params
+    const { coerce = true } = params
 
     if (typeof value == 'string') {
       return value
@@ -10,37 +11,36 @@ const string = createFixer(
       return `${value}`
     }
 
-    // console.log('not a string')
-    return defValue
+    throw new TypeError('not a string')
   },
   { default: '' }
 )
 
+// TODO: replace number with float
 const number = createFixer(
   (value, params) => {
-    const { coerce = true, default: defValue } = params
+    const { coerce = true } = params
 
     if (typeof value == 'number') {
       return value
     } else if (coerce && ['boolean', 'string'].includes(typeof value)) {
       const val = +value
       if (isNaN(val)) {
-        // console.log('not a number')
-        return defValue
+        throw new TypeError('not a number')
       }
 
       return +value
     }
 
-    // console.log('not a number')
-    return defValue
+    throw new TypeError('not a number')
   },
   { default: 0 }
 )
 
+// TODO: replace boolean with bool
 const boolean = createFixer(
   (value, params) => {
-    const { coerce = true, default: defValue } = params
+    const { coerce = true } = params
 
     if (typeof value == 'boolean') {
       return value
@@ -48,15 +48,15 @@ const boolean = createFixer(
       return !!value
     }
 
-    // console.log('not a boolean')
-    return defValue
+    throw new TypeError('not a boolean')
   },
   { default: false }
 )
 
+// TODO: replace array with list
 const array = createFixer(
   (value, params) => {
-    const { of: type, default: defValue, path } = params
+    const { of: type, path } = params
 
     if (Array.isArray(value)) {
       const val = value.reduce(
@@ -70,19 +70,15 @@ const array = createFixer(
       return val
     }
 
-    // console.log('not an array')
-    return defValue
+    throw new TypeError('not an array')
   },
   { default: [] }
 )
 
 const trim = createFixer(
-  (value, params) => {
-    const { default: defValue } = params
-
+  (value) => {
     if (typeof value != 'string') {
-      // console.log('not a string')
-      return defValue
+      throw new TypeError('not a string')
     }
 
     return value.trim()
@@ -91,12 +87,9 @@ const trim = createFixer(
 )
 
 const lower = createFixer(
-  (value, params) => {
-    const { default: defValue } = params
-
+  (value) => {
     if (typeof value != 'string') {
-      // console.log('not a string')
-      return defValue
+      throw new TypeError('not a string')
     }
 
     return value.toLocaleLowerCase()
@@ -105,12 +98,9 @@ const lower = createFixer(
 )
 
 const upper = createFixer(
-  (value, params) => {
-    const { default: defValue } = params
-
+  (value) => {
     if (typeof value != 'string') {
-      // console.log('not a string')
-      return defValue
+      throw new TypeError('not a string')
     }
 
     return value.toLocaleUpperCase()
