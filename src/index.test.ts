@@ -120,7 +120,7 @@ describe('Nested validations', () => {
       address: schema({
         street: string(),
         postalCode: string(),
-        city: string({ default: 'Portland' })
+        city: string({ def: 'Portland' })
       })
     })
 
@@ -152,16 +152,16 @@ describe('Text validation', () => {
     expect(fix(125.48, string())).toBe('125.48')
   })
 
-  test('default option', () => {
+  test('def option', () => {
     expect(fix(undefined, string())).toBe('')
     expect(fix(null, string())).toBe('')
-    expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
-    expect(fix(null, string({ default: 'John Smith' }))).toBe('John Smith')
+    expect(fix(undefined, string({ def: 'John Smith' }))).toBe('John Smith')
+    expect(fix(null, string({ def: 'John Smith' }))).toBe('John Smith')
   })
 
   test('coerce option', () => {
     expect(fix(true, string({ coerce: false }))).toBe('')
-    expect(fix(125.48, string({ coerce: false, default: 'xxx' }))).toBe('xxx')
+    expect(fix(125.48, string({ coerce: false, def: 'xxx' }))).toBe('xxx')
   })
 })
 
@@ -176,15 +176,15 @@ describe('Float validation', () => {
     expect(fix('lorem ipsum', number())).toBe(0)
   })
 
-  test('default option', () => {
-    expect(fix('', number({ default: 100 }))).toBe(100)
-    expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
-    expect(fix(null, number({ default: 125.48 }))).toBe(125.48)
+  test('def option', () => {
+    expect(fix('', number({ def: 100 }))).toBe(100)
+    expect(fix(undefined, number({ def: 125.48 }))).toBe(125.48)
+    expect(fix(null, number({ def: 125.48 }))).toBe(125.48)
   })
 
   test('coerce option', () => {
     expect(fix('125.48', number({ coerce: false }))).toBe(0)
-    expect(fix('125.48', number({ coerce: false, default: 100 }))).toBe(100)
+    expect(fix('125.48', number({ coerce: false, def: 100 }))).toBe(100)
   })
 })
 
@@ -199,16 +199,16 @@ describe('Boolean validation', () => {
     expect(fix({}, boolean())).toBe(true)
   })
 
-  test('default option', () => {
+  test('def option', () => {
     expect(fix(undefined, boolean())).toBe(false)
     expect(fix(null, boolean())).toBe(false)
-    expect(fix(undefined, boolean({ default: true }))).toBe(true)
-    expect(fix(null, boolean({ default: true }))).toBe(true)
+    expect(fix(undefined, boolean({ def: true }))).toBe(true)
+    expect(fix(null, boolean({ def: true }))).toBe(true)
   })
 
   test('coerce option', () => {
     expect(fix(1, boolean({ coerce: false }))).toBe(false)
-    expect(fix(1, boolean({ coerce: false, default: true }))).toBe(true)
+    expect(fix(1, boolean({ coerce: false, def: true }))).toBe(true)
   })
 })
 
@@ -220,11 +220,11 @@ describe('Array validation', () => {
     expect(fix(null, array({ required: false, of: string() }))).toBeUndefined()
   })
 
-  test('default option', () => {
+  test('def option', () => {
     expect(fix(undefined, array({ of: string() }))).toEqual([])
     expect(fix(null, array({ of: string() }))).toEqual([])
-    expect(fix(undefined, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
-    expect(fix(null, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(undefined, array({ of: number(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(null, array({ of: number(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
@@ -297,7 +297,7 @@ describe('Custom parsers', () => {
       }
 
       return Math.floor(value)
-    }, { default: 0 })
+    }, { def: 0 })
 
     expect(fix('105.48', join(number(), floor()))).toBe(105)
     expect(fix('105.48', floor())).toBe(0)
@@ -309,16 +309,16 @@ describe('fix invalid data', () => {
     const x = fix({}, string())
     expect(x).toBe('')
 
-    const y = fix({}, string({ default: 'hello!' }))
+    const y = fix({}, string({ def: 'hello!' }))
     expect(y).toBe('hello!')
 
-    const z = fix(100, trim({ default: 'zzz'}))
+    const z = fix(100, trim({ def: 'zzz'}))
     expect(z).toBe('zzz')
 
-    const v = fix(100, lower({ default: 'vvv'}))
+    const v = fix(100, lower({ def: 'vvv'}))
     expect(v).toBe('vvv')
 
-    const w = fix(100, upper({ default: 'www'}))
+    const w = fix(100, upper({ def: 'www'}))
     expect(w).toBe('www')
   })
 
@@ -326,7 +326,7 @@ describe('fix invalid data', () => {
     const x = fix('aaa', number())
     expect(x).toBe(0)
 
-    const y = fix('aaa', number({ default: 100 }))
+    const y = fix('aaa', number({ def: 100 }))
     expect(y).toBe(100)
   })
 
@@ -334,7 +334,7 @@ describe('fix invalid data', () => {
     const x = fix({}, boolean({ coerce: false }))
     expect(x).toBe(false)
 
-    const y = fix({}, boolean({ coerce: false, default: true }))
+    const y = fix({}, boolean({ coerce: false, def: true }))
     expect(y).toBe(true)
   })
 
@@ -342,7 +342,7 @@ describe('fix invalid data', () => {
     const x = fix('aaa', array({ of: string() }))
     expect(x).toEqual([])
 
-    const y = fix({}, array({ of: number(), default: [1, 2, 3] }))
+    const y = fix({}, array({ of: number(), def: [1, 2, 3] }))
     expect(y).toEqual([1, 2, 3])
 
     const z = fix(undefined, array({ required: false, of: number() }))
@@ -353,7 +353,7 @@ describe('fix invalid data', () => {
     const x = fix(100, { name: string(), age: number() })
     expect(x).toEqual({ name: '', age: 0 })
 
-    const y = fix(100, { name: string({ default: 'John' }), age: number({ default: 35 }) })
+    const y = fix(100, { name: string({ def: 'John' }), age: number({ def: 35 }) })
     expect(y).toEqual({ name: 'John', age: 35 })
   })
 })

@@ -13,7 +13,7 @@ const string = createFixer(
 
     throw new TypeError('not a string')
   },
-  { default: '' }
+  { def: '' }
 )
 
 // TODO: replace number with float
@@ -34,7 +34,7 @@ const number = createFixer(
 
     throw new TypeError('not a number')
   },
-  { default: 0 }
+  { def: 0 }
 )
 
 // TODO: replace boolean with bool
@@ -50,7 +50,7 @@ const boolean = createFixer(
 
     throw new TypeError('not a boolean')
   },
-  { default: false }
+  { def: false }
 )
 
 // TODO: replace array with list
@@ -72,7 +72,7 @@ const array = createFixer(
 
     throw new TypeError('not an array')
   },
-  { default: [] }
+  { def: [] }
 )
 
 const trim = createFixer(
@@ -83,7 +83,7 @@ const trim = createFixer(
 
     return value.trim()
   },
-  { default: '' }
+  { def: '' }
 )
 
 const lower = createFixer(
@@ -94,7 +94,7 @@ const lower = createFixer(
 
     return value.toLocaleLowerCase()
   },
-  { default: '' }
+  { def: '' }
 )
 
 const upper = createFixer(
@@ -105,7 +105,7 @@ const upper = createFixer(
 
     return value.toLocaleUpperCase()
   },
-  { default: '' }
+  { def: '' }
 )
 
 module.exports = {
