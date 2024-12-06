@@ -1,4 +1,4 @@
-import { fix, createFixer, text, upper, lower, trim, float, bool, array, schema, join } from './index'
+import { fix, createFixer, text, upper, lower, trim, float, bool, list, schema, join } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -29,14 +29,14 @@ describe('Validate README examples', () => {
       lastName: text(),
       age: float(),
       isMarried: bool(),
-      childrend: array({ of: text() }),
+      childrend: list({ of: text() }),
       address: schema({
         street: text(),
         city: text(),
         state: text()
       }),
-      // array of complex objects
-      books: array({
+      // list of complex objects
+      books: list({
         of: {
           title: text(),
           year: float(),
@@ -210,17 +210,17 @@ describe('Boolean validation', () => {
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], array({ of: text() }))).toEqual(['true', 'false'])
-    expect(fix([0, 1], array({ of: bool() }))).toEqual([false, true])
-    expect(fix([1, '2', 3], array({ of: float() }))).toEqual([1, 2, 3])
-    expect(fix(null, array({ required: false, of: text() }))).toBeUndefined()
+    expect(fix([true, false], list({ of: text() }))).toEqual(['true', 'false'])
+    expect(fix([0, 1], list({ of: bool() }))).toEqual([false, true])
+    expect(fix([1, '2', 3], list({ of: float() }))).toEqual([1, 2, 3])
+    expect(fix(null, list({ required: false, of: text() }))).toBeUndefined()
   })
 
   test('def option', () => {
-    expect(fix(undefined, array({ of: text() }))).toEqual([])
-    expect(fix(null, array({ of: text() }))).toEqual([])
-    expect(fix(undefined, array({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
-    expect(fix(null, array({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(undefined, list({ of: text() }))).toEqual([])
+    expect(fix(null, list({ of: text() }))).toEqual([])
+    expect(fix(undefined, list({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(null, list({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
@@ -270,7 +270,7 @@ describe('Object validation', () => {
         age: float(),
         single: bool({ coerce: false }),
         location: schema({ latitude: float(), longitude: float() }),
-        novels: array({ of: text() })
+        novels: list({ of: text() })
       }
     )
 
@@ -335,13 +335,13 @@ describe('fix invalid data', () => {
   })
 
   test('invalid arrays', () => {
-    const x = fix('aaa', array({ of: text() }))
+    const x = fix('aaa', list({ of: text() }))
     expect(x).toEqual([])
 
-    const y = fix({}, array({ of: float(), def: [1, 2, 3] }))
+    const y = fix({}, list({ of: float(), def: [1, 2, 3] }))
     expect(y).toEqual([1, 2, 3])
 
-    const z = fix(undefined, array({ required: false, of: float() }))
+    const z = fix(undefined, list({ required: false, of: float() }))
     expect(z).toBeUndefined()
   })
 

@@ -33,5 +33,5 @@ export const trim: ReturnType<typeof createFixer<string, {}>>
 export const lower: ReturnType<typeof createFixer<string, {}>>
 export const upper: ReturnType<typeof createFixer<string, {}>>
 
-export function array<T extends Schema>(_: { required: false; of: T }): (value: any) => Array<Value<T>> | undefined
-export function array<T extends Schema>(_: { def?: Array<Value<T>>; of: T }): (value: any) => Array<Value<T>>
+export function list<T extends Schema>(_: { required: false; of: T }): (value: any) => Array<Value<T>> | undefined
+export function list<T extends Schema>(_: { def?: Array<Value<T>>; of: T }): (value: any) => Array<Value<T>>

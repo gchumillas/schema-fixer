@@ -41,8 +41,7 @@ const bool = createFixer(false, (value, params) => {
   throw new TypeError('not a boolean')
 })
 
-// TODO: replace array with list
-const array = createFixer([], (value, params) => {
+const list = createFixer([], (value, params) => {
   const { of: type, path } = params
 
   if (Array.isArray(value)) {
@@ -88,5 +87,5 @@ module.exports = {
   upper,
   float,
   bool,
-  array
+  list
 }
