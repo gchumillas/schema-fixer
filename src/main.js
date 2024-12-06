@@ -15,10 +15,13 @@ const fix = (value, schema, { path = '' } = {}) => {
   }
 
   // parses an object
-  return Object.entries(schema).reduce((props, [prop, parser]) => ({
-    ...props,
-    [prop]: fix(value[prop], parser, { path: concat([path, prop], '.') })
-  }), {})
+  return Object.entries(schema).reduce(
+    (props, [prop, parser]) => ({
+      ...props,
+      [prop]: fix(value[prop], parser, { path: concat([path, prop], '.') })
+    }),
+    {}
+  )
 }
 
 function createFixer(def, fn) {
@@ -41,8 +44,8 @@ function createFixer(def, fn) {
 
       try {
         return fn(value, params)
-      } catch(e) {
-        console.error([path, e.message ?? `${e}`].filter(x => !!x).join(': '))
+      } catch (e) {
+        console.error([path, e.message ?? `${e}`].filter((x) => !!x).join(': '))
         return required ? defValue : undefined
       }
     }

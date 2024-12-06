@@ -1,8 +1,4 @@
-import {
-  fix, createFixer,
-  string, upper, lower, trim, number, boolean, array,
-  schema, join
-} from './index'
+import { fix, createFixer, string, upper, lower, trim, number, boolean, array, schema, join } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -312,13 +308,13 @@ describe('fix invalid data', () => {
     const y = fix({}, string({ def: 'hello!' }))
     expect(y).toBe('hello!')
 
-    const z = fix(100, trim({ def: 'zzz'}))
+    const z = fix(100, trim({ def: 'zzz' }))
     expect(z).toBe('zzz')
 
-    const v = fix(100, lower({ def: 'vvv'}))
+    const v = fix(100, lower({ def: 'vvv' }))
     expect(v).toBe('vvv')
 
-    const w = fix(100, upper({ def: 'www'}))
+    const w = fix(100, upper({ def: 'www' }))
     expect(w).toBe('www')
   })
 
