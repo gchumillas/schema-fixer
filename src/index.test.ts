@@ -1,4 +1,4 @@
-import { fix, createFixer, text, upper, lower, trim, number, boolean, array, schema, join } from './index'
+import { fix, createFixer, text, upper, lower, trim, float, boolean, array, schema, join } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -27,7 +27,7 @@ describe('Validate README examples', () => {
       name: text(),
       middleName: text({ required: false }),
       lastName: text(),
-      age: number(),
+      age: float(),
       isMarried: boolean(),
       childrend: array({ of: text() }),
       address: schema({
@@ -39,7 +39,7 @@ describe('Validate README examples', () => {
       books: array({
         of: {
           title: text(),
-          year: number(),
+          year: float(),
           // we can combine multiple 'parsers'
           id: join(text(), upper())
         }
@@ -69,14 +69,14 @@ describe('Validate README examples', () => {
   test('floorParser', () => {
     const floorParser = () => (value: any) => {
       if (typeof value != 'number') {
-        throw new Error('not a number')
+        throw new Error('not a float')
       }
 
       return Math.floor(value)
     }
 
     // Note that you can pass "scalar" values to the fix function.
-    const data = fix('105.48', join(number(), floorParser()))
+    const data = fix('105.48', join(float(), floorParser()))
     expect(data).toBe(105)
   })
 
@@ -135,8 +135,8 @@ describe('Nested validations', () => {
     expect(fix(undefined, schema(text()))).toBe('')
     expect(fix('hello there!', schema(text()))).toBe('hello there!')
     expect(fix('   Hello there!   ', schema(join(text(), trim(), lower())))).toBe('hello there!')
-    expect(fix('100', schema(number()))).toBe(100)
-    expect(fix(undefined, schema(number()))).toBe(0)
+    expect(fix('100', schema(float()))).toBe(100)
+    expect(fix(undefined, schema(float()))).toBe(0)
   })
 })
 
@@ -163,24 +163,24 @@ describe('Text validation', () => {
 
 describe('Float validation', () => {
   test('basic', () => {
-    expect(fix(undefined, number())).toBe(0)
-    expect(fix(null, number())).toBe(0)
-    expect(fix(false, number())).toBe(0)
-    expect(fix(true, number())).toBe(1)
-    expect(fix(125.48, number())).toBe(125.48)
-    expect(fix('125.48', number())).toBe(125.48)
-    expect(fix('lorem ipsum', number())).toBe(0)
+    expect(fix(undefined, float())).toBe(0)
+    expect(fix(null, float())).toBe(0)
+    expect(fix(false, float())).toBe(0)
+    expect(fix(true, float())).toBe(1)
+    expect(fix(125.48, float())).toBe(125.48)
+    expect(fix('125.48', float())).toBe(125.48)
+    expect(fix('lorem ipsum', float())).toBe(0)
   })
 
   test('def option', () => {
-    expect(fix('', number({ def: 100 }))).toBe(100)
-    expect(fix(undefined, number({ def: 125.48 }))).toBe(125.48)
-    expect(fix(null, number({ def: 125.48 }))).toBe(125.48)
+    expect(fix('', float({ def: 100 }))).toBe(100)
+    expect(fix(undefined, float({ def: 125.48 }))).toBe(125.48)
+    expect(fix(null, float({ def: 125.48 }))).toBe(125.48)
   })
 
   test('coerce option', () => {
-    expect(fix('125.48', number({ coerce: false }))).toBe(0)
-    expect(fix('125.48', number({ coerce: false, def: 100 }))).toBe(100)
+    expect(fix('125.48', float({ coerce: false }))).toBe(0)
+    expect(fix('125.48', float({ coerce: false, def: 100 }))).toBe(100)
   })
 })
 
@@ -212,15 +212,15 @@ describe('Array validation', () => {
   test('basic', () => {
     expect(fix([true, false], array({ of: text() }))).toEqual(['true', 'false'])
     expect(fix([0, 1], array({ of: boolean() }))).toEqual([false, true])
-    expect(fix([1, '2', 3], array({ of: number() }))).toEqual([1, 2, 3])
+    expect(fix([1, '2', 3], array({ of: float() }))).toEqual([1, 2, 3])
     expect(fix(null, array({ required: false, of: text() }))).toBeUndefined()
   })
 
   test('def option', () => {
     expect(fix(undefined, array({ of: text() }))).toEqual([])
     expect(fix(null, array({ of: text() }))).toEqual([])
-    expect(fix(undefined, array({ of: number(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
-    expect(fix(null, array({ of: number(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(undefined, array({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(null, array({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
@@ -267,9 +267,9 @@ describe('Object validation', () => {
       {
         name: text({ coerce: false }),
         pseudonym: join(lower(), trim()),
-        age: number(),
+        age: float(),
         single: boolean({ coerce: false }),
-        location: schema({ latitude: number(), longitude: number() }),
+        location: schema({ latitude: float(), longitude: float() }),
         novels: array({ of: text() })
       }
     )
@@ -289,13 +289,13 @@ describe('Custom parsers', () => {
   test('floor parser', () => {
     const floor = createFixer(0, (value) => {
       if (typeof value != 'number') {
-        throw TypeError('not a number')
+        throw TypeError('not a float')
       }
 
       return Math.floor(value)
     })
 
-    expect(fix('105.48', join(number(), floor()))).toBe(105)
+    expect(fix('105.48', join(float(), floor()))).toBe(105)
     expect(fix('105.48', floor())).toBe(0)
   })
 })
@@ -319,10 +319,10 @@ describe('fix invalid data', () => {
   })
 
   test('invalid numbers', () => {
-    const x = fix('aaa', number())
+    const x = fix('aaa', float())
     expect(x).toBe(0)
 
-    const y = fix('aaa', number({ def: 100 }))
+    const y = fix('aaa', float({ def: 100 }))
     expect(y).toBe(100)
   })
 
@@ -338,18 +338,18 @@ describe('fix invalid data', () => {
     const x = fix('aaa', array({ of: text() }))
     expect(x).toEqual([])
 
-    const y = fix({}, array({ of: number(), def: [1, 2, 3] }))
+    const y = fix({}, array({ of: float(), def: [1, 2, 3] }))
     expect(y).toEqual([1, 2, 3])
 
-    const z = fix(undefined, array({ required: false, of: number() }))
+    const z = fix(undefined, array({ required: false, of: float() }))
     expect(z).toBeUndefined()
   })
 
   test('invalid objects', () => {
-    const x = fix(100, { name: text(), age: number() })
+    const x = fix(100, { name: text(), age: float() })
     expect(x).toEqual({ name: '', age: 0 })
 
-    const y = fix(100, { name: text({ def: 'John' }), age: number({ def: 35 }) })
+    const y = fix(100, { name: text({ def: 'John' }), age: float({ def: 35 }) })
     expect(y).toEqual({ name: 'John', age: 35 })
   })
 })

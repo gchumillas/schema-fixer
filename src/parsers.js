@@ -12,8 +12,7 @@ const text = createFixer('', (value, params) => {
   throw new TypeError('not a string')
 })
 
-// TODO: replace number with float
-const number = createFixer(0, (value, params) => {
+const float = createFixer(0, (value, params) => {
   const { coerce = true } = params
 
   if (typeof value == 'number') {
@@ -88,7 +87,7 @@ module.exports = {
   trim,
   lower,
   upper,
-  number,
+  float,
   boolean,
   array
 }
