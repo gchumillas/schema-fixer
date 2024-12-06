@@ -18,8 +18,7 @@ declare function parser<T, S>(options: Prettify<{ required: false } & S>): (valu
 declare function parser<T, S>(options?: Prettify<{ def?: T } & S>): (value: any) => T
 declare function createFixer<T, S extends Record<string, any>>(
   fn: (value: any, options: S) => T,
-  // TODO: def should be required
-  options?: { def?: T }
+  options: { def: T }
 ): typeof parser<T, S>
 
 // utilities

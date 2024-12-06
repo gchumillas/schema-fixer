@@ -291,7 +291,7 @@ describe('Object validation', () => {
 
 describe('Custom parsers', () => {
   test('floor parser', () => {
-    const floor = createFixer((value, options) => {
+    const floor = createFixer((value) => {
       if (typeof value != 'number') {
         throw TypeError('not a number')
       }
