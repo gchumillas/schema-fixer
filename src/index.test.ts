@@ -1,4 +1,4 @@
-import { fix, createFixer, text, upper, lower, trim, float, bool, list, schema, join } from './index'
+import { fix, createFixer, text, upper, lower, trim, float, bool, list } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -30,18 +30,18 @@ describe('Validate README examples', () => {
       age: float(),
       isMarried: bool(),
       childrend: list({ of: text() }),
-      address: schema({
+      address: {
         street: text(),
         city: text(),
         state: text()
-      }),
+      },
       // list of complex objects
       books: list({
         of: {
           title: text(),
           year: float(),
           // we can combine multiple 'parsers'
-          id: join(text(), upper())
+          id: [text(), upper()]
         }
       })
     })
@@ -76,7 +76,7 @@ describe('Validate README examples', () => {
     }
 
     // Note that you can pass "scalar" values to the fix function.
-    const data = fix('105.48', join(float(), floorParser()))
+    const data = fix('105.48', [float(), floorParser()])
     expect(data).toBe(105)
   })
 
@@ -90,13 +90,13 @@ describe('Validate README examples', () => {
     }
 
     // note that we are using multiple parsers before applying our custom parser
-    const fixedColor = fix('#ab783F', join(upper(), trim(), colorParser()))
+    const fixedColor = fix('#ab783F', [upper(), trim(), colorParser()])
     expect(fixedColor).toBe('#AB783F')
   })
 
   test('Combine multiple parsers', () => {
     const color = '  #aB4cf7  '
-    const fixedColor = fix(color, join(text(), trim(), upper()))
+    const fixedColor = fix(color, [text(), trim(), upper()])
     expect(fixedColor).toBe('#AB4CF7')
   })
 })
@@ -113,11 +113,11 @@ describe('Nested validations', () => {
 
     const fixedData = fix(data, {
       name: text(),
-      address: schema({
+      address: {
         street: text(),
         postalCode: text(),
         city: text({ def: 'Portland' })
-      })
+      }
     })
 
     expect(fixedData).toMatchObject({
@@ -128,15 +128,6 @@ describe('Nested validations', () => {
         city: 'Portland'
       }
     })
-  })
-
-  test('with aliases', () => {
-    expect(fix(100, schema(text()))).toBe('100')
-    expect(fix(undefined, schema(text()))).toBe('')
-    expect(fix('hello there!', schema(text()))).toBe('hello there!')
-    expect(fix('   Hello there!   ', schema(join(text(), trim(), lower())))).toBe('hello there!')
-    expect(fix('100', schema(float()))).toBe(100)
-    expect(fix(undefined, schema(float()))).toBe(0)
   })
 })
 
@@ -226,23 +217,23 @@ describe('Array validation', () => {
 
 describe('Combine multiple parsers', () => {
   test('trim', () => {
-    expect(fix(' hello there! ', join(text(), trim()))).toBe('hello there!')
+    expect(fix(' hello there! ', [text(), trim()])).toBe('hello there!')
     expect(fix(125.48, trim())).toBe('')
   })
 
   test('lower', () => {
-    expect(fix('Hello There!', join(text(), lower()))).toBe('hello there!')
+    expect(fix('Hello There!', [text(), lower()])).toBe('hello there!')
     expect(fix(125.48, lower())).toBe('')
   })
 
   test('upper', () => {
-    expect(fix('hello there!', join(text(), upper()))).toBe('HELLO THERE!')
+    expect(fix('hello there!', [text(), upper()])).toBe('HELLO THERE!')
     expect(fix(125.48, upper())).toBe('')
   })
 
   test('combined parsers', () => {
-    expect(fix(' Hello There! ', join(text(), trim(), lower()))).toBe('hello there!')
-    expect(fix(' Hello There! ', join(text(), trim(), upper()))).toBe('HELLO THERE!')
+    expect(fix(' Hello There! ', [text(), trim(), lower()])).toBe('hello there!')
+    expect(fix(' Hello There! ', [text(), trim(), upper()])).toBe('HELLO THERE!')
   })
 })
 
@@ -266,10 +257,10 @@ describe('Object validation', () => {
       },
       {
         name: text({ coerce: false }),
-        pseudonym: join(lower(), trim()),
+        pseudonym: [lower(), trim()],
         age: float(),
         single: bool({ coerce: false }),
-        location: schema({ latitude: float(), longitude: float() }),
+        location: { latitude: float(), longitude: float() },
         novels: list({ of: text() })
       }
     )
@@ -295,7 +286,7 @@ describe('Custom parsers', () => {
       return Math.floor(value)
     })
 
-    expect(fix('105.48', join(float(), floor()))).toBe(105)
+    expect(fix('105.48', [float(), floor()])).toBe(105)
     expect(fix('105.48', floor())).toBe(0)
   })
 })

@@ -1,14 +1,13 @@
 type Prettify<T> = { [K in keyof T]: T[K] } & {}
 
 export type Fixer<S = unknown> = (value: any) => S
-export type FixerRecord = Record<string, Fixer>
-export type Schema = Fixer | FixerRecord
+export type Schema = Fixer | Fixer[] | Record<string, Schema>
 
-export type Value<T> = T extends FixerRecord
-  ? { [Prop in keyof T]: ReturnType<T[Prop]> } & {}
-  : T extends Fixer
+export type Value<T extends Schema> = T extends Fixer
   ? ReturnType<T>
-  : never
+  : T extends Fixer[]
+  ? ReturnType<T[0]>
+  : { [Prop in keyof T]: Value<T[Prop]> } & {}
 
 // main functions
 export function fix<T extends Schema>(value: any, schema: T): Value<T>
@@ -20,10 +19,6 @@ declare function createFixer<T, S extends Record<string, any>>(
   def: T,
   fn: (value: any, options: S) => T
 ): typeof fixer<T, S>
-
-// utilities
-export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
-export function join<T>(...fixers: Fixer<T>[]): Fixer<T>
 
 // fixers
 export const text: ReturnType<typeof createFixer<string, { coerce?: boolean }>>
