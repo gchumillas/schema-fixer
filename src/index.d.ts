@@ -12,7 +12,7 @@ export type Value<T extends Schema> = T extends Fixer
 // main functions
 export function fix<T extends Schema>(value: any, schema: T): Value<T>
 
-// create custom parsers
+// create custom fixers
 declare function fixer<T, S>(options: Prettify<{ required: false } & S>): (value: any) => T | undefined
 declare function fixer<T, S>(options?: Prettify<{ def?: T } & S>): (value: any) => T
 declare function createFixer<T, S extends Record<string, any>>(

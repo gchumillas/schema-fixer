@@ -7,7 +7,7 @@ const fix = (value, schema, { path = '' } = {}) => {
 
   // parses an array
   if (Array.isArray(schema)) {
-    return schema.reduce((acc, parser) => parser(acc, { path }), value)
+    return schema.reduce((acc, fixer) => fixer(acc, { path }), value)
   }
 
   if (!isObject(value)) {
@@ -16,9 +16,9 @@ const fix = (value, schema, { path = '' } = {}) => {
 
   // parses an object
   return Object.entries(schema).reduce(
-    (props, [prop, parser]) => ({
+    (props, [prop, fixer]) => ({
       ...props,
-      [prop]: fix(value[prop], parser, { path: concat([path, prop], '.') })
+      [prop]: fix(value[prop], fixer, { path: concat([path, prop], '.') })
     }),
     {}
   )

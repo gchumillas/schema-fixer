@@ -40,7 +40,7 @@ describe('Validate README examples', () => {
         of: {
           title: text(),
           year: float(),
-          // we can combine multiple 'parsers'
+          // we can combine multiple 'fixers'
           id: [text(), upper()]
         }
       })
@@ -89,12 +89,12 @@ describe('Validate README examples', () => {
       return value
     }
 
-    // note that we are using multiple parsers before applying our custom parser
+    // note that we are using multiple fixers before applying our custom fixer
     const fixedColor = fix('#ab783F', [upper(), trim(), colorParser()])
     expect(fixedColor).toBe('#AB783F')
   })
 
-  test('Combine multiple parsers', () => {
+  test('Combine multiple fixers', () => {
     const color = '  #aB4cf7  '
     const fixedColor = fix(color, [text(), trim(), upper()])
     expect(fixedColor).toBe('#AB4CF7')
@@ -215,7 +215,7 @@ describe('Array validation', () => {
   })
 })
 
-describe('Combine multiple parsers', () => {
+describe('Combine multiple fixers', () => {
   test('trim', () => {
     expect(fix(' hello there! ', [text(), trim()])).toBe('hello there!')
     expect(fix(125.48, trim())).toBe('')
@@ -231,7 +231,7 @@ describe('Combine multiple parsers', () => {
     expect(fix(125.48, upper())).toBe('')
   })
 
-  test('combined parsers', () => {
+  test('combined fixers', () => {
     expect(fix(' Hello There! ', [text(), trim(), lower()])).toBe('hello there!')
     expect(fix(' Hello There! ', [text(), trim(), upper()])).toBe('HELLO THERE!')
   })
@@ -276,8 +276,8 @@ describe('Object validation', () => {
   })
 })
 
-describe('Custom parsers', () => {
-  test('floor parser', () => {
+describe('Custom fixers', () => {
+  test('floor fixer', () => {
     const floor = createFixer(0, (value) => {
       if (typeof value != 'number') {
         throw TypeError('not a float')
