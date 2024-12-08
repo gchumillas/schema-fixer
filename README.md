@@ -1,68 +1,50 @@
-# Schema-Fixer
+A small library with full TypeScript support to fix data.
 
-A small library to fix external data sources with full TypeScript support.
+**What is this?** It's a fixer. It fixes "any data" preserving the types. **What is this not?** It's not a parser or a validator. Just a fixer. **Why?** Because you don't want to deal with `null` or `undefined` values ​​or invalid data formats that can break our application.
 
-Working with external data sources is always a risk as they may be rendered in a wrong format and cause your application to crash. The main goal of this library is "to fix" those external data sources.
+Main features:
 
-### `undefined` and `null` are harmful values
+- Never fails. It can fix any data against a given schema.
+- Infers types from the schema.
+- Transforms `null` and `undefined` ​​to default values.
+- Excludes unwanted properties to prevent code injection.
 
-The values `undefined` and `null` are considered "harmful" and they are converted to "default values". For example:
+### Example
 
-```ts
-import sf from '@gchumillas/schema-fixer'
-
-sf.fix(undefined, sf.string())              // returns ""
-sf.fix(null, sf.number())                   // returns 0
-sf.fix(null, sf.boolean({ default: true })) // returns true
-```
-
-### Use in combination with Axios (a typical example)
-
-The following code shows a typical example of using "schema-fixer" in combination with Axios to "repair" data coming from the server:
+In the following example we obtain the data from an external API and ensure that it conforms to our expected format:
 
 ```ts
 import sf from '@gchumillas/schema-fixer'
 
+// unwanted `null` and `undefined` values are transformed to '', 0, [], etc.
+// no need to indicate the return type, since it is inferred from the schema
 function getAuthor = async (authorId: string) => {
-  const res = await axios.get(`/api/authors/${authorId}`)
+  const res = await axios.get(`/api/v1/authors/${authorId}`)
 
-  // 'repairs' the data and ensure it is returned as expected
-  return sf.fix(res.data, {
-    name: sf.string(),
-    middleName: sf.string(),
-    lastName: sf.string(),
-    age: sf.number(),
-    isMarried: sf.boolean(),
-    childrend: sf.array({ of: sf.string() }),
-    // nested schema
-    address: sf.schema({
-      street: sf.string(),
-      city: sf.string(),
-      state: sf.string()
-    }),
-    // array of complex objects
-    books: sf.array({
-      of: {
-        title: sf.string(),
-        year: sf.number(),
-        // combine multiple 'fixers'
-        id: sf.join(sf.trim(), sf.upper())
-      }
-    })
+  // 'fixes' the data against a given 'schema'
+  return sf.fix(data, {
+    name: sf.text(),
+    middleName: sf.text(),
+    lastName: sf.text(),
+    age: sf.float(),
+    isMarried: sf.bool(),
+    // an array of strings
+    childrend: sf.list({ of: sf.text() }),
+    // an object
+    address: {
+      street: sf.text(),
+      city: sf.text(),
+      state: sf.text()
+    },
+    // array of objects
+    books: sf.list({ of: {
+      title: sf.text(),
+      year: sf.float(),
+      // combine multiple 'fixers'
+      id: [sf.trim(), sf.upper()]
+    }})
   })
 }
-```
-
-### Not all data can be fixed
-
-It's important to note that **not all data can be fixed**. In those cases the `fix` function throws an error. For example:
-
-```ts
-import sf from '@gchumillas/schema-fixer'
-
-fix({ text: "I'm not a string" }, string())      // throws an error
-fix("I'm not a number", number())                // throws an error
-fix("I'm not an array", array({ of: string() })) // throws an error
 ```
 
 ## Install
@@ -81,76 +63,99 @@ import sf from '@gchumillas/schema-fixer'
 
 ## API
 
-```
-// main functions
-fix(data, schema)      - repairs the data against a schema
-parse(data, schema)    - repairs the data againts a schema and return the errors
+```js
+fix(data, schema)        // fixes 'any data' againts a given schema
+createFixer(def, fixer)  // creates a custom fixer
 
-// create parsers
-createParser(fn, opts) - create a custom parser
+// built-in fixers
+text({ def = '', required = true, coerce = true })     // fixes a string
+float({ def = 0, required = true, coerce = true })     // fixes a number
+bool({ def = false, required = true, coerce = true })  // fixes a boolean
+list({ of: Schema, def = [], required = true })        // fixes an array
 
-// utilities
-schema(schema)         - allows nested schemas
-join(fixers[])         - combines multiple "fixers"
-
-// fixers
-string()               - fixes a string
-number()               - fixes a number
-boolean()              - fixes a boolean
-array({ of: schema })  - fixes an array
-trim()                 - removes whitespaces
-lower()                - converts text to lowercase
-upper()                - converts text to uppercase
+// additional built-in fixers
+trim({ def = '', required = true })                    // trims a string
+lower({ def = '', required = true })                   // lowercases a string
+upper({ def = '', required = true })                   // uppercases a string
 ```
 
-## Basic examples
+- A 'fixer' is the function that fixes the incoming data.
+
+- A `Schema` can be a 'fixer', an list of 'fixers' or a record of 'fixers'. For example:
 
 ```js
-// no more `undefined` or `null` values
-fix(undefined, string())           // => ''
-fix(null, number())                // => 0
-fix(undefined, boolean())          // => false
-fix(null, array({ of: string() })) // => []
-
-// replaces "empty values" with default values
-fix('', string({ default: 'John Smith' })) // => 'John Smith'
-fix('', number({ default: 100 }))          // => 100
-fix(undefined, boolean({ default: true })) // => true
-
-fix({}, {
-  name: string({ default: 'John' }),
-  surname: string({ default: 'Smith' })
-}) // => { name: 'John', surname: 'Smith' }
+fix(1, bool()) // true
+fix('Hello!', [text(), upper()]) // 'HELLO!'
+fix({ name: 'John' }, { name: text(), age: float() }) // { name: 'John, age: 0 }
 ```
 
-**>> Need more examples?**
+- The `def` parameter indicates the value to return when the 'fixer' cannot fix the incoming data or the data is `null` or `undefined`. For example:
 
-Take a look at the [TESTS FILE](./src/index.test.js).
+```js
+fix(null, text()) // ''
+fix(undefined, text({ def: 'aaa' })) // 'aaa'
+fix({}, float({ def: 100 })) // 100, since {} cannot be fixed
+```
 
-## Write your own "parsers"
+- The `coerce` parameter indicates that you want to "force" the conversion (default is `true`). For example:
+
+```js
+fix(100, text()) // ''
+fix(100, text({ coerce: false })) // '', since 100 is not a string
+```
+
+- The `required` parameter indicates that an incoming value is required. For example:
+
+```js
+fix(undefined, float()) // 0, as we expect a number
+fix(null, float({ required: false })) // undefined
+fix(undefined, text({ required: false })) // undefined
+```
+
+> [!NOTE]
+> You'll probably never have to use the `required`, `def` or `coerce` parameters. But they're there!
+
+Take a look at the [TEST FILE](./src/index.test.ts) for more examples.
+
+## Combine fixers
+
+You can apply different "fixers" to the same incoming data by combining them. For example:
+
+```js
+fix('Hello!', [text(), upper()]) // 'HELLO!'
+```
+
+## Create your own fixer
+
+This is a simple fixer:
 
 ```ts
 import sf from '@gchumillas/schema-fixer'
 
-// tries to fix a "human date" to ensure it is returned in ISO format
-const date = sf.createParser((value: any) => {
-  const milliseconds = Date.parse(`${value}`)
+// fixes a color
+const colorFixer = sf.createFixer('#000000', (value) => {
+  const color = `${value}`.trim().toUpperCase()
 
-  if (isNaN(milliseconds)) {
-    throw new Error('not a date')
+  if (color.match(/^#([0-9,A-F]{6})$/)) {
+    // nice!
+    return color
+  } else {
+    const matches = color.match(/^#([0-9,A-F]{3})$/)
+
+    if (matches) {
+      return `#${matches[1].split('').map(d => d.repeat(2)).join('')}`
+    }
   }
 
-  const date = new Date(milliseconds)
-  return date.toISOString()
+  // a default value is provided
+  throw new TypeError('not a color')
 })
 
-// Examples
-fix('1 Feb 2022', date())       // => '2022-02-01T00:00:00.000Z'
-fix('2012-07-15', date())       // => '2012-07-15T00:00:00.000Z'
-fix('2023-08-03 15:48', date()) // => '2023-08-03T14:48:00.000Z'
-fix('1/1/1', date())            // => throws an error!
+sf.fix('#f6f', colorFixer())    // '#FF66FF'
+sf.fix('#f6ef6f', colorFixer()) // '#F6EF6F'
+sf.fix('red', colorFixer())     // '#000000'
 ```
 
-## Compared with Zod
+## Contributing
 
-Keep in mind that this library was designed to **simplify the process of "fixing" data**, rather than validating it against a given schema. For other uses Zod may offer better features.
+Do you want to contribute? Fantastic! You can start with [THIS ISSUE](./issues/10) or help me find bugs.
