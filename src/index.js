@@ -1,4 +1,4 @@
 const { parse, fix, createFixer } = require('./main')
-const parsers = require('./parsers')
+const fixers = require('./fixers')
 
-module.exports = { parse, fix, createFixer, ...parsers }
+module.exports = { parse, fix, createFixer, ...fixers }
