@@ -1,48 +1,32 @@
 type Prettify<T> = { [K in keyof T]: T[K] } & {}
 
 export type Fixer<S = unknown> = (value: any) => S
-export type FixerRecord = Record<string, Fixer>
-export type Schema = Fixer | FixerRecord
+export type Schema = Fixer | Fixer[] | Record<string, Schema>
 
-export type Value<T> = T extends FixerRecord
-  ? { [Prop in keyof T]: ReturnType<T[Prop]> } & {}
-  : T extends Fixer
+export type Value<T extends Schema> = T extends Fixer
   ? ReturnType<T>
-  : never
+  : T extends Fixer[]
+  ? ReturnType<T[0]>
+  : { [Prop in keyof T]: Value<T[Prop]> } & {}
 
 // main functions
 export function fix<T extends Schema>(value: any, schema: T): Value<T>
-export function parse<T extends Schema>(value: any, schema: T): [Value<T>, errors: any[]]
 
-// create custom parsers
-declare function parser<T, S>(
-  options: Prettify<{ required: false; default?: undefined } & S>
-): (value: any) => T | undefined
-declare function parser<T, S>(options?: Prettify<{ required?: boolean; default?: T } & S>): (value: any) => T
-declare function createParser<T, S extends Record<string, any>>(
-  fn: (value: any, options: S) => T,
-  options?: { default?: T }
-): typeof parser<T, S>
+// create custom fixers
+declare function fixer<T, S>(options: Prettify<{ required: false } & S>): (value: any) => T | undefined
+declare function fixer<T, S>(options?: Prettify<{ def?: T } & S>): (value: any) => T
+declare function createFixer<T, S extends Record<string, any>>(
+  def: T,
+  fn: (value: any, options: S) => T
+): typeof fixer<T, S>
 
-// utilities
-export function schema<T extends Schema>(schema: T): (value: any) => Value<T>
-export function join<T>(...fixers: Fixer<T>[]): Fixer<T>
+// fixers
+export const text: ReturnType<typeof createFixer<string, { coerce?: boolean }>>
+export const float: ReturnType<typeof createFixer<number, { coerce?: boolean }>>
+export const bool: ReturnType<typeof createFixer<boolean, { coerce?: boolean }>>
+export const trim: ReturnType<typeof createFixer<string, {}>>
+export const lower: ReturnType<typeof createFixer<string, {}>>
+export const upper: ReturnType<typeof createFixer<string, {}>>
 
-// parsers
-export const string: ReturnType<typeof createParser<string, { coerced?: boolean }>>
-export const number: ReturnType<typeof createParser<number, { coerced?: boolean }>>
-export const boolean: ReturnType<typeof createParser<boolean, { coerced?: boolean }>>
-export const trim: ReturnType<typeof createParser<string, {}>>
-export const lower: ReturnType<typeof createParser<string, {}>>
-export const upper: ReturnType<typeof createParser<string, {}>>
-
-export function array<T extends Schema>(_: {
-  required: false
-  default?: undefined
-  of: T
-}): (value: any) => Array<Value<T>> | undefined
-export function array<T extends Schema>(_: {
-  required?: boolean
-  default?: Array<Value<T>>
-  of: T
-}): (value: any) => Array<Value<T>>
+export function list<T extends Schema>(_: { required: false; of: T }): (value: any) => Array<Value<T>> | undefined
+export function list<T extends Schema>(_: { def?: Array<Value<T>>; of: T }): (value: any) => Array<Value<T>>

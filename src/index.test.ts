@@ -1,8 +1,4 @@
-import {
-  fix, parse,
-  string, upper, lower, trim, number, boolean, array,
-  schema, join
-} from './index'
+import { fix, createFixer, text, upper, lower, trim, float, bool, list } from './index'
 
 describe('Validate README examples', () => {
   test('General', () => {
@@ -28,31 +24,31 @@ describe('Validate README examples', () => {
     }
 
     const fixedData = fix(data, {
-      name: string(),
-      middleName: string(),
-      lastName: string(),
-      age: number(),
-      isMarried: boolean(),
-      childrend: array({ of: string() }),
-      address: schema({
-        street: string(),
-        city: string(),
-        state: string()
-      }),
-      // array of complex objects
-      books: array({
+      name: text(),
+      middleName: text({ required: false }),
+      lastName: text(),
+      age: float(),
+      isMarried: bool(),
+      childrend: list({ of: text() }),
+      address: {
+        street: text(),
+        city: text(),
+        state: text()
+      },
+      // list of complex objects
+      books: list({
         of: {
-          title: string(),
-          year: number(),
-          // we can combine multiple 'parsers'
-          id: join(string(), upper())
+          title: text(),
+          year: float(),
+          // we can combine multiple 'fixers'
+          id: [text(), upper()]
         }
       })
     })
 
     expect(fixedData).toMatchObject({
       name: 'Stephen',
-      middleName: '', // undefined has been replaced by  ''
+      middleName: undefined,
       lastName: 'King',
       age: 75, // '74' has been replaced by 74
       isMarried: true, // 1 has been replaced by true
@@ -73,14 +69,14 @@ describe('Validate README examples', () => {
   test('floorParser', () => {
     const floorParser = () => (value: any) => {
       if (typeof value != 'number') {
-        throw new Error('not a number')
+        throw new Error('not a float')
       }
 
       return Math.floor(value)
     }
 
     // Note that you can pass "scalar" values to the fix function.
-    const data = fix('105.48', join(number(), floorParser()))
+    const data = fix('105.48', [float(), floorParser()])
     expect(data).toBe(105)
   })
 
@@ -93,14 +89,14 @@ describe('Validate README examples', () => {
       return value
     }
 
-    // note that we are using multiple parsers before applying our custom parser
-    const fixedColor = fix('#ab783F', join(upper(), trim(), colorParser()))
+    // note that we are using multiple fixers before applying our custom fixer
+    const fixedColor = fix('#ab783F', [upper(), trim(), colorParser()])
     expect(fixedColor).toBe('#AB783F')
   })
 
-  test('Combine multiple parsers', () => {
+  test('Combine multiple fixers', () => {
     const color = '  #aB4cf7  '
-    const fixedColor = fix(color, join(string(), trim(), upper()))
+    const fixedColor = fix(color, [text(), trim(), upper()])
     expect(fixedColor).toBe('#AB4CF7')
   })
 })
@@ -116,12 +112,12 @@ describe('Nested validations', () => {
     }
 
     const fixedData = fix(data, {
-      name: string(),
-      address: schema({
-        street: string(),
-        postalCode: string(),
-        city: string({ default: 'Portland' })
-      })
+      name: text(),
+      address: {
+        street: text(),
+        postalCode: text(),
+        city: text({ def: 'Portland' })
+      }
     })
 
     expect(fixedData).toMatchObject({
@@ -133,127 +129,121 @@ describe('Nested validations', () => {
       }
     })
   })
-
-  test('with aliases', () => {
-    expect(fix(100, schema(string()))).toBe('100')
-    expect(fix(undefined, schema(string()))).toBe('')
-    expect(fix('hello there!', schema(string()))).toBe('hello there!')
-    expect(fix('   Hello there!   ', schema(join(string(), trim(), lower())))).toBe('hello there!')
-    expect(fix('100', schema(number()))).toBe(100)
-    expect(fix(undefined, schema(number()))).toBe(0)
-  })
 })
 
 describe('Text validation', () => {
   test('basic', () => {
-    expect(fix('hello there!', string())).toBe('hello there!')
-    expect(fix(true, string())).toBe('true')
-    expect(fix(false, string())).toBe('false')
-    expect(fix(125.48, string())).toBe('125.48')
+    expect(fix('hello there!', text())).toBe('hello there!')
+    expect(fix(true, text())).toBe('true')
+    expect(fix(false, text())).toBe('false')
+    expect(fix(125.48, text())).toBe('125.48')
   })
 
-  test('default option', () => {
-    expect(fix(undefined, string())).toBe('')
-    expect(fix(null, string())).toBe('')
-    expect(fix(undefined, string({ default: 'John Smith' }))).toBe('John Smith')
-    expect(fix(null, string({ default: 'John Smith' }))).toBe('John Smith')
+  test('def option', () => {
+    expect(fix(undefined, text())).toBe('')
+    expect(fix(null, text())).toBe('')
+    expect(fix(undefined, text({ def: 'John Smith' }))).toBe('John Smith')
+    expect(fix(null, text({ def: 'John Smith' }))).toBe('John Smith')
   })
 
-  test('coerced option', () => {
-    expect(() => fix(true, string({ coerced: false }))).toThrow('not a string')
-    expect(() => fix(125.48, string({ coerced: false }))).toThrow('not a string')
+  test('coerce option', () => {
+    expect(fix(true, text({ coerce: false }))).toBe('')
+    expect(fix(125.48, text({ coerce: false, def: 'xxx' }))).toBe('xxx')
   })
 })
 
 describe('Float validation', () => {
   test('basic', () => {
-    expect(fix(undefined, number())).toBe(0)
-    expect(fix(null, number())).toBe(0)
-    expect(fix(false, number())).toBe(0)
-    expect(fix(true, number())).toBe(1)
-    expect(fix(125.48, number())).toBe(125.48)
-    expect(fix('125.48', number())).toBe(125.48)
-    expect(() => fix('lorem ipsum', number())).toThrow('not a number')
+    expect(fix(undefined, float())).toBe(0)
+    expect(fix(null, float())).toBe(0)
+    expect(fix(false, float())).toBe(0)
+    expect(fix(true, float())).toBe(1)
+    expect(fix(125.48, float())).toBe(125.48)
+    expect(fix('125.48', float())).toBe(125.48)
+    expect(fix('lorem ipsum', float())).toBe(0)
   })
 
-  test('default option', () => {
-    expect(fix('', number({ default: 100 }))).toBe(100)
-    expect(fix(undefined, number({ default: 125.48 }))).toBe(125.48)
-    expect(fix(null, number({ default: 125.48 }))).toBe(125.48)
+  test('def option', () => {
+    expect(fix({}, float({ def: 100 }))).toBe(100)
+    expect(fix(undefined, float({ def: 125.48 }))).toBe(125.48)
+    expect(fix(null, float({ def: 125.48 }))).toBe(125.48)
   })
 
-  test('coerced option', () => {
-    expect(() => fix('125.48', number({ coerced: false }))).toThrow('not a number')
+  test('coerce option', () => {
+    expect(fix('125.48', float({ coerce: false }))).toBe(0)
+    expect(fix('125.48', float({ coerce: false, def: 100 }))).toBe(100)
   })
 })
 
 describe('Boolean validation', () => {
   test('basic', () => {
-    expect(fix(true, boolean())).toBe(true)
-    expect(fix(false, boolean())).toBe(false)
-    expect(fix(1, boolean())).toBe(true)
-    expect(fix(0, boolean())).toBe(false)
-    expect(fix('', boolean())).toBe(false)
-    expect(fix('lorem ipsum', boolean())).toBe(true)
-    expect(fix({}, boolean())).toBe(true)
+    expect(fix(true, bool())).toBe(true)
+    expect(fix(false, bool())).toBe(false)
+    expect(fix(1, bool())).toBe(true)
+    expect(fix(0, bool())).toBe(false)
+    expect(fix('', bool())).toBe(false)
+    expect(fix('lorem ipsum', bool())).toBe(true)
+    expect(fix({}, bool())).toBe(true)
   })
 
-  test('default option', () => {
-    expect(fix(undefined, boolean())).toBe(false)
-    expect(fix(null, boolean())).toBe(false)
-    expect(fix(undefined, boolean({ default: true }))).toBe(true)
-    expect(fix(null, boolean({ default: true }))).toBe(true)
+  test('def option', () => {
+    expect(fix(undefined, bool())).toBe(false)
+    expect(fix(null, bool())).toBe(false)
+    expect(fix(undefined, bool({ def: true }))).toBe(true)
+    expect(fix(null, bool({ def: true }))).toBe(true)
   })
 
-  test('coerced option', () => {
-    expect(() => fix(1, boolean({ coerced: false }))).toThrow('not a boolean')
+  test('coerce option', () => {
+    expect(fix(1, bool({ coerce: false }))).toBe(false)
+    expect(fix(1, bool({ coerce: false, def: true }))).toBe(true)
   })
 })
 
 describe('Array validation', () => {
   test('basic', () => {
-    expect(fix([true, false], array({ of: string() }))).toEqual(['true', 'false'])
-    expect(fix([0, 1], array({ of: boolean() }))).toEqual([false, true])
-    expect(fix([1, '2', 3], array({ of: number() }))).toEqual([1, 2, 3])
+    expect(fix([true, false], list({ of: text() }))).toEqual(['true', 'false'])
+    expect(fix([0, 1], list({ of: bool() }))).toEqual([false, true])
+    expect(fix([1, '2', 3], list({ of: float() }))).toEqual([1, 2, 3])
+    expect(fix(null, list({ required: false, of: text() }))).toBeUndefined()
   })
 
-  test('default option', () => {
-    expect(fix(undefined, array({ of: string() }))).toEqual([])
-    expect(fix(null, array({ of: string() }))).toEqual([])
-    expect(fix(undefined, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
-    expect(fix(null, array({ of: number(), default: [1, 2, 3] }))).toEqual([1, 2, 3])
+  test('def option', () => {
+    expect(fix(undefined, list({ of: text() }))).toEqual([])
+    expect(fix(null, list({ of: text() }))).toEqual([])
+    expect(fix(undefined, list({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
+    expect(fix(null, list({ of: float(), def: [1, 2, 3] }))).toEqual([1, 2, 3])
   })
 })
 
-describe('Combine multiple parsers', () => {
+describe('Combine multiple fixers', () => {
   test('trim', () => {
-    expect(fix(' hello there! ', join(string(), trim()))).toBe('hello there!')
-    expect(() => fix(125.48, trim())).toThrow('not a string')
+    expect(fix(' hello there! ', [text(), trim()])).toBe('hello there!')
+    expect(fix(125.48, trim())).toBe('')
   })
 
   test('lower', () => {
-    expect(fix('Hello There!', join(string(), lower()))).toBe('hello there!')
-    expect(() => fix(125.48, lower())).toThrow('not a string')
+    expect(fix('Hello There!', [text(), lower()])).toBe('hello there!')
+    expect(fix(125.48, lower())).toBe('')
   })
 
   test('upper', () => {
-    expect(fix('hello there!', join(string(), upper()))).toBe('HELLO THERE!')
-    expect(() => fix(125.48, upper())).toThrow('not a string')
+    expect(fix('hello there!', [text(), upper()])).toBe('HELLO THERE!')
+    expect(fix(125.48, upper())).toBe('')
   })
 
-  test('combined parsers', () => {
-    expect(fix(' Hello There! ', join(string(), trim(), lower()))).toBe('hello there!')
-    expect(fix(' Hello There! ', join(string(), trim(), upper()))).toBe('HELLO THERE!')
+  test('combined fixers', () => {
+    expect(fix(' Hello There! ', [text(), trim(), lower()])).toBe('hello there!')
+    expect(fix(' Hello There! ', [text(), trim(), upper()])).toBe('HELLO THERE!')
   })
 })
 
 describe('Object validation', () => {
   test('check errors', () => {
-    expect(() => fix(100, { id: string() })).toThrow('not an object')
-    expect(() => fix(true, { id: string() })).toThrow('not an object')
-    expect(() => fix('lorem ipsum', { id: string() })).toThrow('not an object')
+    expect(fix(100, { id: text() })).toEqual({ id: '' })
+    expect(fix(true, { id: text() })).toEqual({ id: '' })
+    expect(fix('lorem ipsum', { id: text() })).toEqual({ id: '' })
 
-    const [, errors] = parse(
+    const data = fix(
       {
         name: 125.48,
         pseudonym: 78945,
@@ -266,187 +256,91 @@ describe('Object validation', () => {
         ]
       },
       {
-        name: string({ coerced: false }),
-        pseudonym: join(lower(), trim()),
-        age: number(),
-        single: boolean({ coerced: false }),
-        location: schema({ latitude: number(), longitude: number() }),
-        novels: array({ of: string() })
+        name: text({ coerce: false }),
+        pseudonym: [lower(), trim()],
+        age: float(),
+        single: bool({ coerce: false }),
+        location: { latitude: float(), longitude: float() },
+        novels: list({ of: text() })
       }
     )
 
-    expect(errors).toMatchObject([
-      { 'path': 'name', 'error': 'not a string' },
-      { 'path': 'pseudonym', 'error': 'not a string' },
-      { 'path': 'age', 'error': 'not a number' },
-      { 'path': 'single', 'error': 'not a boolean' },
-      { 'path': 'location', 'error': 'not an object' },
-      {
-        'path': 'novels',
-        'error': [
-          { 'path': 'novels[0]', 'error': 'not a string' },
-          { 'path': 'novels[1]', 'error': 'not a string' }
-        ]
-      }
-    ])
+    expect(data).toEqual({
+      name: '',
+      pseudonym: '',
+      age: 0,
+      single: false,
+      location: { latitude: 0, longitude: 0 },
+      novels: ['', '']
+    })
   })
 })
 
-describe('Custom parsers', () => {
-  test('floor parser', () => {
-    const floor = () => (value: any) => {
+describe('Custom fixers', () => {
+  test('floor fixer', () => {
+    const floor = createFixer(0, (value) => {
       if (typeof value != 'number') {
-        throw new Error('not a number')
+        throw TypeError('not a float')
       }
 
       return Math.floor(value)
-    }
+    })
 
-    expect(fix('105.48', join(number(), floor()))).toBe(105)
-    expect(() => fix('105.48', floor())).toThrow('not a number')
-  })
-})
-
-describe('default & required options', () => {
-  test('string', () => {
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      // required: false, default: undefined
-      expect(fix(emptyValue, string({ required: false, default: undefined }))).toBeUndefined()
-
-      // required: false, default: !undefined
-      expect(fix(emptyValue, string({ required: false, default: 'hello!' }))).toBe('hello!')
-      expect(fix(emptyValue, string({ required: false }))).toBe('')
-
-      // required: true, default: undefined
-      expect(() => fix(emptyValue, string({ required: true, default: undefined }))).toThrow('required')
-      expect(() => fix(emptyValue, string({ default: undefined }))).toThrow('required')
-
-      // required: true, default: !undefined
-      expect(fix(emptyValue, string({ required: true, default: 'hello!' }))).toBe('hello!')
-      expect(fix(emptyValue, string({ default: 'hello!' }))).toBe('hello!')
-      expect(fix(emptyValue, string())).toBe('')
-    }
-  })
-
-  test('number', () => {
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      // required: false, default: undefined
-      expect(fix(emptyValue, number({ required: false, default: undefined }))).toBeUndefined()
-
-      // required: false, default: !undefined
-      expect(fix(emptyValue, number({ required: false, default: 123 }))).toBe(123)
-      expect(fix(emptyValue, number({ required: false }))).toBe(0)
-
-      // required: true, default: undefined
-      expect(() => fix(emptyValue, number({ required: true, default: undefined }))).toThrow('required')
-      expect(() => fix(emptyValue, number({ default: undefined }))).toThrow('required')
-
-      // required: true, default: !undefined
-      expect(fix(emptyValue, number({ required: true, default: 123 }))).toBe(123)
-      expect(fix(emptyValue, number({ default: 123 }))).toBe(123)
-      expect(fix(emptyValue, number())).toBe(0)
-    }
-  })
-
-  test('boolean', () => {
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      // required: false, default: undefined
-      expect(fix(emptyValue, boolean({ required: false, default: undefined }))).toBeUndefined()
-
-      // required: false, default: !undefined
-      expect(fix(emptyValue, boolean({ required: false, default: true }))).toBe(true)
-      expect(fix(emptyValue, boolean({ required: false }))).toBe(false)
-
-      // required: true, default: undefined
-      expect(() => fix(emptyValue, boolean({ required: true, default: undefined }))).toThrow('required')
-      expect(() => fix(emptyValue, boolean({ default: undefined }))).toThrow('required')
-
-      // required: true, default: !undefined
-      expect(fix(emptyValue, boolean({ required: true, default: true }))).toBe(true)
-      expect(fix(emptyValue, boolean({ default: true }))).toBe(true)
-      expect(fix(emptyValue, boolean())).toBe(false)
-    }
-  })
-
-  test('array', () => {
-    const parsers = [
-      { parser: string(), default: ['aaa', 'bbb', 'ccc'] },
-      { parser: number(), default: [1, 2, 3] },
-      { parser: boolean(), default: [false, true] }
-    ]
-    const emptyValues = [undefined, null, '']
-    for (const emptyValue of emptyValues) {
-      for (const { parser, default: defValue } of parsers) {
-        // required: false, default: undefined
-        expect(fix(emptyValue, array({ of: parser, required: false, default: undefined }))).toBeUndefined()
-
-        // required: false, default: !undefined
-        expect(fix(emptyValue, array({ of: parser, required: false, default: defValue }))).toEqual(defValue)
-        expect(fix(emptyValue, array({ of: parser, required: false }))).toEqual([])
-
-        // required: true, default: undefined
-        expect(() => fix(emptyValue, array({ of: parser, required: true, default: undefined }))).toThrow('required')
-        expect(() => fix(emptyValue, array({ of: parser, default: undefined }))).toThrow('required')
-
-        // required: true, default: !undefined
-        expect(fix(emptyValue, array({ of: parser, required: true, default: defValue }))).toEqual(defValue)
-        expect(fix(emptyValue, array({ of: parser, default: defValue }))).toEqual(defValue)
-        expect(fix(emptyValue, array({ of: parser }))).toEqual([])
-      }
-    }
+    expect(fix('105.48', [float(), floor()])).toBe(105)
+    expect(fix('105.48', floor())).toBe(0)
   })
 })
 
 describe('fix invalid data', () => {
   test('invalid strings', () => {
-    const [x] = parse({}, string())
+    const x = fix({}, text())
     expect(x).toBe('')
 
-    const [y] = parse({}, string({ default: 'hello!' }))
+    const y = fix({}, text({ def: 'hello!' }))
     expect(y).toBe('hello!')
 
-    const [z] = parse(100, trim({ default: 'zzz'}))
+    const z = fix(100, trim({ def: 'zzz' }))
     expect(z).toBe('zzz')
 
-    const [v] = parse(100, lower({ default: 'vvv'}))
+    const v = fix(100, lower({ def: 'vvv' }))
     expect(v).toBe('vvv')
 
-    const [w] = parse(100, upper({ default: 'www'}))
+    const w = fix(100, upper({ def: 'www' }))
     expect(w).toBe('www')
   })
 
   test('invalid numbers', () => {
-    const [x] = parse('aaa', number())
+    const x = fix('aaa', float())
     expect(x).toBe(0)
 
-    const [y] = parse('aaa', number({ default: 100 }))
+    const y = fix('aaa', float({ def: 100 }))
     expect(y).toBe(100)
   })
 
   test('invalid booleans', () => {
-    const [x] = parse({}, boolean({ coerced: false }))
+    const x = fix({}, bool({ coerce: false }))
     expect(x).toBe(false)
 
-    const [y] = parse({}, boolean({ coerced: false, default: true }))
+    const y = fix({}, bool({ coerce: false, def: true }))
     expect(y).toBe(true)
   })
 
   test('invalid arrays', () => {
-    const [x] = parse('aaa', array({ of: string() }))
+    const x = fix('aaa', list({ of: text() }))
     expect(x).toEqual([])
 
-    const [y] = parse({}, array({ of: number(), default: [1, 2, 3] }))
+    const y = fix({}, list({ of: float(), def: [1, 2, 3] }))
     expect(y).toEqual([1, 2, 3])
+
+    const z = fix(undefined, list({ required: false, of: float() }))
+    expect(z).toBeUndefined()
   })
 
   test('invalid objects', () => {
-    const [x] = parse(100, { name: string(), age: number() })
+    const x = fix(100, { name: text(), age: float() })
     expect(x).toEqual({ name: '', age: 0 })
 
-    const [y] = parse(100, { name: string({ default: 'John' }), age: number({ default: 35 }) })
+    const y = fix(100, { name: text({ def: 'John' }), age: float({ def: 35 }) })
     expect(y).toEqual({ name: 'John', age: 35 })
   })
 })
