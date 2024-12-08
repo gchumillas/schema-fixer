@@ -100,7 +100,7 @@ fix({}, float({ def: 100 })) // 100, since {} cannot be fixed
 - The `coerce` parameter indicates that you want to "force" the conversion (default is `true`). For example:
 
 ```js
-fix(100, text()) // ''
+fix(100, text()) // '100'
 fix(100, text({ coerce: false })) // '', since 100 is not a string
 ```
 
