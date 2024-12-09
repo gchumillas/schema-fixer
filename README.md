@@ -81,7 +81,7 @@ upper({ def = '', required = true })                   // uppercases a string
 
 - A 'fixer' is the function that fixes the incoming data.
 
-- A `Schema` can be a 'fixer', an list of 'fixers' or a record of 'fixers'. For example:
+- A `Schema` can be a 'fixer', a list of 'fixers' or a record of 'fixers'. For example:
 
 ```js
 fix(1, bool()) // true
