@@ -158,4 +158,4 @@ sf.fix('red', colorFixer())     // '#000000'
 
 ## Contributing
 
-Do you want to contribute? Fantastic! You can start with [THIS ISSUE](./issues/10) or help me find bugs.
+Do you want to contribute? Fantastic! You can start with [THIS ISSUE](https://github.com/gchumillas/schema-fixer/issues/10) or help me find bugs.
