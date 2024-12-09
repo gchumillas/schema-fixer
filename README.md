@@ -1,6 +1,6 @@
 A small library to fix data with full TypeScript support.
 
-**What is this?** It's a fixer. It fixes "any data" preserving the types. **What is this not?** It's not a parser or a validator. Just a fixer. **Why?** Because you don't want to deal with `null` or `undefined` values ​​or invalid data formats that can break our application.
+**What is this?** It's a fixer. It fixes "any data" preserving the types. **What is this not?** It's not a parser or a validator. Just a fixer. **Why?** Because you don't want to deal with `null` or `undefined` values ​​or invalid data formats that can break your application.
 
 Main features:
 
@@ -11,7 +11,7 @@ Main features:
 
 ### Example
 
-In the following example we obtain the data from an external API and ensure that it conforms to our expected format:
+In the following example we obtain the data from an external API and ensure that it conforms to the expected format:
 
 ```ts
 import sf from '@gchumillas/schema-fixer'
@@ -22,7 +22,7 @@ function getAuthor = async (authorId: string) => {
   const res = await axios.get(`/api/v1/authors/${authorId}`)
 
   // 'fixes' the data against a given 'schema'
-  return sf.fix(data, {
+  return sf.fix(res.data, {
     name: sf.text(),
     middleName: sf.text(),
     lastName: sf.text(),
