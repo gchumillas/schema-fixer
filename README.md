@@ -1,8 +1,8 @@
-A small library to fix data with full TypeScript support.
+# A small library to fix data with full TypeScript support.
 
 **What is this?** It's a fixer. It fixes "any data" preserving the types. **What is this not?** It's not a parser or a validator. Just a fixer. **Why?** Because you don't want to deal with `null` or `undefined` values ​​or invalid data formats that can break your application.
 
-Main features:
+Key features:
 
 - Never fails. It can fix any data against a given schema.
 - Infers types from the schema.
