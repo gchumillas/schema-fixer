@@ -113,7 +113,7 @@ fix(undefined, text({ required: false })) // undefined
 ```
 
 > [!NOTE]
-> You'll probably never have to use the `required`, `def` or `coerce` parameters. But they're there!
+> You'll probably never have to use `required`, `def` or `coerce`. But they're there!
 > 
 > Take a look at the [TEST FILE](./src/index.test.ts) for more examples.
 
@@ -153,7 +153,7 @@ const colorFixer = sf.createFixer('#000000', (value) => {
 
 sf.fix('#f6f', colorFixer())    // '#FF66FF'
 sf.fix('#f6ef6f', colorFixer()) // '#F6EF6F'
-sf.fix('red', colorFixer())     // '#000000'
+sf.fix('red', colorFixer())     // '#000000', as 'red' is not a color
 ```
 
 ## Contributing
