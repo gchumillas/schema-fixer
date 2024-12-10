@@ -8,7 +8,7 @@ describe('Validate README examples', () => {
       lastName: 'King',
       age: '75',
       isMarried: 1,
-      childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
+      children: ['Joe Hill', 'Owen King', 'Naomi King'],
       address: {
         street: '107-211 Parkview Ave, Bangor, ME 04401, USA',
         city: 'Portland',
@@ -29,7 +29,7 @@ describe('Validate README examples', () => {
       lastName: text(),
       age: float(),
       isMarried: bool(),
-      childrend: list({ of: text() }),
+      children: list({ of: text() }),
       address: {
         street: text(),
         city: text(),
@@ -52,7 +52,7 @@ describe('Validate README examples', () => {
       lastName: 'King',
       age: 75, // '74' has been replaced by 74
       isMarried: true, // 1 has been replaced by true
-      childrend: ['Joe Hill', 'Owen King', 'Naomi King'],
+      children: ['Joe Hill', 'Owen King', 'Naomi King'],
       address: {
         street: '107-211 Parkview Ave, Bangor, ME 04401, USA',
         city: 'Portland',
