@@ -1,5 +1,3 @@
-> A small library to fix data with full TypeScript support.
-
 **What is this?** It's a fixer. It fixes "any data" preserving the types. **What is this not?** It's not a parser or a validator. Just a fixer. **Why?** Because you don't want to deal with `null` or `undefined` values ​​or invalid data formats that can break your application.
 
 Key features:
