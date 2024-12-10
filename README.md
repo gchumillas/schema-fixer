@@ -153,7 +153,7 @@ const colorFixer = sf.createFixer('#000000', (value) => {
 
 sf.fix('#f6f', colorFixer())    // '#FF66FF'
 sf.fix('#f6ef6f', colorFixer()) // '#F6EF6F'
-sf.fix('red', colorFixer())     // '#000000', as 'red' is not a color
+sf.fix('red', colorFixer())     // '#000000', as 'red' is not a valid color
 ```
 
 ## Contributing
