@@ -1,7 +1,8 @@
 type Prettify<T> = { [K in keyof T]: T[K] } & {}
 
 export type Fixer<S = unknown> = (value: any) => S
-export type Schema = Fixer | Fixer[] | Record<string, Schema>
+interface SchemaRecord extends Record<string, Schema> {}
+export type Schema = Fixer | Fixer[] | SchemaRecord
 
 export type Value<T extends Schema> =
   T extends Fixer ? ReturnType<T> :
