@@ -344,3 +344,69 @@ describe('fix invalid data', () => {
     expect(y).toEqual({ name: 'John', age: 35 })
   })
 })
+
+describe('Sugar syntax', () => {
+  test('general', () => {
+    const data = {
+      name: 'Stephen',
+      lastName: 'King',
+      age: '75',
+      isMarried: 1,
+      children: ['Joe Hill', 'Owen King', 'Naomi King'],
+      address: {
+        street: '107-211 Parkview Ave, Bangor, ME 04401, USA',
+        city: 'Portland',
+        state: 'Oregon'
+      },
+      books: [
+        { title: 'The Stand', year: 1978, id: 'isbn-9781444720730' },
+        { title: "Salem's lot", year: '1975', id: 'isbn-0385007515' }
+      ],
+      items1: [1.5, '2.5', 3.5],
+      items2: [1, false, true]
+    }
+
+    const fixedData = fix(data, {
+      name: 'string',
+      lastName: 'string',
+      age: 'number',
+      isMarried: 'boolean',
+      children: 'string[]',
+      address: {
+        street: 'string',
+        city: 'string',
+        state: 'string'
+      },
+      // list of complex objects
+      books: list({
+        of: {
+          title: 'string',
+          year: 'number',
+          // we can combine multiple 'fixers'
+          id: [text(), upper()]
+        }
+      }),
+      items1: 'number[]',
+      items2: 'boolean[]'
+    })
+
+    expect(fixedData).toMatchObject({
+      name: 'Stephen',
+      lastName: 'King',
+      age: 75, // '74' has been replaced by 74
+      isMarried: true, // 1 has been replaced by true
+      children: ['Joe Hill', 'Owen King', 'Naomi King'],
+      address: {
+        street: '107-211 Parkview Ave, Bangor, ME 04401, USA',
+        city: 'Portland',
+        state: 'Oregon'
+      },
+      books: [
+        { title: 'The Stand', year: 1978, id: 'ISBN-9781444720730' },
+        { title: "Salem's lot", year: 1975, id: 'ISBN-0385007515' }
+      ],
+      items1: [1.5, 2.5, 3.5],
+      items2: [true, false, true]
+    })
+  })
+})
