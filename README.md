@@ -9,6 +9,20 @@ Key features:
 - Transforms `null` and `undefined` ​​to default values.
 - Excludes unwanted properties to prevent code injection.
 
+## Install
+
+```bash
+# install from your project directory
+npm install @gchumillas/schema-fixer
+```
+
+```js
+// and import it from your file.js or file.ts
+import sf from '@gchumillas/schema-fixer'
+
+console.log(sf.fix(100, 'string')) // returns '100'
+```
+
 ### Example
 
 In the following example we obtain the data from an external API and ensure that it conforms to the expected format:
@@ -47,18 +61,21 @@ function getAuthor = async (authorId: string) => {
 }
 ```
 
-## Install
+## Sugar syntax
 
-Simply execute the following command from your project directory:
-
-```bash
-npm install @gchumillas/schema-fixer
-```
-
-and import the library:
+For brevity, you can also use the "sugar syntax", which replaces "aliases" with the corresponding fixers:
 
 ```js
-import sf from '@gchumillas/schema-fixer'
+import { fix } from '@gchumillas/schema-fixer'
+
+const fixedData = fix(data, {
+  name: 'string',       // sf.text()
+  age: 'number',        // s.float()
+  isMarried: 'boolean', // sf.bool()
+  children: 'string[]', // sf.list({ of: sf.text() })
+  years: 'number[]',    // sf.list({ of: sf.number() })
+  items: 'boolean[]'    // sf.list({ of: sf.bool() })
+})
 ```
 
 ## API
