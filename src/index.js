@@ -121,14 +121,15 @@ const fixerByAlias = {
 }
 
 const fix = (value, schema, { path = '' } = {}) => {
-  if (typeof schema == 'function') {
+  if (['string', 'function'].includes(typeof schema)) {
     schema = [schema]
   }
 
   // parses an array
   if (Array.isArray(schema)) {
     return schema.reduce((acc, fixer) => {
-      return typeof fixer == 'string' ? fixerByAlias[fixer] : fixer(acc, { path })
+      const f = typeof fixer == 'string' ? fixerByAlias[fixer] : fixer
+      return f(acc, { path })
     }, value)
   }
 
