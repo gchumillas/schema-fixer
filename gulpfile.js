@@ -9,7 +9,8 @@ const clean = () => {
 const compile = () => {
   return gulp.src(['src/**/*.js', '!src/**/*.test.js'])
     .pipe(babel({
-      presets: ['@babel/env']
+      presets: ['@babel/env'],
+      minified: true,
     }))
     .pipe(gulp.dest('dist'));
 };
