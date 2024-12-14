@@ -346,6 +346,26 @@ describe('fix invalid data', () => {
 })
 
 describe('Sugar syntax', () => {
+  test('basic', () => {
+    const x0 = fix(100, 'string')
+    expect(x0).toBe('100')
+
+    const x1 = fix('100', 'number')
+    expect(x1).toBe(100)
+
+    const x2 = fix(1, 'boolean')
+    expect(x2).toBe(true)
+
+    const x3 = fix([100, 200, 300], 'string[]')
+    expect(x3).toEqual(['100', '200', '300'])
+
+    const x4 = fix(['100', '200', '300'], 'number[]')
+    expect(x4).toEqual([100, 200, 300])
+
+    const x5 = fix([1, 0, 1], 'boolean[]')
+    expect(x5).toEqual([true, false, true])
+  })
+
   test('general', () => {
     const data = {
       name: 'Stephen',
