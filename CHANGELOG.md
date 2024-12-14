@@ -1,3 +1,7 @@
+## V 3.1.0-beta
+
+- added "sugar syntax"
+
 ## V 3.0.0-beta
 
 - remove parser() function
