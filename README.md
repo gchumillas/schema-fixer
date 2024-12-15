@@ -56,7 +56,7 @@ function getAuthor = async (authorId: string) => {
     age: sf.float(),
     isMarried: sf.bool(),
     // an array of strings
-    childrend: sf.list({ of: sf.text() }),
+    children: sf.list({ of: sf.text() }),
     // an object
     address: {
       street: sf.text(),
