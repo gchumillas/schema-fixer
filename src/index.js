@@ -1,17 +1,15 @@
 // UTILITIES
 const concat = (texts, glue = '') => texts.filter((x) => !!x).join(glue)
-const isNone = (value) => value === null || value === undefined
-const isObject = (value) => value !== null && typeof value == 'object' && !Array.isArray(value)
+const isNullOrUndefined = (value) => value === null || value === undefined
+const isPlainObject = (value) => value !== null && typeof value == 'object' && !Array.isArray(value)
 
 const createFixer = (def, fn) => {
-  return (options1) => {
-    const { def: defValue, required = true } = { def, ...options1 }
-
+  return ({ def: defValue = def, required = true, ...options1 } = {}) => {
     return (value, options2) => {
       const params = { ...options1, ...options2 }
       const { path } = params
 
-      if (isNone(value)) {
+      if (isNullOrUndefined(value)) {
         if (required) {
           return defValue
         }
@@ -125,19 +123,25 @@ const fix = (value, schema, { path = '' } = {}) => {
     schema = [schema]
   }
 
-  // parses an array
   if (Array.isArray(schema)) {
-    return schema.reduce((acc, fixer) => {
-      const f = typeof fixer == 'string' ? fixerByAlias[fixer] : fixer
-      return f(acc, { path })
-    }, value)
+    return fixArray(value, schema, path)
   }
 
-  if (!isObject(value)) {
+  if (!isPlainObject(value)) {
     value = {}
   }
 
-  // parses an object
+  return fixObject(value, schema, path)
+}
+
+const fixArray = (value, schema, path) => {
+  return schema.reduce((acc, fixer) => {
+    const f = typeof fixer == 'string' ? fixerByAlias[fixer] : fixer
+    return f(acc, { path })
+  }, value)
+}
+
+const fixObject = (value, schema, path) => {
   return Object.entries(schema).reduce(
     (props, [prop, fixer]) => ({
       ...props,
@@ -150,7 +154,7 @@ const fix = (value, schema, { path = '' } = {}) => {
 }
 
 module.exports = {
-  // main functinos
+  // main functions
   fix,
   // utilities
   createFixer,
