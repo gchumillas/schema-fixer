@@ -36,7 +36,7 @@ import sf from '@gchumillas/schema-fixer'
 console.log(sf.fix(100, 'string')) // returns '100'
 ```
 
-### Example
+## Example
 
 In the following example we obtain the data from an external API and ensure that it conforms to the expected format:
 
@@ -83,7 +83,7 @@ import { fix } from '@gchumillas/schema-fixer'
 
 const fixedData = fix(data, {
   name: 'string',       // sf.text()
-  age: 'number',        // s.float()
+  age: 'number',        // sf.float()
   isMarried: 'boolean', // sf.bool()
   children: 'string[]', // sf.list({ of: sf.text() })
   years: 'number[]',    // sf.list({ of: sf.float() })
