@@ -36,7 +36,7 @@ import sf from '@gchumillas/schema-fixer'
 console.log(sf.fix(100, 'string')) // returns '100'
 ```
 
-### Example
+## Example
 
 In the following example we obtain the data from an external API and ensure that it conforms to the expected format:
 
