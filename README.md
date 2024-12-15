@@ -1,13 +1,26 @@
 # Schema-Fixer
 
-**What is this?** It's a fixer. It fixes "any data" preserving the types. **What is this not?** It's not a parser or a validator. Just a fixer. **Why?** Because you don't want to deal with `null` or `undefined` values ​​or invalid data formats that can break your application.
+**What is Schema-Fixer?**
 
-Key features:
+Schema-Fixer is a lightweight utility designed to sanitize data while preserving its types.
 
-- Never fails. It can fix any data against a given schema.
-- Infers types from the schema.
-- Transforms `null` and `undefined` ​​to default values.
-- Excludes unwanted properties to prevent code injection.
+**What is it not?**
+
+Schema-Fixer is not a transformer or a validator—it doesn't validate correctness or enforce structure. It simply "fixes" data to align with a given schema.
+
+**Why use Schema-Fixer?**
+
+Handling `null`, `undefined`, or unexpected data formats can lead to application crashes or unintended behavior. Schema-Fixer ensures that your data conforms to the expected schema, allowing your application to run smoothly without errors caused by malformed input.
+
+## Key Features
+
+- **Reliable and Fail-Safe**<br> Schema-Fixer can process any data against a given schema without failing.
+  
+- **Type Inference**<br> Automatically infers data types based on the provided schema.
+
+- **Graceful Handling of `null` and `undefined`**<br> Replaces `null` or `undefined` values with predefined default values, ensuring data integrity
+  
+- **Prevents Unwanted Properties**<br> Excludes extraneous or unexpected properties, mitigating risks like code injection.
 
 ## Install
 
@@ -73,7 +86,7 @@ const fixedData = fix(data, {
   age: 'number',        // s.float()
   isMarried: 'boolean', // sf.bool()
   children: 'string[]', // sf.list({ of: sf.text() })
-  years: 'number[]',    // sf.list({ of: sf.number() })
+  years: 'number[]',    // sf.list({ of: sf.float() })
   items: 'boolean[]'    // sf.list({ of: sf.bool() })
 })
 ```
@@ -175,4 +188,4 @@ sf.fix('red', colorFixer())     // '#000000', as 'red' is not a valid color
 
 ## Contributing
 
-Do you want to contribute? Fantastic! You can start with [THIS ISSUE](https://github.com/gchumillas/schema-fixer/issues/10) or help me find bugs.
+Do you want to contribute? Fantastic! Take a look at [open issues](https://github.com/gchumillas/schema-fixer/issues) or help me find and fix bugs.
