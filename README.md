@@ -83,7 +83,7 @@ import { fix } from '@gchumillas/schema-fixer'
 
 const fixedData = fix(data, {
   name: 'string',       // sf.text()
-  age: 'number',        // s.float()
+  age: 'number',        // sf.float()
   isMarried: 'boolean', // sf.bool()
   children: 'string[]', // sf.list({ of: sf.text() })
   years: 'number[]',    // sf.list({ of: sf.float() })
