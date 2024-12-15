@@ -73,7 +73,7 @@ const fixedData = fix(data, {
   age: 'number',        // s.float()
   isMarried: 'boolean', // sf.bool()
   children: 'string[]', // sf.list({ of: sf.text() })
-  years: 'number[]',    // sf.list({ of: sf.number() })
+  years: 'number[]',    // sf.list({ of: sf.float() })
   items: 'boolean[]'    // sf.list({ of: sf.bool() })
 })
 ```
