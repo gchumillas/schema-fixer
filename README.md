@@ -79,9 +79,9 @@ function getAuthor = async (authorId: string) => {
 For brevity, you can also use the "sugar syntax", which replaces "aliases" with the corresponding fixers:
 
 ```js
-import { fix } from '@gchumillas/schema-fixer'
+import sf from '@gchumillas/schema-fixer'
 
-const fixedData = fix(data, {
+const fixedData = sf.fix(data, {
   name: 'string',       // sf.text()
   age: 'number',        // sf.float()
   isMarried: 'boolean', // sf.bool()
