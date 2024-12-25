@@ -1,3 +1,8 @@
+## V 3.2.0
+
+- added "floor" fixed
+- compress output
+
 ## V 3.1.0-beta
 
 - added "sugar syntax"
