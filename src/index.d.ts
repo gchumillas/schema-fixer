@@ -39,6 +39,7 @@ export const bool: ReturnType<typeof createFixer<boolean, { coerce?: boolean }>>
 export const trim: ReturnType<typeof createFixer<string, {}>>
 export const lower: ReturnType<typeof createFixer<string, {}>>
 export const upper: ReturnType<typeof createFixer<string, {}>>
+export const floor: ReturnType<typeof createFixer<number, {}>>
 
 export function list<T extends Schema>(_: { required: false; of: T }): (value: any) => Array<SchemaType<T>> | undefined
 export function list<T extends Schema>(_: { def?: Array<SchemaType<T>>; of: T }): (value: any) => Array<SchemaType<T>>

@@ -107,6 +107,7 @@ list({ of: Schema, def = [], required = true })        // fixes an array
 trim({ def = '', required = true })                    // trims a string
 lower({ def = '', required = true })                   // lowercases a string
 upper({ def = '', required = true })                   // uppercases a string
+floor({ def = 0, required = true })                    // math floor
 ```
 
 - A 'fixer' is the function that fixes the incoming data.

@@ -1,4 +1,4 @@
-import { fix, createFixer, text, upper, lower, trim, float, bool, list } from './index'
+import { fix, createFixer, text, upper, lower, trim, floor, float, bool, list } from './index'
 
 describe('README examples', () => {
   test('main example should fix input data', () => {
@@ -240,6 +240,9 @@ describe('Build-in fixers', () => {
     // trim
     expect(fix(' Hello There! ', [text(), trim(), lower()])).toBe('hello there!')
     expect(fix(' Hello There! ', [text(), trim(), upper()])).toBe('HELLO THERE!')
+
+    // floor
+    expect(fix('100.5', [float(), floor()])).toBe(100)
   })
 
   test('should fix input data against schema records', () => {

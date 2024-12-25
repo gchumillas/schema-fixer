@@ -108,6 +108,14 @@ const upper = createFixer('', (value) => {
   return value.toLocaleUpperCase()
 })
 
+const floor = createFixer(0, (value) => {
+  if (typeof value != 'number') {
+    throw new TypeError('not a number')
+  }
+
+  return Math.floor(value) // [number(), floor()]
+})
+
 // MAIN FUNCTIONS
 const fixerByAlias = {
   'string': text(),
@@ -165,5 +173,6 @@ module.exports = {
   list,
   trim,
   lower,
-  upper
+  upper,
+  floor
 }
