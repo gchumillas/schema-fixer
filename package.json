@@ -3,7 +3,7 @@
   "license": "ISC",
   "version": "3.2.0",
   "type": "commonjs",
-  "description": "Schema validator and fixer",
+  "description": "Schema fixer",
   "repository": "github:gchumillas/schema-fixer",
   "author": "Gonzalo Chumillas",
   "main": "./dist/index.js",
@@ -16,7 +16,6 @@
   },
   "keywords": [
     "schema",
-    "validator",
     "fixer"
   ],
   "scripts": {
