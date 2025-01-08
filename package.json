@@ -1,7 +1,7 @@
 {
-  "name": "@gchumillas/schema-fixer",
+  "name": "@schema-fixer/core",
   "license": "ISC",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "type": "commonjs",
   "description": "Schema fixer",
   "repository": "github:gchumillas/schema-fixer",

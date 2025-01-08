@@ -26,12 +26,12 @@ Handling `null`, `undefined`, or unexpected data formats can lead to application
 
 ```bash
 # install from your project directory
-npm install @gchumillas/schema-fixer
+npm install @schema-fixer/core
 ```
 
 ```js
 // and import it from your file.js or file.ts
-import sf from '@gchumillas/schema-fixer'
+import sf from '@schema-fixer/core'
 
 console.log(sf.fix(100, 'string')) // returns '100'
 ```
@@ -41,7 +41,7 @@ console.log(sf.fix(100, 'string')) // returns '100'
 In the following example we obtain the data from an external API and ensure that it conforms to the expected format:
 
 ```ts
-import sf from '@gchumillas/schema-fixer'
+import sf from '@schema-fixer/core'
 
 // unwanted `null` and `undefined` values are transformed to '', 0, [], etc.
 // no need to indicate the return type, since it is inferred from the schema
@@ -79,7 +79,7 @@ function getAuthor = async (authorId: string) => {
 For brevity, you can also use the "sugar syntax", which replaces "aliases" with the corresponding fixers:
 
 ```js
-import sf from '@gchumillas/schema-fixer'
+import sf from '@schema-fixer/core'
 
 const fixedData = sf.fix(data, {
   name: 'string',       // sf.text()
@@ -161,7 +161,7 @@ fix('Hello!', [text(), upper()]) // 'HELLO!'
 This is a simple fixer:
 
 ```ts
-import sf from '@gchumillas/schema-fixer'
+import sf from '@schema-fixer/core'
 
 // fixes a color
 const colorFixer = sf.createFixer('#000000', (value) => {
